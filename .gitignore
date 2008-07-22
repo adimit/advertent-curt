@@ -1,0 +1,17 @@
+# TeX files
+/thesis
+!/thesis/*.tex
+!/thesis/*.bib
+
+# Backups
+*~
+*.swp
+*.swo
+# Temporary inferencing tools' files
+*.in
+*.out
+*.ready
+
+# stuff I'd better not make public.
+/src/lib
+/lib

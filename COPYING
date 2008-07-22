@@ -1,0 +1,12 @@
+All files in /lib are not to be redistributed.
+All files in /src/lib are not to be redistributed.
+
+All files in /src bearing the GPL header and authorship by Blackburn & Bos are
+subject to /src/COPYING and their respective headers.  All modifications to the
+above files are public domain, created by Aleksandar Dimitrov.
+
+All files in /src not bearing the GPL header and authorship by Aleksandar
+Dimitrov are currently public domain.
+
+All files in /thesis may be used for personal and academic purposes, but not be
+redistributed, especially not be sold or otherwise profited from.
