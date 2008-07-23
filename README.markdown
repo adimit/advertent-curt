@@ -1,5 +1,7 @@
-Thi is my B.A. thesis and is currently work in progress.
+# Advertent Curt
 
-Topic: From Questions to Queries, asking Prolog the Natural Way.
+This is my B.A. thesis and is currently work in progress.
 
-Feel free to comment and/or criticise.
+Topic: 
+## From Questions to Queries
+### Enhancing the Curt System by a Theory and Implementation of Embedded WH-Questions

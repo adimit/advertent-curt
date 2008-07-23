@@ -92,12 +92,12 @@ while($readmace || $readparadox) {
 }
 
 if ($mace_selected) {
-   close MACE_OUTPUT;			 
-} 
+   close MACE_OUTPUT;
+}
 
 if ($paradox_selected) {
-   close PARADOX_OUTPUT;			 
-} 
+   close PARADOX_OUTPUT;
+}
 
 open(OUTPUT,">mb.out");
 if ($mace_result == 1) {
