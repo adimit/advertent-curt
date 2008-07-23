@@ -124,7 +124,7 @@ while( (keys %pids) > 0 && $winner eq "") {
             }
      }
      close(OUTPUT);
-     delete $pids{otter};
+     delete $pids{prover9};
   }
 
   if (-e "otter.ready" && $winner eq "") {
