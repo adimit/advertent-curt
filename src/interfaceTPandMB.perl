@@ -35,6 +35,7 @@ my $winner = "";
 # how to run programs
 my %command = ( 
  otter   => "otter < otter.in > otter.out 2>/dev/null; echo otter > otter.ready",
+ prover9   => "prover9 < prover9.in > prover9.out 2>/dev/null; echo prover9 > prover9.ready",
  bliksem => "bliksem < bliksem.in > bliksem.out 2>/dev/null; echo bliksem > bliksem.ready",
  mace    => "mace -t20 -n1 -N$domainsize -P < mace.in > mace.out 2>/dev/null; echo mace > mace.ready",
  paradox => "paradox paradox.in --sizes 1..$domainsize --print Model > paradox.out 2>/dev/null; echo paradox > paradox.ready"
@@ -44,7 +45,7 @@ my %command = (
 system "rm -f *.ready";
 
 # run any requested processes
-foreach my $p (("otter", "bliksem", "mace", "paradox")) {
+foreach my $p (("prover9", "otter", "bliksem", "mace", "paradox")) {
    if ($pleaseload =~ /$p/) {
       my $forkedpid = fork;
       unless ($forkedpid) {
@@ -113,6 +114,17 @@ while( (keys %pids) > 0 && $winner eq "") {
 	 }
       close(OUTPUT);
       delete $pids{paradox};
+  }
+
+  if (-e "prover9.ready" && $winner eq "") {
+      open(OUTPUT,"prover9.out");
+      while (<OUTPUT>) {
+             if (/THEOREM PROVED/) {
+                $winner = "prover9";
+            }
+     }
+     close(OUTPUT);
+     delete $pids{otter};
   }
 
   if (-e "otter.ready" && $winner eq "") {
