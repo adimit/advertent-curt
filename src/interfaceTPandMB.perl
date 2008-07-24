@@ -41,6 +41,9 @@ my %command = (
  paradox => "paradox paradox.in --sizes 1..$domainsize --print Model > paradox.out 2>/dev/null; echo paradox > paradox.ready"
 );
 
+# Log file for debugging purposes
+open ($log, ">>", "tpandmb.log") or die "Can't open logfile! $!";
+
 # delete any cruft from previous instances of this script 
 system "rm -f *.ready";
 
@@ -50,11 +53,16 @@ foreach my $p (("prover9", "otter", "bliksem", "mace", "paradox")) {
       my $forkedpid = fork;
       unless ($forkedpid) {
           # the child process execs the program
+		print $log "Starting process $p\n";
           exec($command{$p}); 
       }
       # the parent process keeps track of the child process
       $pids{$p} = $forkedpid;
    }
+}
+
+foreach my $process (keys %pids) {
+	print $log "Running $process with PID $pids{$process}\n";
 }
  
 
@@ -72,6 +80,7 @@ while( (keys %pids) > 0 && $winner eq "") {
              if (/end_of_model/) {
                 $winner = "mace";
                 $readmacemodel = 0;
+		print $log "mace won.\n"
              }
              elsif ($readmacemodel) {
                 $model = "$model$_";
@@ -93,6 +102,7 @@ while( (keys %pids) > 0 && $winner eq "") {
                $model = "$model dummy\n]).\n";
                $winner = "paradox";
                $readparadoxmodel = 0;
+	       print $log "paradox won.\n"
             }
             elsif ($readparadoxmodel) {
                s/\n/,\n/;
@@ -121,6 +131,7 @@ while( (keys %pids) > 0 && $winner eq "") {
       while (<OUTPUT>) {
              if (/THEOREM PROVED/) {
                 $winner = "prover9";
+		print $log "prover9 won.\n"
             }
      }
      close(OUTPUT);
@@ -132,6 +143,7 @@ while( (keys %pids) > 0 && $winner eq "") {
       while (<OUTPUT>) {
              if (/proof of the theorem/) {
                 $winner = "otter";
+		print $log "otter won.\n"
             }
      }
      close(OUTPUT);
@@ -143,6 +155,7 @@ while( (keys %pids) > 0 && $winner eq "") {
       while (<OUTPUT>) {
              if (/found a proof/) {
                 $winner = "bliksem";
+		print $log "noooo bliksem *can't* win!\n"
             }
        }
       close(OUTPUT);
@@ -150,11 +163,21 @@ while( (keys %pids) > 0 && $winner eq "") {
   }
 }
 
+print $log "Done. Processes left over are:\n";
+
+foreach my $process (keys %pids) {
+	print $log "$process with PID $pids{$process}\n";
+}
+
+print $log "Killing... ";
 
 # kill any remaining child processes (for example, any theorem
 # provers or model builders which are still working)
-foreach (values %pids) { kill $_; }
+foreach (values %pids) { kill $_; print $log $_ . " " }
 
+print $log ".\n";
+
+close $log or die $!;
 
 # write the results out to a file which will be read by Curt
 open(OUTPUT,">tpmb.out");
