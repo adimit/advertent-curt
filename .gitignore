@@ -11,6 +11,7 @@
 *.in
 *.out
 *.ready
+*.log
 
 # stuff I'd better not make public.
 /src/lib
