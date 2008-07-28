@@ -75,6 +75,14 @@ lexEntry(noun,[symbol:weapon,syntax:[weapon]]).
 lexEntry(noun,[symbol:wife,syntax:[wife]]).
 lexEntry(noun,[symbol:woman,syntax:[woman]]).
 
+% bogeymen
+
+lexEntry(noun,[symbol:sasquatch,syntax:[sasquatch]]).
+lexEntry(noun,[symbol:yeti,syntax:[yeti]]).
+lexEntry(noun,[symbol:karakondjol,syntax:[karakondjol]]).
+lexEntry(noun,[symbol:ebu_gogo,syntax:[ebu,gogo]]).
+lexEntry(noun,[symbol:orang_pendex,syntax:[orang,pendex]]).
+
 
 /*========================================================================
    Proper Names
@@ -138,6 +146,10 @@ lexEntry(iv,[symbol:smoke,syntax:[smoke],inf:fin,num:pl]).
 lexEntry(iv,[symbol:snort,syntax:[snort],inf:inf,num:sg]).
 lexEntry(iv,[symbol:snort,syntax:[snorts],inf:fin,num:sg]).
 lexEntry(iv,[symbol:snort,syntax:[snort],inf:fin,num:pl]).
+
+lexEntry(iv,[symbol:snore,syntax:[snore],inf:inf:num:sg]).
+lexEntry(iv,[symbol:snore,syntax:[snores],inf:fin:num:sg]).
+lexEntry(iv,[symbol:snore,syntax:[snore],inf:fin:num:pl]).
 
 lexEntry(iv,[symbol:shriek,syntax:[shriek],inf:inf,num:sg]).
 lexEntry(iv,[symbol:shriek,syntax:[shrieks],inf:fin,num:sg]).
@@ -272,4 +284,30 @@ lexEntry(av,[syntax:[does,not],inf:fin,num:sg,pol:neg]).
 lexEntry(av,[syntax:[did],inf:fin,num:sg,pol:pos]).
 lexEntry(av,[syntax:[did,not],inf:fin,num:sg,pol:neg]).
 
+/*========================================================================
+   WH-embedding
+========================================================================*/
 
+lexEntry(whemb,[syntax:[whether],mood:int,type:alt]).
+lexEntry(whemb,[syntax:[if],mood:int,type:alt]).
+lexEntry(whemb,[syntax:[that],mood:int,type:ass]).
+
+/*========================================================================
+   WH-embedding verbs - extensional
+========================================================================*/
+
+lexEntry(ivt,[symbol:know,syntax:[know],inf:inf:num:sg]).
+lexEntry(ivt,[symbol:know,syntax:[knows],inf:fin:num:sg]).
+
+lexEntry(ivt,[symbol:tell,syntax:[tell],inf:inf:num:sg]).
+lexEntry(ivt,[symbol:tell,syntax:[tells],inf:fin:num:sg]).
+
+/*========================================================================
+   WH-embedding verbs - intensional
+========================================================================*/
+
+lexEntry(ivt,[symbol:believe,syntax:[believe],inf:inf:num:sg]).
+lexEntry(ivt,[symbol:believe,syntax:[believes],inf:fin:num:sg]).
+
+lexEntry(ivt,[symbol:suspect,syntax:[suspect],inf:inf:num:sg]).
+lexEntry(ivt,[symbol:suspect,syntax:[suspects],inf:fin:num:sg]).

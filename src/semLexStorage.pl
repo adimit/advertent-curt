@@ -93,10 +93,8 @@ semLex(coord,M):-
    M = [type:disj,
         sem:[lam(X,lam(Y,lam(P,or(app(X,P),app(Y,P)))))]].
 
-
-
-
-
-
-
-
+semLex(ivt,M) :-
+	M = [type:epistemic,
+	sem:['stub']];
+	M = [type:extensional,
+	sem:['stub']].
