@@ -1,7 +1,7 @@
 # TeX files
 /thesis
-!/thesis/*.tex
-!/thesis/*.bib
+!/thesis/*tex
+!/thesis/*bib
 
 # Backups
 *~
