@@ -1,0 +1,77 @@
+\documentclass{article}
+
+\usepackage[english]{babel}
+\usepackage{qtree}
+\usepackage[utf8x]{inputenc}
+\usepackage{linguex}
+\usepackage{natbib}
+
+\bibliographystyle{plainnat}
+
+\author{Aleksandar Dimitrov}
+\title{Questioning Discourse in Prolog: From Questions to Queries}
+
+\begin{document}
+
+\maketitle
+
+Discourse Representation Theory (DRT), as presented in \citet{kampreyle:drt}
+provides a powerful and flexible approach to capturing the meaning of natural
+language and storing information in tidy data structures.
+\citep{blackburnbos:cl2} further provide us with an implementation of DRT in
+Prolog. Although unfinished, their results may already prove useful to an
+attempt of an implementation of a generic way to retrieve information from
+Discourse Representation Structures (DRS) in form of either absolute truth
+values (answers to alternative questions) in questions like \ref{qex:yesno} or a
+possible set of individuals as in \ref{qex:set}.
+
+\ex. 
+\a. Is Mary pregnant? \label{qex:yesno}
+\b. Who is coming to the party? \label{qex:set}
+
+The problem of treating questions has generally been recognized as being
+non-trivial and there exist several attempts to explain the semantics of
+questions in natural language, the classical examples being \citet{hamblin:1973}
+with a first rather simple attempt, \citet{karttunen:1973} and \citet{gs:1984a},
+who both take a much more sophisticated approach to the proper treatment of
+questions.
+
+One of the main challenges of this work will be the unification of classical
+linguistic theories with the newer DRT. Both originate from entirely different
+mindsets. While the classic theory according to \citep{karttunen:1973} is based
+on Montague's analysis of English (in \citet{ptq}) and thus presupposes
+intensional logic, DRT introduces its own formalism and does so far not treat
+intensionality. Trying to let the classic theory operate on DRT in a naïve way
+will thus fail. This makes it imperative to find a feasible approach to let
+question operators work with DRSs in a well-defined way.
+
+As a further challenge, implementing presuppositions and/or modality might prove
+to be an interesting task. 
+
+\ex. \label{presups}
+\a. Is Jon pregnant? \label{presup}
+\b. Can Jon be pregnant? \label{modal}
+
+In \ref{presups} we see two sentences which should be answered on grounds of
+presuppositions - Jon is presumably male and can thus not be pregnant. In
+\ref{presup}, an answer to the question may not even need to be proved against
+the current model, while a sentences as \emph{Jon became pregnant} should be
+rejected by the system. Cases like \ref{modal} might be much harder to properly
+treat, since they involve modal verbs.
+
+While treating presuppositions in DRT is not new\footnote{\citet[Chap.
+4]{blackburnbos:cl2} provide a discussion on the implementation in Prolog},
+modality has so far not received great attention\footnote{Albeit a few papers do
+seem to exist. See \citet{frank96context}.}. Since questions in natural language
+rely quite a lot on presuppositions, implementing at least a primitive method
+seems to be an enticing opportunity to further explore the treatment of natural
+language questions to DRSs.
+
+Based on \citet{jaeger:1997} and possibly others, one might also want to
+consider implementing \emph{informative questions}, that is, questions that not
+only query for informations, but also \emph{provide} information to the system.
+
+\bibliography{aleksbib}
+
+\end{document}
+

@@ -1,0 +1,126 @@
+\documentclass{scrartcl}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{bbm,qtree,natbib,stmaryrd,aleks,linguex}
+
+\newcommand{\abbr}{\textsf}
+\newcommand{\pn}{\textsc}
+\newcommand{\url}[1]{\texttt{http://#1}}
+%names
+\newcommand{\curt}{\pn{Curt}}
+\newcommand{\prol}{\pn{Prolog}}
+
+
+\bibliographystyle{plainnat}
+
+\author{Aleksandar Dimitrov}
+\title{From Questions to Queries -- Enhancing the Curt System by a Theory and Implementation of Embedded WH-Questions}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Choosing Grounds} % FIXME title sucks
+
+\subsection{The Curt System}
+
+\subsection{General Comparison of the Curt System}
+
+This section will briefly discuss how the features of the Curt system compare to
+other similar systems or systems with the same goal, namely implementing a
+system that is able to model a logic representation of human language.
+
+\subsection{Early Attempts: \pn{Shrdlu} and \pn{Cyc}}
+%TODO: need some reference for this section!
+
+Interest in deep semantic parsing of natural language has existed since the very
+beginning of the informational age. One of the first systems to achieve public
+recognition, the \pn{Shrdlu} system 
+
+
+\section{Concepts}
+
+After having elaborated on the grounds of the implementation, we will now
+display the implementation's underlying concepts. % FIXME this sentence is too short
+
+%OUTLINE Presenting a conceptual overview, while arguing for and against stuff.
+
+First we will present a brief overview of the considerations regarding the
+choice of an appropriate formalism for the system in section \ref{sec:formal}
+to then compare it with already existing implementations of question answering
+systems in \ref{sec:othercrap}.
+
+\subsection{Formalism}\label{sec:formal}
+
+Most of the traditional literature in natural language semantics follows
+\cite{ptq} and thus also uses its underlying formalism, \emph{Intensional Logic}
+(henceforth \abbr{IL}). \cite{gs:sqpa} (and subsequent publications) however use
+two-sorted type logic (henceforth \abbr{Ty2}) as proposed in
+\cite{gallin:ty2}. \cite{z:ilty2} discusses the differences and similarities in expressive power
+between \abbr{Ty2} and \abbr{IL} and comes to the conclusion that the set of
+expressions expressible in the former but not in the latter might not be
+relevant for the treatment of natural language semantics. Although he proposes
+a translation scheme between both languages, translation from \abbr{Ty2} to
+\abbr{IL} seems to sometimes produce very complex \abbr{IL} terms.
+
+Since this paper is not concerned with possible extensions of the underlying
+theories of treating natural language questions, but rather with their
+implementation in the programming language \pn{Prolog} several additional
+constraints have to be considered. Among them the \emph{feasibility} of any
+possible approach takes highest precedence.
+
+While the \pn{Curt} system is unique in its approach to deep semantic analysis, its
+architecture has been crafted in a pragmatic manner. The authors chose to use
+external tools where it was possible in order to avoid reimplementation of
+existing functionality and be able to focus on novel parts of the
+implementation\footnote{The name of the \pn{Curt} system reflects this choice.
+It stands for \emph{\textbf{C}lever \textbf{u}se of \textbf{r}easoning
+\textbf{t}ools}.}. While there exist inferencing tools for modal
+logic\footnote{See %todo todo and todo 
+for discussions. The interested reader is also referred to \pn{Molle}
+(\url{molle.sf.net}), a modal theorem prover that comes with a graphical user
+interface that allows interactive investigation of the constructed indices.},
+a restructuring of the \pn{Curt} system would to take advantage of them would be
+beyond the scope of this thesis. Another design decision of the \pn{Curt} system
+was to use \prol as an implementation language. While \prol is a general
+purpose logic programming language, it is rooted in first-order predicate logic
+and does not explicitly support modal logic\footnote{But see%todo, todo and todo
+for a discussion of the implementation of modal logic into \prol}.
+
+It was therefore decided to avoid modal logic and implement a pragmatic approach
+to representing the indices of higher-order logic in \prol in section
+\ref{sec:indices}.
+
+\cite{g:inqs} presents an approach to implementing inquisitive semantics in
+predicate logic.
+
+\subsection{Existing Implementations of Similar Systems}\label{sec:othercrap}
+
+Godot, all that statistical crap and Pereira's CHAT-80.
+
+\section{Implementation}
+
+\subsection{An Ontology of Embedding Verbs}
+
+Karttunen's List.
+
+\subsubsection{Extensional WH-embedding Verbs}
+
+Like \emph{know}.
+
+\subsubsection{Intensional WH-embedding Verbs}
+
+Like \emph{believe}.
+
+\subsection{Modality and Possible Worlds}
+\label{sec:indices}
+\subsection{Treatment of Baker-Ambiguities}
+
+\section{Discussion}
+
+\bibliography{aleksbib}
+
+
+\end{document}
+

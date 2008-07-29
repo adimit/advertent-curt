@@ -1,0 +1,339 @@
+\documentclass{beamer}
+
+\mode<beamer>{
+\usetheme{Singapore}
+%Berlin
+%\usecolortheme{rose}
+}
+
+\usepackage[english]{babel}
+\usepackage{qtree}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsfonts,amsmath}
+\usepackage{linguex}
+\usepackage{color}
+
+\newcommand{\stress}{\textbf}
+\title{From Questions to Queries: Asking Prolog the Natural Way}
+\institute{Universität Tübingen}
+\author{Aleksandar L. Dimitrov}
+
+\begin{document}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{What We Have So Far}
+
+\subsection{The Curt System}
+\begin{frame}
+\frametitle{The Curt System so Far}
+  \begin{itemize}
+    \item[$\to$] Newest version: Sensitive Curt
+    \item \stress{Features:}
+    \begin{itemize}
+      \item Uses external tools to provide enhanced feature set
+      \item Can thus \stress{detect inconsistent additions} to existing discourse
+      \item and \stress{detect uninformative additions} to existing discourse
+    \end{itemize}
+    \item \stress{Shortcomings:}
+    \begin{itemize}
+      \item Does not account for $\alpha$-equivalent readings
+      \item Does not know about worlds and situations
+      \item Has no background knowledge apart from the discourse
+      \item Is hard to interface with as a normal human
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Blackburn \& Bos: Extending Curt}
+
+\subsection{Scrupulous Curt}
+\begin{frame}
+\frametitle{Scrupulous Curt}
+  \begin{itemize}
+    \item Recognizes ``a man likes a hash bar'' is not ambiguous
+    \item \ldots by proving ``$\leftrightarrow$'' between the two readings
+    \item Only disambiguates at request
+    \item Does not produce models after disambiguation
+    \item Is unable to construct a model where one holds and the other doesn't
+    \item \emph{Failure to prove something does not prove the non-existance of a proof}
+  \end{itemize}
+\end{frame}
+
+\subsection{Knowledgeable Curt}
+\begin{frame}
+\frametitle{Knowledgeable Curt: Know What's Going on in the Human World}
+  \begin{itemize}
+    \item Knowledgeable Curt introduces \stress{background knowledge}
+    \item Features
+    \begin{itemize}
+      \item Distinguishes between \emph{plants} and \emph{humans}
+      \item Adds new types of knowledge to our discourse: \stress{it takes knowledge}
+      \item[$\to$] from \pause the lexicon\pause, the world\pause{} and the situational
+      context
+    \end{itemize}
+    \item Our new discourse:
+    \begin{equation}
+    LK \wedge WK \wedge SK \wedge DK
+    \end{equation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Lexical Knowledge}
+  Keywords: \emph{Lexical Semantics}, \emph{ontology}
+  \begin{itemize}
+    \item Knowledgeable Curt introduces \emph{Ontologies}
+    \item \Tree [.Organism Animal Plant [.Person Man Woman ] ]
+    \item Ontologies can be \emph{subject of dispute}
+    \item \texttt{lexicalKnowledge.pl} uses \alert{triggers} to enhance
+      efficiency.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Lexical Knowledge, Cntd.}
+  \begin{itemize}
+    \item A particular ontology can only be applicable to a certain domain
+    \item Ontologies can help distinguish \stress{homonyms}
+    \item[$\to$] $\forall X [\texttt{grunt}(X) \wedge \texttt{person}(X)]$ vs.  $\forall X [ \texttt{grunt}(X) \wedge \texttt{utterance}(X) ]$
+    vs. $\forall X [\texttt{grunt}(X) \wedge \texttt{fish}(X)]$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{World Knowledge}
+  \begin{itemize}
+    \item Being a \texttt{wife} implies being \texttt{married}
+    \item Distinction between \stress{world knowledge} and \stress{lexical
+    knowledge} can be fuzzy:
+    \begin{itemize}
+      \item being a \texttt{student} implies being an \texttt{undergraduate}.
+      \item \ldots{} but couldn't a \texttt{student} be a child of \texttt{undergraduate}?
+    \end{itemize}
+    \item \stress{Inheritance relationships:} no thing is a subpart of itself, no thing is a subpart of two distinct things.
+    \item \stress{Really?} No thing is owned by itself? No thing is owned by two
+    distinct things?
+    \item[$\to$] Distinguish between notions of \emph{have}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Situational Knowledge}
+  \begin{itemize}
+    \item Discourse knowledge
+    \begin{itemize}
+      \item When we talk about two different things, we don't talk about the
+	same thing.
+    \end{itemize}
+    \item All three types of knowledge can interact in interesting
+      ways\ldots{}\pause
+    \item consider: \emph{every car has a radio}.
+  \end{itemize}
+\end{frame}
+
+\subsection{Helpful Curt}
+\begin{frame}
+\frametitle{Helpful Curt: Asking the Natural Way}
+  \begin{itemize}
+    \item For now, \texttt{readings/0} and \texttt{models/0} were the only way of
+    querying Curt
+    \item How about natural language questions?
+    \begin{enumerate}
+      \item Is Mia married?
+      \item Who owns a hash bar?
+      \item Does every man like a gun?
+      \item Who did not shoot Marvin?
+    \end{enumerate}
+    \item Building models where possible answers hold
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Helping Curt Help}
+  \begin{itemize}
+    \item Introducing the \texttt{que/3} predicate.
+    \begin{itemize}
+      \item basically a \emph{variable binder}:
+      \item[$\to$] $que(X, person(X), not(shot(X. marvin))).$
+      \item[$\to$] $que(X, customer(X), some(Y, and(fdshake(Y), order(X,Y)))).$
+    \end{itemize}
+    \item No first order terms or formulas
+    \item[$\to$] Translate:
+    \begin{equation}
+      que(X,R,N) \to some(X, and (R,N))
+    \end{equation}
+    \item[$\to$] Now we know whether the question makes sense - and if we can
+    answer it.
+    \item Next: free the variable and unify it with the model: $satisfy(X, and(R,N))$
+  \end{itemize}
+\end{frame}
+
+\section{Excursion: Question Semantics}
+\begin{frame}
+\frametitle{Question Semantics}
+  Two main theories:
+  \begin{enumerate}
+    \item<1-| alert@3> Lauri Karttunen
+    \item<2-> Groenendijk \& Stokhof
+  \end{enumerate}
+\end{frame}
+
+\subsection{Karttunen 77}
+\begin{frame}
+  \frametitle{Karttunen 77: Types of Questions}
+  \begin{itemize}
+    \item<1-> Two (syntactic) types of questions:
+      \begin{enumerate}
+	\item<2-|alert@4> Direct questions
+	\item<3-|alert@5> Indirect questions
+      \end{enumerate}
+    \item<4-> \emph{Which book did Mary read?}, \emph{Who is John meeting?}
+    \item<5-> I ask\ldots{} \emph{\dots{} whether it is raining},
+      \emph{\dots{} who John met}
+    \item<6-> Karttunen treats only \alert{indirect questions}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Karttunen 77: Types of Questions, contd.}
+  \begin{itemize}
+    \item<1-> Two (semantic) types of questions:
+      \begin{enumerate}
+	\item<2-|alert@4> Alternative questions \only<5->{\stress<5>{Yes/No questions}}
+	\item<3-|alert@6> Wh-questions
+      \end{enumerate}
+    \item<4-> \emph{Does Mary smoke?}, \emph{Will you come to the party?}
+    \item<6-> \emph{Who owns a hash bar?}, \emph{Who is Mia married to?}
+    \item<7-> Karttunen considers \stress{alternative questions} syntactically
+      degenerate variants of \stress{Wh-questions}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{A Simplistic Overview of Karttunen 77}
+  \begin{itemize}
+    \item Karttunen generalises all questions to \emph{proto-questions}
+      \begin{itemize}
+	\item ?Mary reads
+      \end{itemize}
+    \item He introduces three question rules: PQ, AQ, YNQ (and some more\dots)
+    \item PQ: For every phrase $\phi$ of type $t$, ?$\phi$ is of type Q
+    \item ?$\phi$ is the set of propositions that are the intension of $\phi$
+      and for which the extension of $\phi$ holds
+    \item AQ: For every disjunction of $\phi_1$ to $\phi_n$, ?$\phi_1$ to
+      $\phi_n$ is the set of propositions for which either proto-question holds.
+      (whether Mia snorts or Butch walks)
+    \item YNQ: For every phrase $\phi$, ?$\phi$ is a set of propositions equal
+      to either the intension of $\phi$ or the intension of $\phi$
+      \emph{negated} \alert{and} the extension of $\phi$
+      (whether Mia snorts or not)
+  \end{itemize}
+\end{frame}
+
+%\begin{frame}
+  %\frametitle{An Ontology of Embedding Verbs}
+  %Verbs of\ldots
+  %\begin{itemize}
+    %\item \emph{retaining knowledge}: know, recall, forget
+    %\item \emph{acquiring knowledge}: learn find out
+    %\item \emph{conjecture}: guess, estimate
+    %\item \emph{decision}: decide, determine, agree on
+    %\item \emph{relevance}: matter, care, be significant
+    %\item \emph{dependency}: depend on, make a difference to
+    %\item \ldots
+  %\end{itemize}
+%\end{frame}
+
+\subsection{Intensional Logic}
+
+\begin{frame}
+  \frametitle{Intensional Logic}
+  Intensional logic is needed to interpret
+  \begin{itemize}
+    \item tense
+    \item aspect
+    \item modality
+    \item object intensional verbs like \emph{seek}
+    \item \ldots
+  \end{itemize}
+\end{frame}
+
+\section{Thesis Topic: More Curt}
+\begin{frame}
+  \frametitle{Thesis Topic: Extend Curt}
+  \begin{itemize}
+    \item Curt's way of inferring background knowledge is demanding
+    \item Curt is unaware of the informative value of questoins
+    \item Curt cannot handle more than one situation
+    \item Curt has no idea of accessible worlds
+    \item Curt can only handle very simple questoins
+    \item Curt's background knowledge is static
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Meaning of Life: Make Curt Even More Awesome}
+  \begin{itemize}
+    \item Let Curt handle more and more syntactical constructions
+    \item Implement plurals
+    \item Implement tense \& aspect
+    \item Make him feel \texttt{:-)}
+  \end{itemize}
+\end{frame}
+
+\subsection{Ideas: Advertent Curt}
+\begin{frame}
+\frametitle{Advertent Curt: Be Smart About Information}
+  \begin{itemize}
+    \item Curt should handle \emph{informative questions}.
+    \item[$\to$] \emph{Does George Bush like Jaques Chirac?}
+    \item What does Mia do?
+    \item What can Mia do?
+  \end{itemize}
+\end{frame}
+
+\subsection{More Ideas: Studious Curt}
+\begin{frame}
+\frametitle{Spiritual Curt: Learning from Discourse}
+  \begin{itemize}
+    \item Knowledgebale Curt is stubborn: provide a way to re-learn
+    \item Curt should be able to start blank and improve from there
+    \item Awarness of distinction between \emph{world} knowledge and
+    \emph{situational} knowledge
+  \end{itemize}
+\end{frame}
+
+\subsection{Even More Ideas: Spiritual Curt}
+\begin{frame}
+\frametitle{Spiritual Curt: Finding Possible and Accessible Worlds}
+  \begin{itemize}
+    \item Support \emph{more than one} situation
+    \item \emph{believe}, \emph{may}, \emph{can}, \emph{seek}
+    \item John seeks a unicorn? Every unicorn is a king of France!
+    \item Extend Curt to be \stress{intensional}
+  \end{itemize}
+\end{frame}
+
+\subsection{Even More More Ideas: Inquisitive Curt}
+\begin{frame}
+  \frametitle{Inqusitive Curt: Detect Inconsistencies and Unadequate Discourse}
+  \begin{itemize}
+    \item What if we don't say something about an entity in either
+    \emph{world}, \emph{situational} or \emph{lexical} knowledge?
+    \item What if for an item not every relationship it \emph{can} engage on is
+    fulfilled?
+    \begin{itemize}
+      \item Is Mia married?
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\end{document}
