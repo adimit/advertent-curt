@@ -2,14 +2,14 @@
 
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
-\usepackage{bbm,qtree,natbib,stmaryrd,aleks,linguex}
+\usepackage{bbm,qtree,natbib,stmaryrd,amsmath,amssymb,aleks,linguex}
 
 \newcommand{\abbr}{\textsf}
 \newcommand{\pn}{\textsc}
 \newcommand{\url}[1]{\texttt{http://#1}}
 %names
 \newcommand{\curt}{\pn{Curt}}
-\newcommand{\prol}{\pn{Prolog}}
+\newcommand{\prol}{\pn{Prolog} }
 
 
 \bibliographystyle{plainnat}
@@ -25,6 +25,18 @@
 
 \subsection{The Curt System}
 
+\pn{Curt}, a system written in \prol that is able to interpret basic utterances
+in natural language and express them in terms of first order logic, is developed
+throughout chapter six of \cite{blackburnbos:cl1}. While relatively simple in
+terms of lexical and grammatical coverage it is able to perform basic checks for 
+\emph{consistency} and \emph{informativity} of its input\footnotemark, within
+the bounds of the tools it uses.
+
+\footnotetext{Here, the notion of \emph{consistency} is meant as \emph{validity}
+of the input and \emph{informativity} denotes \emph{validity}. Thus, if
+$\mathcal{D}$, the discourse so far and $\phi$ a new input token (fully parsed
+sentence), then consistency means $\mathcal{D} \to \phi$ holds and informativity
+means $\mathcal{D} \nvDash \phi$.}
 \subsection{General Comparison of the Curt System}
 
 This section will briefly discuss how the features of the Curt system compare to
@@ -109,18 +121,52 @@ Karttunen's List.
 
 Like \emph{know}.
 
+We first derive know(john,all(X,imp(woman(X),love(X,john)))) from the syntax of
+john knows whether every woman loves john, then we see if
+all(X,imp(woman(X),love(X,john))) is valid (uninformative) and ridicule John, if
+it's not valid and not consistent, assert his knowledge of the fact that it's
+not true. If it's true, we assert he knows that.
+
+For whether we can ridicule him if it's not true (inconsistent).
+\newcommand{\discourse}{\ensuremath{\mathcal{D}}}
+The MB/TP do a comparison \discourse to all(X,imp(woman(X),love(X,john)))
+
 \subsubsection{Intensional WH-embedding Verbs}
 
 Like \emph{believe}.
 
 \subsection{Modality and Possible Worlds}
 \label{sec:indices}
+
+We have seen that some embedding verbs may not be interpreted without
+implementing a higher order formalism that is able to model the notion of
+\emph{possible} and \emph{accessible} worlds. While foobar %fixme! Nelken &
+% Francez 2001
+argue for an extensional treatment of questions, they already % n & f 2006
+retract their claims and admit that a ``minimal account of intensionality'' has
+to be assumed. While they propose a two-world system later adopted in
+\cite{g:is}, this is not going to suffice if we want to model each individual's
+knowledge in order to be able to discriminate people's knowledge and beliefs.
+%fixme bla bla
+
 \subsection{Treatment of Baker-Ambiguities}
+
+\subsection{Alternative Questions -- Inquisitive Semantics}
+
+\cite{g:is} presents a novel approach to treating questions in natural
+semantics: \pn{Inquisitive Semantics}. Groenendijk presents a new logic
+formalism aimed at providing a wider coverage of the intentions of question in
+human language. The main source of the ``inquisitiveness'' of statements is
+given by the interpretation of \emph{disjunction}. We will now show how to
+incorporate this novel approach into the \pn{Curt} system.
+
+We will, however depart from the path we have been following throughout this
+paper and first implement a theory for direct questions. Only then will we extend
+it to also cover embedded alternative questions.
 
 \section{Discussion}
 
 \bibliography{aleksbib}
-
 
 \end{document}
 
