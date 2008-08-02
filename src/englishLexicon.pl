@@ -296,11 +296,11 @@ lexEntry(whemb,[syntax:[that],mood:int,type:ass]).
    WH-embedding verbs - extensional
 ========================================================================*/
 
-lexEntry(ivt,[symbol:know,syntax:[know],inf:inf:num:sg]).
-lexEntry(ivt,[symbol:know,syntax:[knows],inf:fin:num:sg]).
+lexEntry(ivt,[symbol:know,type:extensional,syntax:[know],inf:inf:num:sg]).
+lexEntry(ivt,[symbol:know,type:extensional,syntax:[knows],inf:fin:num:sg]).
 
-lexEntry(ivt,[symbol:tell,syntax:[tell],inf:inf:num:sg]).
-lexEntry(ivt,[symbol:tell,syntax:[tells],inf:fin:num:sg]).
+lexEntry(ivt,[symbol:tell,type:extensional,syntax:[tell],inf:inf:num:sg]).
+lexEntry(ivt,[symbol:tell,type:extensional,syntax:[tells],inf:fin:num:sg]).
 
 /*========================================================================
    WH-embedding verbs - intensional

@@ -53,8 +53,13 @@ semLex(iv,M):-
 
 semLex(tv,M):-
    M = [symbol:Sym,
-        sem:[lam(K,lam(Y,app(K,lam(X,Formula))))]], 
+        sem:[lam(K,lam(Y,app(K,lam(X,Formula))))]],
    compose(Formula,Sym,[Y,X]).
+
+semLex(ivt,M) :-
+	M = [type:extensional,symbol:Sym,
+		sem:[lam(T,lam(X,app(T,lam(X,Formula))))]],
+	compose(Formula,Sym,[X,T]).
 
 semLex(qnp,M):-
    M = [type:wh,
@@ -92,9 +97,3 @@ semLex(coord,M):-
         sem:[lam(X,lam(Y,lam(P,and(app(X,P),app(Y,P)))))]];  
    M = [type:disj,
         sem:[lam(X,lam(Y,lam(P,or(app(X,P),app(Y,P)))))]].
-
-semLex(ivt,M) :-
-	M = [type:epistemic,
-	sem:['stub']];
-	M = [type:extensional,
-	sem:['stub']].

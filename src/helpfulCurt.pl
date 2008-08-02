@@ -161,7 +161,7 @@ curtUpdate(Input,Moves,run):-
          (
             InfReadings=[],
             Moves=[obvious]
-         ;  
+         ;
             \+ InfReadings=[],
             Moves=[accept]
          ),
