@@ -31,5 +31,5 @@
 
 %% There are at least two different cars
 %%
-situationalKnowledge(Axiom):-
-   Axiom = some(X,some(Y,and(car(X),and(car(Y),not(eq(X,Y)))))).
+%situationalKnowledge(Axiom):-
+%   Axiom = some(X,some(Y,and(car(X),and(car(Y),not(eq(X,Y)))))).
