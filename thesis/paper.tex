@@ -1,57 +1,161 @@
-\documentclass{scrartcl}
+\documentclass[a4paper,fontsize=12pt]{article}
 
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
-\usepackage{bbm,qtree,natbib,stmaryrd,amsmath,amssymb,aleks,linguex}
+\usepackage{amsthm,bbm,qtree,natbib,stmaryrd,amsmath,amssymb,aleks,linguex}
 
-\newcommand{\abbr}{\textsf}
-\newcommand{\pn}{\textsc}
-\newcommand{\url}[1]{\texttt{http://#1}}
+\newcommand{\abbr}{\textsf} % how to render abbreviations like IL or Ty2
+\newcommand{\stress}{\textbf} % put stress somewhere (as opposed to \emph)
+\newcommand{\term}{\textsf} % introduce a term
+\newcommand{\code}{\texttt} % layout of in-line code snippets
+%\newcommand{\quote}[1]{\textit{``#1''}} % a direct quote from a paper
+\newcommand{\pn}{\textsc} % how to render proper names like Shrdlu
+\newcommand{\url}[1]{\code{http://#1}} % how urls appear
+
+% commonly used phrases
+\newcommand{\Disc}{\ensuremath{\mathcal{D}}} % the discourse
+\newcommand{\wh}{\textsc{wh}} %
+
 %names
-\newcommand{\curt}{\pn{Curt}}
-\newcommand{\prol}{\pn{Prolog} }
+\newcommand{\curt}{\pn{Curt}\mbox{ }}
+\newcommand{\acurt}{\pn{Advertent Curt}\mbox{ }}
+\newcommand{\prol}{\pn{Prolog}\mbox{ }}
 
+%theorem environments
+\theoremstyle{remark} \newtheorem*{termin}{Definition} % terminology. Could use a
+%better title fixme
 
 \bibliographystyle{plainnat}
 
-\author{Aleksandar Dimitrov}
+\author{Aleksandar Lyubenov Dimitrov\\
+$\langle$\href{mailto:aleks.dimitrov@googlemail.com}{aleks.dimitrov@googlemail.com}$\rangle$}
 \title{From Questions to Queries -- Enhancing the Curt System by a Theory and Implementation of Embedded WH-Questions}
-\begin{document}
 
+\usepackage[pdftex,colorlinks,citecolor=magenta]{hyperref}
+\begin{document}
 \maketitle
 \tableofcontents
+\newpage
 
-\section{Choosing Grounds} % FIXME title sucks
+\section*{Introduction}
 
-\subsection{The Curt System}
+%fixme: to be formalized
+Where we use ``natural language'', usually the English language will be treated
+in practice, though it would be nice to come up with treatments of other
+languages. We abstract away from pragmatic affairs and concern ourselves with
+mostly the purely semantic/logic domain, so this should be feasible to achieve.
+\subsection*{Acknowledgements}
+
+\section{Concepts}
+
+% fixme: formalize
+A brief overview of the premisses for the theory (which itself lays ground to
+the implementation).
+
+\subsection{The Curt System} \label{sec:curt}
 
 \pn{Curt}, a system written in \prol that is able to interpret basic utterances
-in natural language and express them in terms of first order logic, is developed
-throughout chapter six of \cite{blackburnbos:cl1}. While relatively simple in
-terms of lexical and grammatical coverage it is able to perform basic checks for 
+in natural language and store them in expressions of first order logic, is presented
+in \cite{blackburnbos:cl1}. While relatively limited when compared to other
+systems presented in \ref{sec:comparision} in
+terms of lexical and grammatical coverage it is able to perform basic checks for
 \emph{consistency} and \emph{informativity} of its input\footnotemark, within
 the bounds of the tools it uses.
 
+% FIXME: don't really like this footnote
 \footnotetext{Here, the notion of \emph{consistency} is meant as \emph{validity}
 of the input and \emph{informativity} denotes \emph{validity}. Thus, if
-$\mathcal{D}$, the discourse so far and $\phi$ a new input token (fully parsed
-sentence), then consistency means $\mathcal{D} \to \phi$ holds and informativity
-means $\mathcal{D} \nvDash \phi$.}
-\subsection{General Comparison of the Curt System}
+\Disc, the discourse so far and $\phi$ a new input token (fully parsed
+sentence), then consistency means $\Disc \to \phi$ holds and informativity
+means $\Disc \nvDash \phi$.}
+
+
+It can thus detect incoherent discourse and would reject a sequence of
+sentences such as \emph{``Mary likes every man. Peter is a man. Mary does not
+like Peter''}, claiming it found a contradiction in its input. For every input
+token, \pn{Curt} will also try to infer whether the current discourse would
+entail the information given in its newest token and is thus irrelevant with
+regard to previous utterances -- effectively allowing it to
+reduce the size of its internal representation of the discourse by not adding
+clauses to it which would not contribute to the overall informational value
+already present in the program.
+
+The system is introduced during the final chapter of \cite{blackburnbos:cl1},
+incrementally increasing in features and complexity. Support for external
+inferencing via theorem provers and model builders is added in a step-by-step
+fashion and finally an ontology and a straight-forward way of parsing and
+answering direct questions for noun phrases conclude its development. The theory
+and implementation of this paper is meant as a replacement and enhancement for
+the latter feature. This will also happen in an incremental manner and new
+features will be introduced one at a time.
+
+\subsection{General Comparison of the Curt System}\label{sec:comparision}
 
 This section will briefly discuss how the features of the Curt system compare to
 other similar systems or systems with the same goal, namely implementing a
 system that is able to model a logic representation of human language.
 
-\subsection{Early Attempts: \pn{Shrdlu} and \pn{Cyc}}
+\subsubsection{Early Attempts: \pn{Shrdlu} and \pn{Cyc}}
 %TODO: need some reference for this section!
 
 Interest in deep semantic parsing of natural language has existed since the very
 beginning of the informational age. One of the first systems to achieve public
 recognition, the \pn{Shrdlu} system 
 
+While the \pn{Curt} system is unique in its approach to deep semantic analysis, its
+architecture has been crafted in a pragmatic manner. The authors chose to use
+external tools where it was possible in order to avoid reimplementation of
+existing functionality and be able to focus on novel parts of the
+implementation\footnote{The name of the \pn{Curt} system reflects this choice.
+It stands for \emph{\textbf{C}lever \textbf{u}se of \textbf{r}easoning
+\textbf{t}ools}.}. This also allows for great flexibility in adopting new
+solutions and improvements made in the field of inferencing tools for first
+order predicate logic.
 
-\section{Concepts}
+\subsection{Extending the Curt System}
+
+At the end of \cite{blackburnbos:cl1}, \curt is able to cope with a small
+grammar and provides some features for interacting with humans in natural
+language. It does only understand basic extensional transitive verbs - modal
+verbs or the treatment of questions are not implemented. Anaphora resolution
+still remains an open issue. The grammar is rather limited and \curt only comes
+with a basic vocabulary oriented around the setting of a popular movie.
+
+The aim of this paper is to introduce the reader into question semantics as it
+will be relevant for implementing a basic capability of treating intensional
+verbs like `to \stress{know} whether something is the case' and `to
+\stress{believe} that something might be the case' and then present such an
+implementation within the framework of the \curt system. Further and more
+advanced investigations will be dealt with at the end of this discussion or left
+for further research.
+
+\section{Theory}
+
+\subsection{Terminology}
+
+Following \cite{gs:q}, we will not use the natural natural language word
+``question'' but distinguish between \term{questions},
+\term{interrogative sentences} and \term{interrogative acts} in the following
+way:
+
+\begin{termin}
+  An \term{interrogative} is a certain type of sentence in natural language
+  distinguished by certain features\footnote{To quote \cite{gs:q}: \quote{[An
+  interrogative sentence is] characterized by word order, intonation, question
+  mark, the occurrence of interrogative pronouns}.}
+  whereas an \term{interrogative act} refers to the utterance of an
+  \emph{interrogative}. Finally, a 
+  \term{question} will denote the semantic entity uttered by the
+  \emph{interrogative act}, whichever form it may have.
+\end{termin}
+
+\abbr{Ty2} is two-sorted type logic\footnote{See \cite{gallin:ty2} for a
+discussion and \cite{gs:sqpa} for its usage in describing the semantics of
+questions}. \abbr{IL} is intensional logic\footnote{As used by \cite{ptq}}. 
+An embedded \wh-phrase looks
+like:%fixme
+
+\ex. John \stress{knows} \emph{whether} good examples are hard to come up with.
 
 After having elaborated on the grounds of the implementation, we will now
 display the implementation's underlying concepts. % FIXME this sentence is too short
@@ -65,16 +169,24 @@ systems in \ref{sec:othercrap}.
 
 \subsection{Formalism}\label{sec:formal}
 
+% FIXME if we have a `Terminology' section, all those `henceforths' aren't really
+% necessary anymore.
+
 Most of the traditional literature in natural language semantics follows
-\cite{ptq} and thus also uses its underlying formalism, \emph{Intensional Logic}
-(henceforth \abbr{IL}). \cite{gs:sqpa} (and subsequent publications) however use
-two-sorted type logic (henceforth \abbr{Ty2}) as proposed in
-\cite{gallin:ty2}. \cite{z:ilty2} discusses the differences and similarities in expressive power
-between \abbr{Ty2} and \abbr{IL} and comes to the conclusion that the set of
-expressions expressible in the former but not in the latter might not be
-relevant for the treatment of natural language semantics. Although he proposes
-a translation scheme between both languages, translation from \abbr{Ty2} to
-\abbr{IL} seems to sometimes produce very complex \abbr{IL} terms.
+\cite{ptq} and thus also makes use of its underlying formalism,
+\emph{Intensional Logic} (henceforth \abbr{IL}). \cite{gs:sqpa} (and many subsequent
+publications) however also use two-sorted type logic (henceforth \abbr{Ty2}) as
+proposed in \cite{gallin:ty2}. \cite{z:ilty2} discusses the differences and
+similarities in expressive power between \abbr{Ty2} and \abbr{IL} and comes to
+the conclusion that the set of expressions contained in the former but not in
+the latter might not be relevant for the treatment of natural language
+semantics. Although he proposes a translation scheme between both languages,
+translation from \abbr{Ty2} to \abbr{IL} seems to sometimes produce very complex
+\abbr{IL} terms and is therefore avoided here. In fact, \abbr{IL} will be only
+marginally relevant for the presentation of \acurt -- only the type system
+presented in \cite{ptq} is carried over.
+
+% OK till now, but the rest is a fixme :-(
 
 Since this paper is not concerned with possible extensions of the underlying
 theories of treating natural language questions, but rather with their
@@ -82,40 +194,96 @@ implementation in the programming language \pn{Prolog} several additional
 constraints have to be considered. Among them the \emph{feasibility} of any
 possible approach takes highest precedence.
 
-While the \pn{Curt} system is unique in its approach to deep semantic analysis, its
-architecture has been crafted in a pragmatic manner. The authors chose to use
-external tools where it was possible in order to avoid reimplementation of
-existing functionality and be able to focus on novel parts of the
-implementation\footnote{The name of the \pn{Curt} system reflects this choice.
-It stands for \emph{\textbf{C}lever \textbf{u}se of \textbf{r}easoning
-\textbf{t}ools}.}. While there exist inferencing tools for modal
-logic\footnote{See %todo todo and todo 
+As was already mentioned in \ref{sec:curt}, Curt is based on an
+implementation and the use of external tools only capable of treating first
+order logic -- an extensional framework. \prol on the other hand, is a language
+that can very well make use of higher order formalisms for
+calculation\footnote{The two most popular predicates in \prol used for
+implementing higher-order logic are
+\code{call/n} and \code{apply/3}. This paper is based on \pn{SWI-Prolog} which
+provides an implementation of the former, but not of the latter. See
+\cite{naish:prolhio} for a discussion of higher order functional programming in
+\prol.}.
+
+While there exist inferencing tools for modal logic\footnote{See %todo todo and todo 
 for discussions. The interested reader is also referred to \pn{Molle}
-(\url{molle.sf.net}), a modal theorem prover that comes with a graphical user
+(\url{http://molle.sf.net}), a modal theorem prover that comes with a graphical user
 interface that allows interactive investigation of the constructed indices.},
-a restructuring of the \pn{Curt} system would to take advantage of them would be
-beyond the scope of this thesis. Another design decision of the \pn{Curt} system
-was to use \prol as an implementation language. While \prol is a general
-purpose logic programming language, it is rooted in first-order predicate logic
-and does not explicitly support modal logic\footnote{But see%todo, todo and todo
-for a discussion of the implementation of modal logic into \prol}.
+a restructuring of the \pn{Curt} system to take advantage of them would be
+beyond the scope of this thesis.
 
 It was therefore decided to avoid modal logic and implement a pragmatic approach
 to representing the indices of higher-order logic in \prol in section
 \ref{sec:indices}.
 
-\cite{g:inqs} presents an approach to implementing inquisitive semantics in
+\cite{g:is} presents an approach to implementing inquisitive semantics in
 predicate logic.
 
-\subsection{Existing Implementations of Similar Systems}\label{sec:othercrap}
+\subsection{On the Proper Treatment of Questions}
 
-Godot, all that statistical crap and Pereira's CHAT-80.
+Question Semantics is a much-disputed but often overlooked field of modern
+semantic research. Often question semantics has been reduced to an issue of
+pragmatics, treating direct questions (interrogatives) as nothing more than a
+paraphrase of indirect questions (embedded interrogatives).\cite{tichy}
+even goes as far as claiming equality in semantic value between
+indicatives and interrogatives. The benefit of such an approach would be the
+strict reliance on traditional analyses, where interrogatives would only infer a
+different `attitude' in the speaker's utterance. Putting this attitude into
+context and making it yield the correct results would then be left to
+pragmatics.
+This approach has been challenged and proven wrong by \cite{gs:q},
+who also argue that the proper treatment of questions would require extensions
+to the existing logic frameworks used in natural language semantics semantics.
+More recent publications, such as \cite{gal:tmbi}
+address this topic and aim to introduce notions of \term{information change
+potential} as opposed to the traditional focus of natural language semantics on
+\term{truth values}.
 
-\section{Implementation}
+Nevertheless, progress has been very lively since the first
+formal approaches to the field started with \cite{hamblin:q} and other
+publications such as % todo
+. \cite{gs:q} provide a very descriptive overview of the field of question
+semantics
+
+\subsubsection{Classification of Interrogatives}
+
+When treating questions one will be confronted with many different
+categorizations of questions. One of the first distinctions to make is the one
+between \term{embedded questions} as in \ref{ex:embed} and \term{direct
+questions} shown in \ref{ex:direct}.
+
+\ex. \a. John knows \emph{whether this sentence contains an embedded
+question}.\label{ex:embed}
+\b. Does this sentence pose a direct question?\label{ex:direct}
+
+As indicated already by the title, this paper will concern itself with the
+treatment of the former and only briefly comment on the latter. The reasons for
+this are numerous  %fixme I need a synonym for that
+and this section is going to name the most important ones.
+
+Early literature, such as \cite{karttunen:1977} only regards embedded
+\wh-phrases, treating direct questions as semantically equivalent. To quote
+Karttunen:
+
+\begin{quote}A direct question can be treated as semantically equivalent to a
+certain kind of declarative sentence containing the corresponding indirect
+question embedded under  a suitable `performative' verb.\end{quote}
+
+Using this strategy, Karttunen escapes the treatment of direct  questions and
+thus gives an approach for indirect questions only.
 
 \subsection{An Ontology of Embedding Verbs}
 
-Karttunen's List.
+\cite{karttunen:1977} introduces means of classification for \wh-embedding
+verbs, the nature of which \cite{lahiri:diss} covers in a much broader scope.
+The different verb classes ask for different strategies of treating the
+\wh-clauses they embed and also pose different restrictions on the type of
+clause they expect.
+
+Our aim is to improve coverage of grammatical structures and thus when faced
+with the necessity to make compromise about the complexity of our grammar, we
+will choose overgeneration in favor of unmotivated complexity of the grammar
+itself.
 
 \subsubsection{Extensional WH-embedding Verbs}
 
@@ -128,12 +296,48 @@ it's not valid and not consistent, assert his knowledge of the fact that it's
 not true. If it's true, we assert he knows that.
 
 For whether we can ridicule him if it's not true (inconsistent).
-\newcommand{\discourse}{\ensuremath{\mathcal{D}}}
-The MB/TP do a comparison \discourse to all(X,imp(woman(X),love(X,john)))
+The MB/TP do a comparison \Disc to all(X,imp(woman(X),love(X,john)))
 
 \subsubsection{Intensional WH-embedding Verbs}
 
 Like \emph{believe}.
+
+\section{Implementation}
+
+\subsection{Existing Implementations of Similar Systems}\label{sec:othercrap}
+
+Enhancing \curt by an implementation dealing with questions in natural language
+sparks interest in whether there have been similar efforts made in the past. No
+further extensions to the \curt system aiming at comparable goals are known to the
+author at the time of writing. However, there is a lively interest in providing
+so-called question answering or QA-systems since the early stages of computer
+science. % fixme; cite some ancient 60's paper
+This section discusses a few of the more elaborate approaches: first an early
+but already quite impressive implementation is shown, followed by a newer approach
+using embodied agents and finally an overview over the many database-based
+QA-systems is given. Finally, all this is compared what the current extension to
+\curt can do.
+
+
+\subsubsection{Godot, the Talking Robot}
+
+\subsubsection{CHAT-80}
+
+\subsubsection{Modern Intensional Database Approaches}
+
+\subsubsection{Advertent Curt}
+
+\acurt lends its name from the fact that it is not only aware of its own
+knowledge and presuppositions, but `knows' about what individuals in its
+model of the world are aware of. It is not in this sense a question
+\emph{answering} system, but it may be seen as an early effort towards providing
+such a system on a more sophisticated scale. While section \ref{sec:altq} shows
+how direct questions can be integrated into the system with relative ease, focus
+is still on providing a feasible method of implementing intensionality in what
+is mostly a first-order logic computing environment.
+
+It is also not constrained to being useful in a particular domain, like
+\pn{CHAT-80} is.
 
 \subsection{Modality and Possible Worlds}
 \label{sec:indices}
@@ -149,12 +353,33 @@ to be assumed. While they propose a two-world system later adopted in
 knowledge in order to be able to discriminate people's knowledge and beliefs.
 %fixme bla bla
 
-\subsection{Treatment of Baker-Ambiguities}
+\subsubsection{Enhancing Storage}
 
-\subsection{Alternative Questions -- Inquisitive Semantics}
+\curt parses sentences of natural language using an enhanced version of \pn{Cooper
+storage}\footnote{See \cite{cooper:storage2} for the original implementation.} as
+presented in \cite{keller:storage}. \cite{blackburnbos:cl1} call this version
+\pn{Keller storage}. That name will be used from here % FIXME sucks. Please change
+to refer to this particular implementation as presented in
+\cite{blackburnbos:cl1}. Although \pn{Keller storage} is already quite capable
+of dealing with more complex constituents such as nested noun phrases, it needs
+some enhancements in order to be able to treat verbs embedding whole
+sentences or \wh-phrases correctly. The aim is to enable \curt's implementation of
+\pn{Keller storage} to deal with examples such as \ref{ex:kel1}\footnotemark.
 
-\cite{g:is} presents a novel approach to treating questions in natural
-semantics: \pn{Inquisitive Semantics}. Groenendijk presents a new logic
+\ex. \label{ex:kel1} Mia knows whether Vincent snorts.\\
+\Tree [.t [.T Mia ] [.IV [.{IV/$\bar{t}$} knows ] [.{$\bar{t}$} whether [.t [.T
+Vincent ] [.IV snorts ] ] ] ] ]
+
+\footnotetext{Note that \ref{ex:kel1} is shown using the same syntactic type system used in
+\cite{gs:sawhq}, which extends the system given in \cite{ptq} by $\bar{t}$ to
+denote embedded \wh-constituents.}
+
+\subsection{Treatment of Baker Ambiguities}
+
+\subsection{Alternative Questions -- Inquisitive Semantics}\label{sec:altq}
+
+\cite{g:is} introduces a novel approach to treating questions in natural
+semantics: \pn{Inquisitive Semantics}. He presents a new logic
 formalism aimed at providing a wider coverage of the intentions of question in
 human language. The main source of the ``inquisitiveness'' of statements is
 given by the interpretation of \emph{disjunction}. We will now show how to
@@ -165,6 +390,19 @@ paper and first implement a theory for direct questions. Only then will we exten
 it to also cover embedded alternative questions.
 
 \section{Discussion}
+
+We have seen, the Curt system is quite capable of treating questions this way.
+Having implemented modality and possible worlds in such a fashion, let's go on
+and implement some even cooler stuff (tense, aspect, negation, comparatives,
+anaphora). Basing all this on a nice implementation of DRT (discussed in
+\cite{kampreyle:drt}) like the one given in \cite{blackburnbos:cl2} might be
+interesting.
+
+\section{Appendix}
+
+\subsection{The Source Code}
+
+\subsection{Whatnot}
 
 \bibliography{aleksbib}
 

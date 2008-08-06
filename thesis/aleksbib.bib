@@ -1,13 +1,3 @@
-% Books, by year
-@BOOK{dowtywallpeters:montague,
-	author="D. R. Dowty and R. E. Wall and S. Peters",
-	title="Introduction to Montague Semantics",
-	publisher="D. Reidel Publishing Company",
-	address="Dodrecht, Holland; Boston MA, USA; London, England",
-	year=1981,
-	pages=313,
-}
-
 @BOOK{kampreyle:drt,
 	author= "Hans Kamp and Uwe Reyle",
 	title= "From Discourse to Logic. Introduction of Modeltheoretic Semantics of Natural Language, Formal Logic and Discourse Representation Theory",
@@ -31,7 +21,6 @@
 	year =          {2005}
 }
 
-% collections/proceedings, by year
 @article{ptq,
 	author = {Richard Montague},
 	title  = {The Proper Treatment of Quantifiers in Ordinary English},
@@ -41,7 +30,7 @@
 	pages  = { 247-270 },
 }
 
-@article{hamblin:1973,
+@article{hamblin:q,
 	author =        {C. Hamblin},
 	title  =        {Questions in Montague English},
 	year   =        {1973},
@@ -70,7 +59,7 @@
 	pages = {143-170},
 }
 
-@article{gs:sahwq,
+@article{gs:sawhq,
 	author = {J. Groenendijk and M. Stokhof},
 	title = {Semantic Analysis of WH-Complements},
 	journal = {Linguistics and Philosophy},
@@ -79,12 +68,23 @@
 	year = 1982,
 }
 
-@article{g:is,
-	author = {J. Groenendijk},
-	title  = {Inquisitive Semantics: Two Possibilities for Disjunction},
-	year   = 2008,
+@inbook{gs:q,
+	author = {J. Groenendijk and M. Stokhof},
+	title = {Handbook of Logic and Language},
+	chapter = {19},
+	publisher = {Elsevier Science},
+	year   = 1994,
 }
 
+@misc{g:is,
+	author = {J. Groenendijk},
+	title  = {Inquisitive Semantics: Two Possibilities for Disjunction},
+	organization = {ILLC/Department of Philosophy},
+	school = {University of Amsterdam},
+	year   = 2008,
+	text   = {Paper submitted for the Proceedings of Tbilisi 2007: Seventh
+		  International Tbilisi Symposium on Language, Logic and Computation.}
+}
 
 @article{baker:1970,
 	author = {C. L. Baker},
@@ -117,14 +117,26 @@
     year = "1988",
     url = "citeseer.ist.psu.edu/gelfond88stable.html" }
 
-
-
-% unpublished books, alphabetical, by author
 @UNPUBLISHED{blackburnbos:cl2,
 	author =        {Blackburn, Patrick and Bos, Johan},
 	title =         {Working with Discourse Representation Theory. An Advanced Course in Computational Semantics},
 	note =          {Second Volume of Blackburn \& Bos 2005, dealing with DRT. Draft as of June 2008},
 	year =          {to appear}
+}
+
+@phdthesis{lahiri:diss,
+	author = "Utpal Lahiri",
+	title = "Embedded Interrogatives and the Predicates that Embed Them",
+	school = "Massachusets Institute of Technology",
+	year = 1991
+}
+
+@techreport{naish:prolhio,
+	author = {Lee Naish},
+	title  = {Higher-Order Logic Porgramming in Prolog},
+	year   = 1996,
+	number = 2,
+	institution = {Department of Computer Science, University of Melbourne}
 }
 
 @UNPUBLISHED{stechow:satzsemantik,
@@ -133,8 +145,6 @@
 	note="Originally written as a script to A. von Stechow's 
 		undergraduate introduction to semantics",
 }
-
-% unpublished miscellanea
 
 @unpublished{jaeger:1997,
 	author = {Gerhard Jäger},
@@ -147,8 +157,43 @@
 	author = "Robert van Rooy",
 	year = 2004,
 	title = "Questions and Relevance",
-	url = "citeseer.ist.psu.edu/vanrooy04questions.html" 
+	url = "citeseer.ist.psu.edu/vanrooy04questions.html"
 }
+
+@misc{gal:tmbi,
+	author = {Jeroen Groenendijk and Martin Stokhof and Frank Veltman},
+	year = 1996,
+	title = {This Might Be It},
+	text = "ILLC/Department of Philosophy, University of Amsterdam",
+}
+
+@article{tichy,
+	author = "Pavel Tichy",
+	title = "Questions, Answers and Logic",
+	journal = "American Philosophical Quarterly",
+	volume = 15,
+	year = 1987,
+	pages = {275-284},
+}
+
+%fixme: find a more decent entry for this
+@misc{cooper:storage2,
+	author = {R. Cooper},
+	year = 1983,
+	title = {Quantification and Syntactic Theory},
+	publisher = {Dodrecht: Reidel},
+}
+
+@article{keller:storage,
+	author = {W.R. Keller},
+	year = 1988,
+	title = {Nested Cooper Storage: The Proper Treatment of Quantification in Ordinary Noun Phrases},
+	editor = {U. Reyle and C. Rohrer},
+	journal = {Natural Language Parsing and Linguistic Theories},
+	pages = {432-447},
+	publisher = {Dodrecht: Reidel},
+}
+
 
 @misc{gallin:ty2,
 	author = {D. Gallin},
@@ -156,12 +201,20 @@
 	title = {Intensional and Higher-Order Modal Logic}
 }
 
-% miscellanea
-@misc{ frank96context,
+@misc{frank96context,
 	author = "A. Frank",
 	title = "Context Dependence in Modal Constructions",
 	text = "Frank, A.: 1996, Context Dependence in Modal Constructions, Ph.D. dissertation,
 	University of Stuttgart.",
 	year = "1996",
 	url = "citeseer.ist.psu.edu/frank96context.html" 
+}
+
+@article{z:ilty2,
+	title = {Intensional Logic and Two-Sorted Type Theory},
+	author = {Thomas Ede Zimmermann},
+	journal = {The Journal of Symbolic Logic},
+	volume = 54,
+	number = 1,
+	year  = {1989},
 }
