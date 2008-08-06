@@ -13,6 +13,8 @@
 *.ready
 *.log
 
+/TODO
+
 # stuff I'd better not make public.
 /src/lib
 /lib
