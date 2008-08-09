@@ -105,6 +105,8 @@ lexEntry(pn,[symbol:thewolf,syntax:[the,wolf]]).
 lexEntry(pn,[symbol:vincent,syntax:[vincent]]).
 lexEntry(pn,[symbol:vincent,syntax:[vincent,vega]]).
 lexEntry(pn,[symbol:yolanda,syntax:[yolanda]]).
+lexEntry(pn,[symbol:john,syntax:[john]]).
+lexEntry(pn,[symbol:mary,syntax:[mary]]).
 
 
 /*========================================================================
@@ -113,7 +115,6 @@ lexEntry(pn,[symbol:yolanda,syntax:[yolanda]]).
 
 lexEntry(qnp,[symbol:person,syntax:[who],mood:int,type:wh]).
 lexEntry(qnp,[symbol:thing,syntax:[what],mood:int,type:wh]).
-
 
 /*========================================================================
    Intransitive Verbs
@@ -296,18 +297,26 @@ lexEntry(whemb,[syntax:[that],mood:int,type:ass]).
    WH-embedding verbs - extensional
 ========================================================================*/
 
-lexEntry(ivt,[symbol:know,type:extensional,syntax:[know],inf:inf:num:sg]).
-lexEntry(ivt,[symbol:know,type:extensional,syntax:[knows],inf:fin:num:sg]).
+lexEntry(ivt,[type:ex,symbol:know,syntax:[know],inf:inf,num:sg]).
+lexEntry(ivt,[type:ex,symbol:know,syntax:[knows],inf:fin,num:sg]).
+lexEntry(ivt,[type:ex,symbol:know,syntax:[know],inf:inf,num:pl]).
 
-lexEntry(ivt,[symbol:tell,type:extensional,syntax:[tell],inf:inf:num:sg]).
-lexEntry(ivt,[symbol:tell,type:extensional,syntax:[tells],inf:fin:num:sg]).
+lexEntry(ivt,[type:ex,symbol:tell,syntax:[tell],inf:inf,num:sg]).
+lexEntry(ivt,[type:ex,symbol:tell,syntax:[tells],inf:fin,num:sg]).
+lexEntry(ivt,[type:ex,symbol:tell,syntax:[tell],inf:inf,num:pl]).
 
 /*========================================================================
    WH-embedding verbs - intensional
 ========================================================================*/
 
-lexEntry(ivt,[symbol:believe,syntax:[believe],inf:inf:num:sg]).
-lexEntry(ivt,[symbol:believe,syntax:[believes],inf:fin:num:sg]).
+lexEntry(ivt,[type:in,symbol:believe,syntax:[believe],inf:inf,num:sg]).
+lexEntry(ivt,[type:in,symbol:believe,syntax:[believes],inf:fin,num:sg]).
+lexEntry(ivt,[type:in,symbol:believe,syntax:[believe],inf:inf,num:pl]).
 
-lexEntry(ivt,[symbol:suspect,syntax:[suspect],inf:inf:num:sg]).
-lexEntry(ivt,[symbol:suspect,syntax:[suspects],inf:fin:num:sg]).
+lexEntry(ivt,[type:in,symbol:think,syntax:[think],inf:inf,num:sg]).
+lexEntry(ivt,[type:in,symbol:think,syntax:[thinks],inf:fin,num:sg]).
+lexEntry(ivt,[type:in,symbol:think,syntax:[think],inf:inf,num:pl]).
+
+lexEntry(ivt,[type:in,symbol:suspect,syntax:[suspect],inf:inf,num:sg]).
+lexEntry(ivt,[type:in,symbol:suspect,syntax:[suspects],inf:fin,num:sg]).
+lexEntry(ivt,[type:in,symbol:suspect,syntax:[suspect],inf:inf,num:pl]).

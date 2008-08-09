@@ -56,6 +56,8 @@ combine(n:app(A,B),[adj:A,n:B]).
 combine(n:A,[noun:A]).
 combine(n:app(B,A),[noun:A,nmod:B]).
 
+%combine().
+
 combine(nmod:A,[pp:A]).
 combine(nmod:A,[rc:A]).
 combine(nmod:lam(P,app(A,app(B,P))),[pp:A,nmod:B]).

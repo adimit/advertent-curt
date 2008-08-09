@@ -25,15 +25,15 @@
    Texts
 ========================================================================*/
 
-t([sem:T])--> 
+t([sem:T])-->
    s([coord:no,sem:S]),
    {combine(t:T,[s:S])}.
 
-t([sem:T])--> 
+t([sem:T])-->
    s([coord:yes,sem:S]),
    {combine(t:T,[s:S])}.
 
-t([sem:T])--> 
+t([sem:T])-->
    q([sem:Q]),
    {combine(t:T,[q:Q])}.
 
@@ -87,7 +87,6 @@ sinv([gap:G,sem:S])-->
    vp([coord:_,inf:inf,num:Num,gap:G,sem:VP]), 
    {combine(sinv:S,[av:Sem,np:NP,vp:VP])}.
 
-
 /*========================================================================
    Questions
 ========================================================================*/
@@ -101,7 +100,6 @@ q([sem:Sem])-->
    whnp([num:_,sem:NP]), 
    sinv([gap:[np:NP],sem:S]),
    {combine(q:Sem,[sinv:S])}.
-
 
 /*========================================================================
    Noun Phrases
@@ -211,11 +209,29 @@ vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP])-->
    iv([inf:Inf,num:Num,sem:IV]), 
    {combine(vp:VP,[iv:IV])}.
 
-vp([coord:no,inf:I,num:Num,gap:G,sem:VP])-->   
+vp([coord:no,inf:I,num:Num,gap:G,sem:VP])-->
    tv([inf:I,num:Num,sem:TV]), 
    np([coord:_,num:_,gap:G,sem:NP]), 
    {combine(vp:VP,[tv:TV,np:NP])}.
 
+/*
+ * WH-Embedding verb phrases: take an IV/t-bar verb and a tbar
+ * and produce a verb phrase. We check for type agreement, in order to prevent
+ * something like 'believe if'. 
+ *
+ * We produce finite iv.
+ */
+vp([coord:no,inf:fin,num:Num,gap:[],sem:VP])
+-->	ivt([coord:_,type:Type,num:Num,sem:IVT])
+	, tbar([coord:_,type:Type,sem:TBAR])
+	, {combine(iv:VP,[ivt:IVT,tbar:TBAR])}
+.
+% coord:no to exclude a faux pas like 'whether either'
+% TODO: but 'John knows that either Bill likes Mary or …'? is this grammatical?
+tbar([coord:no,type:Type,sem:TBAR])
+-->	whemb([type:Type,sem:WHEMB])
+	, s(coord:no,sem:S)
+	, {combine(tbar:TBAR,[whemb:WHEMB,s:S])}.
 
 /*========================================================================
    Prepositional Phrases
