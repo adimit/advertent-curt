@@ -1,14 +1,21 @@
-\documentclass[a4paper,fontsize=12pt]{article}
+\documentclass[a4paper]{article}
 
 \usepackage[english]{babel}
-\usepackage[utf8x]{inputenc}
-\usepackage{amsthm,bbm,qtree,natbib,stmaryrd,amsmath,amssymb,aleks,linguex}
+
+\usepackage{amssymb,bbm,qtree,graphicx,natbib,aleks,linguex}
+
+
+%% note that this file depends on being processed with XeTeX
+\usepackage{xltxtra,xunicode,fontspec}
+
+% font specifications (don't overuse ;-)
+\defaultfontfeatures{Mapping=tex-text} % converts LaTeX specials (``quotes'' --- dashes etc.) to unicode
+\setromanfont [Ligatures={Common,Rare}]{Gentium}
 
 \newcommand{\abbr}{\textsf} % how to render abbreviations like IL or Ty2
 \newcommand{\stress}{\textbf} % put stress somewhere (as opposed to \emph)
 \newcommand{\term}{\textsf} % introduce a term
 \newcommand{\code}{\texttt} % layout of in-line code snippets
-%\newcommand{\quote}[1]{\textit{``#1''}} % a direct quote from a paper
 \newcommand{\pn}{\textsc} % how to render proper names like Shrdlu
 \newcommand{\url}[1]{\code{http://#1}} % how urls appear
 
@@ -22,7 +29,7 @@
 \newcommand{\prol}{\pn{Prolog}\mbox{ }}
 
 %theorem environments
-\theoremstyle{remark} \newtheorem*{termin}{Definition} % terminology. Could use a
+%\theoremstyle{remark} \newtheorem*{termin}{Definition} % terminology. Could use a
 %better title fixme
 
 \bibliographystyle{plainnat}
@@ -30,10 +37,12 @@
 
 \author{Aleksandar Lyubenov Dimitrov\\
 $\langle$\href{mailto:aleks.dimitrov@googlemail.com}{aleks.dimitrov@googlemail.com}$\rangle$}
-\title{From Questions to Queries -- Enhancing the Curt System by a Theory and Implementation of Embedded WH-Questions}
+\title{From Questions to Queries – Enhancing the Curt System by a Theory and Implementation of Embedded WH-Questions}
 
-\usepackage[pdftex,colorlinks,citecolor=magenta]{hyperref}
+\usepackage{fontspec}
+\usepackage[xetex,colorlinks,citecolor=magenta]{hyperref}
 \begin{document}
+
 \maketitle
 \tableofcontents
 \newpage
@@ -66,9 +75,9 @@ the bounds of the tools it uses.
 % FIXME: don't really like this footnote
 \footnotetext{Here, the notion of \emph{consistency} is meant as \emph{validity}
 of the input and \emph{informativity} denotes \emph{validity}. Thus, if
-\Disc, the discourse so far and $\phi$ a new input token (fully parsed
-sentence), then consistency means $\Disc \to \phi$ holds and informativity
-means $\Disc \nvDash \phi$.}
+\Disc, the discourse so far and $φ$ a new input token (fully parsed
+sentence), then consistency means $\Disc → \phi$ holds and informativity
+means $\Disc \nvDash$ φ.}
 
 
 It can thus detect incoherent discourse and would reject a sequence of
@@ -76,7 +85,7 @@ sentences such as \emph{``Mary likes every man. Peter is a man. Mary does not
 like Peter''}, claiming it found a contradiction in its input. For every input
 token, \pn{Curt} will also try to infer whether the current discourse would
 entail the information given in its newest token and is thus irrelevant with
-regard to previous utterances -- effectively allowing it to
+regard to previous utterances – effectively allowing it to
 reduce the size of its internal representation of the discourse by not adding
 clauses to it which would not contribute to the overall informational value
 already present in the program.
@@ -139,7 +148,7 @@ Following \cite{gs:q}, we will not use the natural natural language word
 \term{interrogative sentences} and \term{interrogative acts} in the following
 way:
 
-\begin{termin}
+\begin{quote}
   An \term{interrogative} is a certain type of sentence in natural language
   distinguished by certain features\footnote{To quote \cite{gs:q}: \quote{[An
   interrogative sentence is] characterized by word order, intonation, question
@@ -148,7 +157,7 @@ way:
   \emph{interrogative}. Finally, a 
   \term{question} will denote the semantic entity uttered by the
   \emph{interrogative act}, whichever form it may have.
-\end{termin}
+\end{quote}
 
 \abbr{Ty2} is two-sorted type logic\footnote{See \cite{gallin:ty2} for a
 discussion and \cite{gs:sqpa} for its usage in describing the semantics of
@@ -184,7 +193,7 @@ the latter might not be relevant for the treatment of natural language
 semantics. Although he proposes a translation scheme between both languages,
 translation from \abbr{Ty2} to \abbr{IL} seems to sometimes produce very complex
 \abbr{IL} terms and is therefore avoided here. In fact, \abbr{IL} will be only
-marginally relevant for the presentation of \acurt -- only the type system
+marginally relevant for the presentation of \acurt – only the type system
 presented in \cite{ptq} is carried over.
 
 % OK till now, but the rest is a fixme :-(
@@ -197,7 +206,7 @@ possible approach takes highest precedence.
 
 As was already mentioned in \ref{sec:curt}, Curt is based on an
 implementation and the use of external tools only capable of treating first
-order logic -- an extensional framework. \prol on the other hand, is a language
+order logic – an extensional framework. \prol on the other hand, is a language
 that can very well make use of higher order formalisms for
 calculation\footnote{The two most popular predicates in \prol used for
 implementing higher-order logic are
@@ -383,7 +392,7 @@ denote embedded \wh-constituents.}
 
 \subsection{Treatment of Baker Ambiguities}
 
-\subsection{Alternative Questions -- Inquisitive Semantics}\label{sec:altq}
+\subsection{Alternative Questions – Inquisitive Semantics}\label{sec:altq}
 
 \cite{g:is} introduces a novel approach to treating questions in natural
 semantics: \pn{Inquisitive Semantics}. He presents a new logic
