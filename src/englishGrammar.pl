@@ -102,6 +102,28 @@ q([sem:Sem])-->
    sinv([gap:[np:NP],sem:S]),
    {combine(q:Sem,[sinv:S])}.
 
+/*
+ * Embedded Questions
+ */
+
+%todo: really coord:no for s? Bill knows that either Jane loves Mary or …
+tbar([sem:TBar])
+-->	whemb([sem:WHemb])
+	, s([coord:no,sem:S])
+	, { combine(tbar:TBar,[whemb:WHemb,s:S]) }
+.
+
+% for empty complementizers
+tbar([sem:TBar])
+-->	s([coord:no,sem:S])
+	, { combine(tbar:TBar,[s:S]) }
+.
+
+% for 'mia knows who likes vincent'
+tbar([sem:TBar])
+-->	q([sem:Q])
+	, { combine(tbar:TBar,[q:Q]) }
+.
 
 /*========================================================================
    Noun Phrases
@@ -191,6 +213,12 @@ nmod([sem:Sem])-->
    Verb Phrases
 ========================================================================*/
 
+vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP])
+-->	ivtbar([inf:Inf,num:Num,sem:IVTBAR]) % verb
+	, tbar([sem:TBAR]) % embedded sentence
+	, {combine(vp:VP,[ivtbar:IVTBAR,tbar:TBAR])}
+.
+
 vp([coord:yes,inf:Inf,num:Num,gap:[],sem:VP])--> 
    vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP1]), 
    coord([type:_,sem:C]), 
@@ -246,6 +274,12 @@ iv([inf:Inf,num:Num,sem:Sem])-->
    Word,
    {semLex(iv,[symbol:Sym,sem:Sem])}.
 
+ivtbar([inf:Inf,num:Num,sem:Sem])
+-->	{lexEntry(ivtbar,[symbol:Sym,syntax:Word,inf:Inf,num:Num])}
+	, Word
+	, {semLex(ivtbar,[symbol:Sym,sem:Sem])}
+.
+
 tv([inf:Inf,num:Num,sem:Sem])--> 
    {lexEntry(tv,[symbol:Sym,syntax:Word,inf:Inf,num:Num])},
    Word,
@@ -263,13 +297,25 @@ det([mood:M,type:Type,sem:Det])-->
 
 pn([sem:Sem])--> 
    {lexEntry(pn,[symbol:Sym,syntax:Word])},
-   Word,  
+   Word,
    {semLex(pn,[symbol:Sym,sem:Sem])}.
 
 relpro([sem:Sem])--> 
    {lexEntry(relpro,[syntax:Word])},
    Word,
    {semLex(relpro,[sem:Sem])}.
+
+/*
+ * WH-embedding
+ * We don't use symbols because wh-embedders are translated to
+ * logic right away (using the respective storage method)
+ */
+whemb([sem:Sem])
+-->	{lexEntry(whemb,[syntax:Word,type:T])}
+	, Word
+	, {semLex(whemb,[sem:Sem,type:T])}
+.
+
 
 prep([sem:Sem])--> 
    {lexEntry(prep,[symbol:Sym,syntax:Word])},

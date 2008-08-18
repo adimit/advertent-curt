@@ -21,6 +21,22 @@
 
 *************************************************************************/
 
+/*
+ * wh-embedding verbs
+ * cf karttunen 77 for the complete classification according to 'type'
+ */
+lexEntry(ivtbar,[symbol:knowi,syntax:[know],inf:inf,num:sg]).
+lexEntry(ivtbar,[symbol:knowi,syntax:[knows],inf:fin,num:sg]).
+lexEntry(ivtbar,[symbol:knowi,syntax:[know],inf:fin,num:pl]).
+
+lexEntry(ivtbar,[symbol:believei,syntax:[believe],inf:inf,num:sg]).
+lexEntry(ivtbar,[symbol:believei,syntax:[believes],inf:fin,num:sg]).
+lexEntry(ivtbar,[symbol:believei,syntax:[believe],inf:fin,num:pl]).
+
+lexEntry(ivtbar,[symbol:thinki,syntax:[think],inf:inf,num:sg]).
+lexEntry(ivtbar,[symbol:thinki,syntax:[thinks],inf:fin,num:sg]).
+lexEntry(ivtbar,[symbol:thinki,syntax:[think],inf:fin,num:pl]).
+
 /*========================================================================
    Determiners
 ========================================================================*/
@@ -205,7 +221,7 @@ lexEntry(tv,[symbol:pickup,syntax:[picks,up],inf:fin,num:sg]).
 lexEntry(tv,[symbol:pickup,syntax:[pick,up],inf:fin,num:pl]).
 
 lexEntry(tv,[symbol:shoot,syntax:[shot],inf:inf,num:sg]).
-lexEntry(tv,[symbol:shoot,syntax:[shot],inf:fin,num:sg]).
+lexEntry(tv,[symbol:shoot,syntax:[shot],inf:fin,num:sg]). % interesting. they allow past tense :-)
 lexEntry(tv,[symbol:shoot,syntax:[shoots],inf:fin,num:sg]).
 lexEntry(tv,[symbol:shoot,syntax:[shoot],inf:fin,num:pl]).
 
@@ -254,6 +270,12 @@ lexEntry(adj,[symbol:tall,syntax:[tall]]).
 lexEntry(relpro,[syntax:[who]]).
 lexEntry(relpro,[syntax:[that]]).
 
+/*
+ * wh-embedders
+ */
+lexEntry(whemb,[syntax:[that],type:assert]).
+lexEntry(whemb,[syntax:[whether],type:altern]).
+lexEntry(whemb,[syntax:[if],type:altern]).
 
 /*========================================================================
    Coordinations
