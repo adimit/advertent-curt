@@ -275,9 +275,9 @@ iv([inf:Inf,num:Num,sem:Sem])-->
    {semLex(iv,[symbol:Sym,sem:Sem])}.
 
 ivtbar([inf:Inf,num:Num,sem:Sem])
--->	{lexEntry(ivtbar,[symbol:Sym,syntax:Word,inf:Inf,num:Num])}
+-->	{lexEntry(ivtbar,[symbol:Sym,syntax:Word,inf:Inf,num:Num,type:Type])}
 	, Word
-	, {semLex(ivtbar,[symbol:Sym,sem:Sem])}
+	, {semLex(ivtbar,[symbol:Sym,sem:Sem,type:Type])}
 .
 
 tv([inf:Inf,num:Num,sem:Sem])--> 

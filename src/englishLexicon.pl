@@ -25,17 +25,17 @@
  * wh-embedding verbs
  * cf karttunen 77 for the complete classification according to 'type'
  */
-lexEntry(ivtbar,[symbol:knowi,syntax:[know],inf:inf,num:sg]).
-lexEntry(ivtbar,[symbol:knowi,syntax:[knows],inf:fin,num:sg]).
-lexEntry(ivtbar,[symbol:knowi,syntax:[know],inf:fin,num:pl]).
+lexEntry(ivtbar,[symbol:knowi,syntax:[know],inf:inf,num:sg,type:assert]).
+lexEntry(ivtbar,[symbol:knowi,syntax:[knows],inf:fin,num:sg,type:assert]).
+lexEntry(ivtbar,[symbol:knowi,syntax:[know],inf:fin,num:pl,type:assert]).
 
-lexEntry(ivtbar,[symbol:believei,syntax:[believe],inf:inf,num:sg]).
-lexEntry(ivtbar,[symbol:believei,syntax:[believes],inf:fin,num:sg]).
-lexEntry(ivtbar,[symbol:believei,syntax:[believe],inf:fin,num:pl]).
+lexEntry(ivtbar,[symbol:believei,syntax:[believe],inf:inf,num:sg,type:stipul]).
+lexEntry(ivtbar,[symbol:believei,syntax:[believes],inf:fin,num:sg,type:stipul]).
+lexEntry(ivtbar,[symbol:believei,syntax:[believe],inf:fin,num:pl,type:stipul]).
 
-lexEntry(ivtbar,[symbol:thinki,syntax:[think],inf:inf,num:sg]).
-lexEntry(ivtbar,[symbol:thinki,syntax:[thinks],inf:fin,num:sg]).
-lexEntry(ivtbar,[symbol:thinki,syntax:[think],inf:fin,num:pl]).
+lexEntry(ivtbar,[symbol:thinki,syntax:[think],inf:inf,num:sg,type:stipul]).
+lexEntry(ivtbar,[symbol:thinki,syntax:[thinks],inf:fin,num:sg,type:stipul]).
+lexEntry(ivtbar,[symbol:thinki,syntax:[think],inf:fin,num:pl,type:stipul]).
 
 /*========================================================================
    Determiners
