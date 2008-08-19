@@ -1,7 +1,7 @@
 # TeX files
 /thesis
-!/thesis/*.tex
-!/thesis/*.bib
+!/thesis/*tex
+!/thesis/*bib
 
 # Backups
 *~
@@ -12,6 +12,8 @@
 *.out
 *.ready
 *.log
+
+/TODO
 
 # stuff I'd better not make public.
 /src/lib
