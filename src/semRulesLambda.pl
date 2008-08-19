@@ -31,9 +31,6 @@ combine(t:Converted,[s:Sem]):-
 combine(t:Converted,[q:Sem]):- 
    betaConvert(Sem,Converted).
 
-combine(tbar:Converted,[s:Sem]):- 
-   betaConvert(Sem,Converted).
-
 combine(s:app(A,B),[np:A,vp:B]).
 combine(s:app(A,B),[s:A,s:B]).
 combine(s:lam(B,imp(S,B)),[if:S]).
@@ -69,20 +66,17 @@ combine(vp:app(A,B),[cop:A,np:B]).
 combine(vp:A,[iv:A]).
 combine(vp:app(A,B),[tv:A,np:B]).
 
-% wh-embedding verbs need to beta-reduce the sentence they embed first.
 combine(vp:app(A,B),[ivtbar:A,tbar:B]).
 
 combine(tbar:app(WH,SRed),[whemb:WH,s:S])
 :-	betaConvert(S,SRed)
 .
-
 combine(tbar:SRed,[s:S])
 :-	betaConvert(S,SRed)
 .
 combine(tbar:QRed,[q:Q])
 :-	betaConvert(Q,QRed)
 .
-
 combine(pp:app(A,B),[prep:A,np:B]).
 
 combine(rc:app(A,B),[relpro:A,vp:B]).

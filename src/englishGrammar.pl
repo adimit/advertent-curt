@@ -305,17 +305,14 @@ relpro([sem:Sem])-->
    Word,
    {semLex(relpro,[sem:Sem])}.
 
-/*
- * WH-embedding
- * We don't use symbols because wh-embedders are translated to
- * logic right away (using the respective storage method)
- */
+% WH-embedding
+% We don't use symbols because wh-embedders are translated to
+% logic right away (using the respective storage method)
 whemb([sem:Sem])
 -->	{lexEntry(whemb,[syntax:Word,type:T])}
 	, Word
 	, {semLex(whemb,[sem:Sem,type:T])}
 .
-
 
 prep([sem:Sem])--> 
    {lexEntry(prep,[symbol:Sym,syntax:Word])},
