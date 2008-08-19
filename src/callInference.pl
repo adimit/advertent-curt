@@ -33,6 +33,9 @@
 :- use_module(fol2otter,[fol2otter/2,
                          fol2mace/2]).
 
+:- use_module(fol2prover9,[fol2prover9/2,
+			   fol2mace4/2]).
+
 :- use_module(fol2bliksem,[fol2bliksem/2]).
 
 :- use_module(fol2tptp,[fol2tptp/2]).
@@ -67,6 +70,12 @@ initTheoremProvers([bliksem|L],Formula):- !,
    fol2bliksem(not(Formula),Stream),
    close(Stream),
 %   executeCommand('dos2unix bliksem.in'), %%% use for MS-DOS/Windows
+   initTheoremProvers(L,Formula).
+
+initTheoremProvers([prover9|L],Formula):- !,
+   open('prover9.in',write,Stream),
+   fol2prover9(not(Formula),Stream),
+   close(Stream),
    initTheoremProvers(L,Formula).
 
 initTheoremProvers([_|L],Formula):-
