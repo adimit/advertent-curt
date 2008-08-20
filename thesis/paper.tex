@@ -1,23 +1,29 @@
-\documentclass[a4paper]{article}
+\documentclass[12pt,a4paper]{article}
 
-\usepackage[english]{babel}
+%\usepackage[english]{babel}
 
-\usepackage{amssymb,bbm,qtree,graphicx,natbib,aleks,linguex}
+\usepackage{amssymb,qtree,natbib,aleks,linguex}
 
+\usepackage{amsthm}
 
 %% note that this file depends on being processed with XeTeX
-\usepackage{xltxtra,xunicode,fontspec}
+\usepackage{fontspec}
+\usepackage{xltxtra,xunicode}
 
+\usepackage{mathpazo}
 % font specifications (don't overuse ;-)
 \defaultfontfeatures{Mapping=tex-text} % converts LaTeX specials (``quotes'' --- dashes etc.) to unicode
-\setromanfont [Ligatures={Common,Rare}]{Gentium}
+\setromanfont [Ligatures={Common,Rare}, BoldFont={Fontin Bold}, ItalicFont={Fontin Italic}]{Fontin Regular}
+\setsansfont [Ligatures={Common}, BoldFont={Fontin Sans Bold}, ItalicFont={Fontin Sans Italic}]{Fontin Sans}
+
 
 \newcommand{\abbr}{\textsf} % how to render abbreviations like IL or Ty2
 \newcommand{\stress}{\textbf} % put stress somewhere (as opposed to \emph)
 \newcommand{\term}{\textsf} % introduce a term
 \newcommand{\code}{\texttt} % layout of in-line code snippets
-\newcommand{\pn}{\textsc} % how to render proper names like Shrdlu
+\newcommand{\pn}{\textsf} % how to render proper names like Shrdlu
 \newcommand{\url}[1]{\code{http://#1}} % how urls appear
+\newcommand{\example}{\textit} % in-text examples
 
 % commonly used phrases
 \newcommand{\Disc}{\ensuremath{\mathcal{D}}} % the discourse
@@ -29,7 +35,7 @@
 \newcommand{\prol}{\pn{Prolog}\mbox{ }}
 
 %theorem environments
-%\theoremstyle{remark} \newtheorem*{termin}{Definition} % terminology. Could use a
+\theoremstyle{remark} \newtheorem*{termin}{Definition} % terminology. Could use a
 %better title fixme
 
 \bibliographystyle{plainnat}
@@ -75,9 +81,9 @@ the bounds of the tools it uses.
 % FIXME: don't really like this footnote
 \footnotetext{Here, the notion of \emph{consistency} is meant as \emph{validity}
 of the input and \emph{informativity} denotes \emph{validity}. Thus, if
-\Disc, the discourse so far and $φ$ a new input token (fully parsed
-sentence), then consistency means $\Disc → \phi$ holds and informativity
-means $\Disc \nvDash$ φ.}
+\Disc, the discourse so far and $\phi$ a new input token (fully parsed
+sentence), then consistency means $\Disc \to \phi$ holds and informativity
+means $\Disc \nvDash \phi$.}
 
 
 It can thus detect incoherent discourse and would reject a sequence of
@@ -141,6 +147,20 @@ for further research.
 
 \section{Theory}
 
+This section first gives an overview over the terminology that will be used for
+the discussion of the formal treatment of questions. It then elaborates on the
+differences between different logical formalisms employed in the treatment of
+natural language questions. After a small overview on the types of questions
+(and pointing out the subset of questions that will be treated), %fixme maybe a
+% bit sloppy
+the discussion
+turns to how those questions are best treated in the given formalism.
+
+The reader should note that all choices presented in this section have been made
+with the implementation of section \label{sec:implementation} in mind.
+% todo talk a bit more
+
+
 \subsection{Terminology}
 
 Following \cite{gs:q}, we will not use the natural natural language word
@@ -148,7 +168,7 @@ Following \cite{gs:q}, we will not use the natural natural language word
 \term{interrogative sentences} and \term{interrogative acts} in the following
 way:
 
-\begin{quote}
+\begin{termin}
   An \term{interrogative} is a certain type of sentence in natural language
   distinguished by certain features\footnote{To quote \cite{gs:q}: \quote{[An
   interrogative sentence is] characterized by word order, intonation, question
@@ -157,7 +177,7 @@ way:
   \emph{interrogative}. Finally, a 
   \term{question} will denote the semantic entity uttered by the
   \emph{interrogative act}, whichever form it may have.
-\end{quote}
+\end{termin}
 
 \abbr{Ty2} is two-sorted type logic\footnote{See \cite{gallin:ty2} for a
 discussion and \cite{gs:sqpa} for its usage in describing the semantics of
@@ -218,42 +238,59 @@ provides an implementation of the former, but not of the latter. See
 While there exist inferencing tools for modal logic\footnote{See %todo todo and todo 
 for discussions. The interested reader is also referred to \pn{Molle}
 (\url{http://molle.sf.net}), a modal theorem prover that comes with a graphical user
-interface that allows interactive investigation of the constructed indices.},
+interface which allows interactive investigation of the constructed indices.},
 a restructuring of the \pn{Curt} system to take advantage of them would be
 beyond the scope of this thesis.
 
 It was therefore decided to avoid modal logic and implement a pragmatic approach
 to representing the indices of higher-order logic in \prol in section
-\ref{sec:indices}.
+\ref{sec:indices}. This logic however has to be augmented with question
+operators as already used by \cite{karttunen:1977}. % todo: writeme!
 
 \cite{g:is} presents an approach to implementing inquisitive semantics in
 predicate logic.
 
 \subsection{On the Proper Treatment of Questions}
 
-Question Semantics is a much-disputed but often overlooked field of modern
-semantic research. Often question semantics has been reduced to an issue of
-pragmatics, treating direct questions (interrogatives) as nothing more than a
-paraphrase of indirect questions (embedded interrogatives).\cite{tichy}
-even goes as far as claiming equality in semantic value between
+Question semantics are an interesting subproblem of modern research on natural
+language semantics. While traditional approaches based on \abbr{IL} and newer
+accounts also employ plain extensional logic, % todo: which ones 
+the treatment
+of questions seems to demand that we introduce a new kind of logic formalism.
+But as interesting topics go, the semantics of questions has attracted many
+different views on this issue.
+
+Often question semantics has been reduced to a problem of
+pragmatics, treating direct interrogatives as nothing more than a
+paraphrase of embedded interrogatives.\cite{tichy}
+even goes as far as claiming equality in semantic (truth) value between
 indicatives and interrogatives. The benefit of such an approach would be the
 strict reliance on traditional analyses, where interrogatives would only infer a
 different `attitude' in the speaker's utterance. Putting this attitude into
 context and making it yield the correct results would then be left to
 pragmatics.
-This approach has been challenged and proven wrong by \cite{gs:q},
-who also argue that the proper treatment of questions would require extensions
-to the existing logic frameworks used in natural language semantics semantics.
+
+This approach has been challenged and proven unfeasible by \cite{gs:q},
+who have also proposed interesting extensions
+to the existing logic frameworks used in natural language semantics.
 More recent publications, such as \cite{gal:tmbi}
 address this topic and aim to introduce notions of \term{information change
 potential} as opposed to the traditional focus of natural language semantics on
 \term{truth values}.
 
-Nevertheless, progress has been very lively since the first
-formal approaches to the field started with \cite{hamblin:q} and other
-publications such as % todo
-. \cite{gs:q} provide a very descriptive overview of the field of question
-semantics
+The present work will rely on \cite{gs:q} for providing the main guidelines for
+the theoretic aspects and also lend from earlier works, most importantly
+\cite{gs:sqpa}\footnotemark. Later on, in section \ref{sec:altq} we will also
+discuss the very newest (at the time of writing) developments in question
+semantics, depicted in \cite{g:is}.
+
+\footnotetext{\cite{gs:sqpa} is actually a series of three articles
+that have appeared before. Among them, we will mostly consider \cite{gs:sawhq}.
+Both, the earlier paper and the later dissertation (and many other papers
+originating in Amsterdam) have been kindly made
+available electronically, free of charge, by the Universiteit van Amsterdam at
+the following address: \url{http://dare.uva.nl}}
+
 
 \subsubsection{Pragmatics and Semantics of Questions}
 
@@ -296,10 +333,44 @@ The different verb classes ask for different strategies of treating the
 \wh-clauses they embed and also pose different restrictions on the type of
 clause they expect.
 
-Our aim is to improve coverage of grammatical structures and thus when faced
-with the necessity to make compromise about the complexity of our grammar, we
-will choose overgeneration in favor of unmotivated complexity of the grammar
-itself.
+The present work will not consider a full analysis of \wh-embedding verbs, but
+confine itself on a few ones, namely \example{know}, \example{think} and
+\example{believe}. The grammar implementation of \acurt allows for \wh-embedding
+verbs to have a \code{type} field, determining their semantic denotation. The two
+types used so far are \code{assert} for assertive verbs such as \example{know}
+and \code{stipul} for stipulating verbs, such as \example{believe} and
+\example{think}.
+
+\subsubsection{Grammatic Constraints}
+
+With this ontology in mind, the next step is to analyse and enumerate the sorts
+of grammatic constructions that are to be treated. The following examples will
+illustrate them.
+
+\begin{itemize}
+  \item Alternative Questions
+  \ex. \a. Mia \emph{knows} whether Vincent snorts.
+  \b. * Mia \emph{believes} whether Vincent snorts.
+  \b. * Mia \emph{thinks} whether Vincent snorts.
+  
+  \item Enumerative Questions
+  \ex. \a.  Mia \emph{knows} who snorts.
+  \b. * Mia \emph{believes} who snorts.
+  \b. * Mia \emph{thinks} who snorts.
+
+  \item Embedding Propositions
+  \ex. \label{ex:stipul}
+  \a. Mia \emph{believes} Vincent snorts.
+  \b. * Mia \emph{believes} who snorts.
+
+\end{itemize}
+
+An important observation to be made here is that only \emph{assertive} verbs can
+embed real questions. \emph{Stipulating} verbs only embed \emph{propositions} as
+in \ref{ex:stipul}.
+Nevertheless, both are treated in the following analysis, but with a focus on
+the treatment of assertive \wh-embedding verbs.
+
 
 \subsubsection{Extensional WH-embedding Verbs}
 
@@ -352,6 +423,7 @@ how direct questions can be integrated into the system with relative ease, focus
 is still on providing a feasible method of implementing intensionality in what
 is mostly a first-order logic computing environment.
 
+
 It is also not constrained to being useful in a particular domain, like
 \pn{CHAT-80} is.
 
@@ -369,22 +441,52 @@ to be assumed. While they propose a two-world system later adopted in
 knowledge in order to be able to discriminate people's knowledge and beliefs.
 %fixme bla bla
 
-\subsubsection{Enhancing Storage}
+The underlying theory for 
+
+\subsubsection{Defining the Grammar Rules}
 
 \curt parses sentences of natural language using an enhanced version of \pn{Cooper
 storage}\footnote{See \cite{cooper:storage2} for the original implementation.} as
 presented in \cite{keller:storage}. \cite{blackburnbos:cl1} call this version
 \pn{Keller storage}. That name will be used from here % FIXME sucks. Please change
 to refer to this particular implementation as presented in
-\cite{blackburnbos:cl1}. Although \pn{Keller storage} is already quite capable
-of dealing with more complex constituents such as nested noun phrases, it needs
-some enhancements in order to be able to treat verbs embedding whole
-sentences or \wh-phrases correctly. The aim is to enable \curt's implementation of
-\pn{Keller storage} to deal with examples such as \ref{ex:kel1}\footnotemark.
+\cite{blackburnbos:cl1}. 
+
+\pn{Keller storage} is already quite capable
+of dealing with more complex constituents such as nested noun phrases, but it
+has its limitations. In particular, it can only handle quantifier scope
+ambiguities and does not take negation into account. Moreover, it overgenerates
+with some quantifier scope ambiguities\footnote{\cite{blackburnbos:cl1} mention
+sentences such as \ref{ex:kellersucks}, where Keller storage produces six
+instead of the desired five readings.
+\ex. One criminal knows every owner of a hash bar\label{ex:kellersucks}
+
+Clearly, \example{a hash bar} cannot take scope over \example{every owner}, but
+Keller storage predicts this reading.}.
+
+In order to cope with more complicated quantifier configurations, where
+constraints need to be enforced, and with other kinds of ambiguities,
+Blackburn and Bos present an approach utilizing underspecified representations and
+dominance relations, \pn{Hole Semantics}\footnote{Also presented in % todo:cite
+%Bos' paper
+}. Since, however, none of the cases discussed so far would require the enhanced
+expressive power of \pn{Hole Semantics} it was decided to go on using \pn{Keller
+Storage} instead, since this is what the original implementation of the \curt
+system relies on.
+%todo: fix capitalization in Keller storage all over the document
+
+Enhancing the grammatic rules of the \curt system to cope with
+proposition-embedding verbs is made trivial by its elaborate grammatical back
+end. \ref{ex:kel1} is an example of the logic behind the grammar that is put to
+use.
 
 \ex. \label{ex:kel1} Mia knows whether Vincent snorts.\\
-\Tree [.t [.T Mia ] [.IV [.{IV/$\bar{t}$} knows ] [.{$\bar{t}$} whether [.t [.T
-Vincent ] [.IV snorts ] ] ] ] ]
+\Tree
+[.$t$ [.$T$ { $\lambda X.X(Mia)$\\Mia } ]
+[.$IV$ [.{$IV/\bar{t}$} { $\lambda X.know(X)$\\knows } ]
+[.{$\bar{t}$} [.$\bar{t}/t$ whether ] [.{ $t$\\$snort(Vincent)$ } 
+[.$T$ { $\lambda X.X(Vincent)$\\Vincent } ]
+[.$IV$ { $\lambda X.snort(X)$\\snorts } ] ] ] ] ]
 
 \footnotetext{Note that \ref{ex:kel1} is shown using the same syntactic type system used in
 \cite{gs:sawhq}, which extends the system given in \cite{ptq} by $\bar{t}$ to
