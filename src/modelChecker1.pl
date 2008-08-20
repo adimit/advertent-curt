@@ -56,7 +56,6 @@ evaluate(Formula,Example,Assignment):-
    example(Example,Model),
    satisfy(Formula,Model,Assignment,Result),
    printStatus(Result).
-   
 
 /*========================================================================
    Test Suite
