@@ -55,28 +55,77 @@ $\langle$\href{mailto:aleks.dimitrov@googlemail.com}{aleks.dimitrov@googlemail.c
 
 \section*{Introduction}
 
+
+Growing efforts have thus been made to provide a technology that is (going to
+be) able to extract logical formulae from sentences of ordinary language and
+establish relations between objects of its logical representation. In addition,
+providing a means to compute with said representations is will eventually enable
+the machine-processing of meaning.  In doing so, the ultimate goal may be to
+enable a man-made system to \emph{understand} what a humans communicate.
+
+Exploration of this  interesting field of linguistics has shown that
+the notion of \emph{understanding} is far more than a linguistic concern, but
+involves at least findings in the domain of logics, (cognitive) psychology and
+probably even philosophy.
+
+Development of exhaustive systems in this area appears to be a daunting task of
+quite some scope. Therefore most approaches have been centered on providing
+coverage of at least a fragment of natural language. Many such systems exist and
+they prove to be increasingly successful. Some of them will be discussed here
+and presenting an extension to one system in particular is the main matter of
+this Bachelor's thesis.
+
+In doing so, the present work will aim to provide the \curt system of
+\cite{blackburnbos:cl1} with the mechanics of dealing with more than one
+partition of its logical domain, viz. the ability to handle more than one
+\term{possible} or \term{accessible world}. As a ground for development of this
+work, the treatment of \term{embedded questions} was chosen as one that
+naturally demands a possibility to account for more than one division in a
+system's \emph{understanding} or representation of a universe of objects and
+relations. 
+
+As 
+
+The first section gives a conceptual overview, introducing the \curt
+system and comparing it to other similar systems in existence. It then goes on
+to explain the target domain of natural language the implementation has to
+account for.
+The next section concerns itself with a more detailed analysis of the theoretic
+assumptions of this implementation and justifies some choices and restrictions
+that had to be made because of the limited scope of this analysis. While the
+third section will display and clarify the actual implementation on top of the
+\curt system, the last section will discuss the results of this work and also
+give a prospect on possible further work on the subject.
+
+\subsection*{Acknowledgements}
+
+Frank... who else?
+
+\section{Concepts}
+
+The basis of 
+
 %fixme: to be formalized
 Where we use ``natural language'', usually the English language will be treated
 in practice, though it would be nice to come up with treatments of other
 languages. We abstract away from pragmatic affairs and concern ourselves with
 mostly the purely semantic/logic domain, so this should be feasible to achieve.
-\subsection*{Acknowledgements}
 
-\section{Concepts}
-
-% fixme: formalize
 A brief overview of the premisses for the theory (which itself lays ground to
 the implementation).
 
 \subsection{The Curt System} \label{sec:curt}
 
 \pn{Curt}, a system written in \prol that is able to interpret basic utterances
-in natural language and store them in expressions of first order logic, is presented
-in \cite{blackburnbos:cl1}. While relatively limited when compared to other
-systems presented in \ref{sec:comparision} in
-terms of lexical and grammatical coverage it is able to perform basic checks for
-\emph{consistency} and \emph{informativity} of its input\footnotemark, within
-the bounds of the tools it uses.
+in natural language and store them in expressions of first order logic, is
+presented in \cite[chapter 6]{blackburnbos:cl1}. While relatively limited when
+compared to other systems presented in \ref{sec:comparision} in terms of lexical
+and grammatical coverage, it provides a sound basis for extended work because of
+its coherent design and relative simplicity.
+
+Besides parsing and translating utterances into logic, \curt is able to perform
+basic checks for \emph{consistency} and \emph{informativity} on the resulting
+formulae -- within the bounds of the tools it uses.
 
 % FIXME: don't really like this footnote
 \footnotetext{Here, the notion of \emph{consistency} is meant as \emph{validity}
@@ -223,6 +272,21 @@ theories of treating natural language questions, but rather with their
 implementation in the programming language \pn{Prolog} several additional
 constraints have to be considered. Among them the \emph{feasibility} of any
 possible approach takes highest precedence.
+
+To quote \cite{blackburnbos:cl1}:
+
+\begin{quote}
+  Questions, unlike assertions, don't have truth-values, so it would be
+  misleading to represent them as ordinary formulas.
+\end{quote}
+
+It is important to note that this claim is not undisputed and
+\cite{karttunen:1977}, argues against it. The present approach, however will
+base itself on this assumption and extend it by more formal approaches than the
+one given by Blackburn \& Bos. Specifically, the work by J. Groenendijk and M. Stokhof
+will lay ground to the implementation. But in order to realise their formal
+discussions computationally, modifications will have to be made, and even
+compromises.
 
 As was already mentioned in \ref{sec:curt}, Curt is based on an
 implementation and the use of external tools only capable of treating first
