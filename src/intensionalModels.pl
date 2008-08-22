@@ -421,7 +421,7 @@ answer(protoq(X,Formula),model(D,M),G,Answers) :-
 
 info:-
    format('~n> ------------------------------------------------------------------------- <',[]),
-   format('~n> modelChecker2.pl, by Patrick Blackburn and Johan Bos                      <',[]),
+   format('~n> intensionalModels.pl, by Aleksandar Dimitrov, based on modelChecker2.pl   <',[]),
    format('~n>                                                                           <',[]),
    format('~n> ?- evaluate(F,E).          - evaluate a formula in a model                <',[]),
    format('~n> ?- evaluate(F,E,A).        - evaluate a formula in a model wrt assignment <',[]),
