@@ -507,6 +507,44 @@ knowledge in order to be able to discriminate people's knowledge and beliefs.
 
 The underlying theory for 
 
+\subsubsection{Representing Intensionality in \prol}
+
+\prol programs can be self-modifying, or dynamic. This means that the program is
+able to change its own state and thus store information. 
+
+\subsubsection{Disjunction and Ambiguity}
+Consider the following sentences:
+
+\ex. \label{ex:disjunction} \a. Mia or Jody dances
+\b. Either Butch snores or Vincent is using the chainsaw
+
+\pn{Helpful Curt}, with its unpartitioned logical space and its lack of
+the awareness of more than one (possible) world, would generate only one model
+to represent the facts of \ref{ex:disjunction}. It is therefore only able to
+generate \emph{one} possible answer to both questions, effectively accounting only
+for one possible constituent of the disjunction, prefixing it with a `maybe' to
+indicate its uncertainty.
+
+Another example where \curt has to sacrifice exhaustiveness over its one-world
+representation of the world is given in \ref{ex:ambig}
+
+\ex.\label{ex:ambig} Every boxer likes a woman.
+
+This will generally generate two readings, but only one model -- with only one
+world. And further discourse will have to choose between one of the readings and
+stick with the minimal model constructed by the model builder. This is not
+really satisfactory and extending the dimensions of knowledge within \curt seems
+necessary in order to treat such examples.
+
+The previous work on \acurt enables it to generate a \term{choice point} -- and
+moreover, not pursue only one path of it, but both at the same time, by
+generating more than one world in its model.
+Unfortunately, this will build up very large models over time and computations
+with it might prove to be very complex and resource demanding. Adding such a
+functionality to the system, however, is not a hard task and hopefully the
+technique employed here can be further refined. %todo: maybe add a footnote
+%about future prospects or so
+
 \subsubsection{Defining the Grammar Rules}
 
 \curt parses sentences of natural language using an enhanced version of \pn{Cooper
