@@ -16,6 +16,8 @@
 				selectFromList/3,
 				printRepresentations/1]).
 
+:- use_module(or,[disjunk/2]).
+
 :- use_module(kellerStorage,[kellerStorage/2]).
 
 :- use_module(intensionalModels,[satisfy/4]).
@@ -107,10 +109,10 @@ curtUpdate([summary],[],run):-
    updateModels([]).
 
 curtUpdate([knowledge],[],run):-
-   readings(R), 
+   readings(R),
    findall(K,(memberList(F,R),backgroundKnowledge(F,K)),L),
    printRepresentations(L).
-   
+
 curtUpdate([readings],[],run):- !,
    readings(R),
    printRepresentations(R).
@@ -123,40 +125,31 @@ curtUpdate([history],[],run):- !,
    history(H),
    printRepresentations(H).
 
-curtUpdate(Input,Moves,run):-
-   kellerStorage(Input,Readings), !,
-   updateHistory(Input),
-   (
-      Readings=[que(X,R,S)|_],
-      models(OldModels),
-      answerQuestion(que(X,R,S),OldModels,Moves)
-   ;
-      \+ Readings=[que(_,_,_)|_],
-      consistentReadings(Readings,[]-ConsReadings,[]-Models),
-      (
-         ConsReadings=[],
-         Moves=[contradiction]
-      ;
-         \+ ConsReadings=[],
-         informativeReadings(ConsReadings,[]-InfReadings),
-         (
-            InfReadings=[],
-            Moves=[obvious]
-         ;
-            \+ InfReadings=[],
-            Moves=[accept]
-         ),
-         combine(ConsReadings,CombinedReadings), 
-         updateReadings(CombinedReadings),
-         updateModels(Models)
-      )
-   ).
+curtUpdate(Input,Moves,run) :-
+	kellerStorage(Input,Rs)
+	, !
+	, maplist(disjunk,Rs,Nested)
+	, flatten(Nested,Readings)
+	, updateHistory(Input)
+	,
+	% TODO: Write Answer Code
+	interpret(Readings,Model,Moves)
+	.
 
 curtUpdate(_,[noparse],run).
+
+%%% interpret/3
+% take some readings and generate appropriate models based on what's already
+% there. Also inform the rest of Curt about what we do next based on the result.
+
+interpret([],[],[noparse]).
+
+interpret(Readings,Model,Move).
 
 
 /*========================================================================
    Combine New Utterances with History
+   TODO: add a call to the summary command
 ========================================================================*/
 
 combine(New,New):-
@@ -165,76 +158,6 @@ combine(New,New):-
 combine(Readings,Updated):-
    readings([Old|_]),
    findall(and(Old,New),memberList(New,Readings),Updated).
-
-
-/*========================================================================
-   Select Consistent Readings
-========================================================================*/
-
-consistentReadings([],C-C,M-M).
-
-consistentReadings([New|Readings],C1-C2,M1-M2):-
-   readings(Old),
-   (
-      consistent(Old,New,Model), !,
-      consistentReadings(Readings,[New|C1]-C2,[Model|M1]-M2) 
-   ;
-      consistentReadings(Readings,C1-C2,M1-M2) 
-   ).
-
-
-/*========================================================================
-   Consistency Checking calling Theorem Prover and Model Builder
-========================================================================*/
-
-consistent([Old|_],New,Model):-
-   backgroundKnowledge(and(Old,New),BK),
-   DomainSize=15,
-   callTPandMB(not(and(and(BK,Old),New)),and(and(BK,Old),New),DomainSize,Proof,Model,Engine),
-   format('~nMessage (consistency checking): ~p found a result.',[Engine]),
-   \+ Proof=proof, Model=model([_|_],_).
-
-consistent([],New,Model):-
-   backgroundKnowledge(New,BK),
-   DomainSize=15,
-   callTPandMB(not(and(BK,New)),and(BK,New),DomainSize,Proof,Model,Engine),
-   format('~nMessage (consistency checking): ~p found a result.',[Engine]),
-   \+ Proof=proof, Model=model([_|_],_).
-
-
-/*========================================================================
-   Select Informative Readings
-========================================================================*/
-
-informativeReadings([],I-I).
-
-informativeReadings([New|L],I1-I2):-
-   readings(Old),
-   (
-      informative(Old,New), !,
-      informativeReadings(L,[New|I1]-I2) 
-   ;
-      informativeReadings(L,I1-I2) 
-   ).
-
-
-/*========================================================================
-   Informativity Checking calling Theorem Prover
-========================================================================*/
-
-informative([Old|_],New):-
-   backgroundKnowledge(and(Old,New),BK),
-   DomainSize=15,
-   callTPandMB(not(and(and(BK,Old),not(New))),and(and(BK,Old),not(New)),DomainSize,Proof,Model,Engine),
-   format('~nMessage (informativity checking): ~p found a result.',[Engine]),
-   \+ Proof=proof, Model=model([_|_],_).  
-
-informative([],New):-
-   backgroundKnowledge(New,BK),
-   DomainSize=15,
-   callTPandMB(not(and(BK,not(New))),and(BK,not(New)),DomainSize,Proof,Model,Engine),
-   format('~nMessage (informativity checking): ~p found a result.',[Engine]),
-   \+ Proof=proof, Model=model([_|_],_).
 
 
 /*========================================================================
