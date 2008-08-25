@@ -133,19 +133,32 @@ curtUpdate(Input,Moves,run) :-
 	, updateHistory(Input)
 	,
 	% TODO: Write Answer Code
-	interpret(Readings,Model,Moves)
+	interpret(Model,Readings,Moves)
 	.
 
 curtUpdate(_,[noparse],run).
 
-%%% interpret/3
-% take some readings and generate appropriate models based on what's already
-% there. Also inform the rest of Curt about what we do next based on the result.
+domainSize(15).
 
-interpret([],[],[noparse]).
+% fails if Old is not a curt world or empty
+interpret(Old,New,World) :-
+	getKnowledge(Old,New,BK)
+	, check(and(BK,New),'consistency',World)
+	, check(and(BK,not(New)),'informativity',_)
+	.
 
-interpret(Readings,Model,Move).
+getKnowledge(world([curt|_Others],Old,_Functions),New,and(BackgroundKnowledge,Old)) :- 
+	backgroundKnowledge(and(Old,New),BackgroundKnowledge).
 
+getKnowledge([],New,BackgroundKnowledge) :- 
+	backgroundKnowledge(New,BackgroundKnowledge).
+
+check(Formula,Reason,Model) :-
+	domainSize(DomainSize)
+	, callTPandMB(not(Formula),Formula,DomainSize,Proof,Model,Engine)
+	, format('~nMessage (~p checking): ~p found a result.',[Reason,Engine])
+	, \+ Proof=proof, Model=model([_|_],_)
+	.
 
 /*========================================================================
    Combine New Utterances with History
