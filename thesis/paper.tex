@@ -19,7 +19,7 @@
 
 \newcommand{\abbr}{\textsf} % how to render abbreviations like IL or Ty2
 \newcommand{\stress}{\textbf} % put stress somewhere (as opposed to \emph)
-\newcommand{\term}{\textsf} % introduce a term
+\newcommand{\term}[1]{\textsf{\textbf{#1}}} % introduce a term
 \newcommand{\code}{\texttt} % layout of in-line code snippets
 \newcommand{\pn}{\textsf} % how to render proper names like Shrdlu
 \newcommand{\url}[1]{\code{http://#1}} % how urls appear
@@ -35,8 +35,7 @@
 \newcommand{\prol}{\pn{Prolog}\mbox{ }}
 
 %theorem environments
-\theoremstyle{remark} \newtheorem*{termin}{Definition} % terminology. Could use a
-%better title fixme
+\theoremstyle{remark} \newtheorem*{termin}{Terminology} % terminology.
 
 \bibliographystyle{plainnat}
 \bibpunct{(}{)}{;}{a}{,}{,}
@@ -53,15 +52,16 @@ $\langle$\href{mailto:aleks.dimitrov@googlemail.com}{aleks.dimitrov@googlemail.c
 \tableofcontents
 \newpage
 
-\section*{Introduction}
+\section{Introduction}
 
 
 Growing efforts have thus been made to provide a technology that is (going to
 be) able to extract logical formulae from sentences of ordinary language and
 establish relations between objects of its logical representation. In addition,
-providing a means to compute with said representations is will eventually enable
-the machine-processing of meaning.  In doing so, the ultimate goal may be to
-enable a man-made system to \emph{understand} what a humans communicate.
+providing a means to compute with said representations will eventually enable
+the machine-processing of an abstract concept of meaning. In doing so, the
+ultimate goal may be to enable a man-made system to \emph{understand} what a
+humans communicate.
 
 Exploration of this  interesting field of linguistics has shown that
 the notion of \emph{understanding} is far more than a linguistic concern, but
@@ -69,22 +69,34 @@ involves at least findings in the domain of logics, (cognitive) psychology and
 probably even philosophy.
 
 Development of exhaustive systems in this area appears to be a daunting task of
-quite some scope. Therefore most approaches have been centered on providing
-coverage of at least a fragment of natural language. Many such systems exist and
-they prove to be increasingly successful. Some of them will be discussed here
-and presenting an extension to one system in particular is the main matter of
-this Bachelor's thesis.
+quite some scope. Therefore most approaches have been focused on providing
+coverage of a small fragment of natural language often with respect to a
+particular domain. Many such systems exist and they prove to be increasingly
+successful. Some of them will be discussed here and presenting an extension to
+one system in particular is the main matter of this Bachelor's thesis.
 
-In doing so, the present work will aim to provide the \curt system of
+\subsection{Premises}
+
+The present work will aim to provide the \curt system of
 \cite{blackburnbos:cl1} with the mechanics of dealing with more than one
 partition of its logical domain, viz. the ability to handle more than one
 \term{possible} or \term{accessible world}. As a ground for development of this
 work, the treatment of \term{embedded questions} was chosen as one that
 naturally demands a possibility to account for more than one division in a
 system's \emph{understanding} or representation of a universe of objects and
-relations. 
+relations.
 
-As 
+As the scope of a Bachelor's thesis is limited by its nature, not all of the
+theoretical background can be understood without background knowledge in some
+rather divergent domains. In particular, a basic familiarity with traditional
+\term{natural language semantics} and \term{extensional} as well as
+\term{intensional logic} frameworks will be assumed. Furthermore, a basic
+acquaintance with \term{eroteric logic} will be helpful in understanding some of
+the reasoning in section \ref{sec:theory}.
+
+Some knowledge of the \prol programming language and a good overview of the
+architecture of the \curt system is imperative in order to understand the
+implementation itself.
 
 The first section gives a conceptual overview, introducing the \curt
 system and comparing it to other similar systems in existence. It then goes on
@@ -92,109 +104,138 @@ to explain the target domain of natural language the implementation has to
 account for.
 The next section concerns itself with a more detailed analysis of the theoretic
 assumptions of this implementation and justifies some choices and restrictions
-that had to be made because of the limited scope of this analysis. While the
-third section will display and clarify the actual implementation on top of the
+that had to be made due to the limited scope of this analysis. While the
+third section will display and document the actual implementation on top of the
 \curt system, the last section will discuss the results of this work and also
 give a prospect on possible further work on the subject.
 
-\subsection*{Acknowledgements}
-
-Frank... who else?
 
 \section{Concepts}
 
-The basis of 
-
-%fixme: to be formalized
-Where we use ``natural language'', usually the English language will be treated
-in practice, though it would be nice to come up with treatments of other
-languages. We abstract away from pragmatic affairs and concern ourselves with
-mostly the purely semantic/logic domain, so this should be feasible to achieve.
-
-A brief overview of the premisses for the theory (which itself lays ground to
-the implementation).
+todo: write something here... :-(
 
 \subsection{The Curt System} \label{sec:curt}
 
-\pn{Curt}, a system written in \prol that is able to interpret basic utterances
-in natural language and store them in expressions of first order logic, is
+\curt, a system written in \prol that is able to interpret basic utterances
+of English and store them in expressions of first order logic, is
 presented in \cite[chapter 6]{blackburnbos:cl1}. While relatively limited when
-compared to other systems presented in \ref{sec:comparision} in terms of lexical
+compared to other systems presented in \ref{sec:comparison} in terms of lexical
 and grammatical coverage, it provides a sound basis for extended work because of
 its coherent design and relative simplicity.
 
 Besides parsing and translating utterances into logic, \curt is able to perform
 basic checks for \emph{consistency} and \emph{informativity} on the resulting
 formulae -- within the bounds of the tools it uses.
-
-% FIXME: don't really like this footnote
-\footnotetext{Here, the notion of \emph{consistency} is meant as \emph{validity}
-of the input and \emph{informativity} denotes \emph{validity}. Thus, if
-\Disc, the discourse so far and $\phi$ a new input token (fully parsed
-sentence), then consistency means $\Disc \to \phi$ holds and informativity
-means $\Disc \nvDash \phi$.}
-
-
 It can thus detect incoherent discourse and would reject a sequence of
 sentences such as \emph{``Mary likes every man. Peter is a man. Mary does not
-like Peter''}, claiming it found a contradiction in its input. For every input
-token, \pn{Curt} will also try to infer whether the current discourse would
-entail the information given in its newest token and is thus irrelevant with
-regard to previous utterances – effectively allowing it to
-reduce the size of its internal representation of the discourse by not adding
-clauses to it which would not contribute to the overall informational value
+like Peter''}, claiming it found a contradiction in its input. The discourse is
+then said to be \term{inconsistent} with the new input.
+
+For every input
+sentence, \pn{Curt} will also try to infer whether the current discourse would
+entail the information it contains and would thus be \term{uninformative} with
+respect to previous utterances – effectively allowing it to
+reduce the size of its internal representation of the discourse by avoiding to
+add clauses to its database that would not contribute to the overall informational value
 already present in the program.
 
-The system is introduced during the final chapter of \cite{blackburnbos:cl1},
-incrementally increasing in features and complexity. Support for external
-inferencing via theorem provers and model builders is added in a step-by-step
-fashion and finally an ontology and a straight-forward way of parsing and
-answering direct questions for noun phrases conclude its development. The theory
-and implementation of this paper is meant as a replacement and enhancement for
-the latter feature. This will also happen in an incremental manner and new
-features will be introduced one at a time.
+The final chapter of \cite{blackburnbos:cl1} introduces the implementation
+incrementally, presenting new versions of \curt that add to the software's
+feature set. Support for external inferencing via theorem provers and model
+builders is added right after the first naïve implementations and
+finally an ontology and a straight-forward way of parsing and answering direct
+questions for noun phrases conclude its development. The theory and
+implementation of this paper is meant as a replacement and enhancement for the
+latter feature. This will also happen in an incremental manner and new features
+will be introduced one at a time.
 
-\subsection{General Comparison of the Curt System}\label{sec:comparision}
+\subsection{Comparison of the Curt System}\label{sec:comparison}
 
-This section will briefly discuss how the features of the Curt system compare to
-other similar systems or systems with the same goal, namely implementing a
-system that is able to model a logic representation of human language.
+Generally, question answering and semantic parsing are not related and seldom
+interdependent in current implementations of similar systems, with a few notable
+exceptions.
 
-\subsubsection{Early Attempts: \pn{Shrdlu} and \pn{Cyc}}
-%TODO: need some reference for this section!
+\cite{chat} are among  the first to attempt creating a question answering system
+with deep semantic coverage. Their effort has been focused on the geographical
+domain, and their implementation, dubbed \pn{CHAT-80}, is written entirely in
+\prol. The lack of hardware resources of that time forced the system to be
+written with efficiency in mind. Moreover, it had to maintain a statical
+database of facts which was hand-crafted. The \curt system is built on  an
+entirely different set of premises and aims to provide a proof-of-concept of a
+more general purpose system that is also able to extend its knowledge
+dynamically.
 
-Interest in deep semantic parsing of natural language has existed since the very
-beginning of the informational age. One of the first systems to achieve public
-recognition, the \pn{Shrdlu} system 
+Soon after \pn{CHAT-80}, two entirely different types of systems emerged. The
+first type is probably the most promising to be used on a wider scale, given
+today's technological standards. Implementations are usually based on
+\term{information retrieval} and the generation of question/answer pairs. Such
+systems are generally referred to as a \abbr{QA} (\term{Question Answering})
+systems.  Examples implementations of such systems are discussed in \cite{rama},
+\cite{iesqa} and many others. Most of these seem to provide a good lexical and
+grammatical coverage due to their large input corpora and
+shallow interpretation techniques. The latter is also the \abbr{QA} technique's
+greatest shortcoming, as no deep analysis is  performed and usually
+only factoids of less then a couple of words in length can be supplied as
+answers.\footnote{But see \cite{aqabtf} for an approach that aims to cover a
+wider range of possible answers.}
 
-While the \pn{Curt} system is unique in its approach to deep semantic analysis, its
-architecture has been crafted in a pragmatic manner. The authors chose to use
-external tools where it was possible in order to avoid reimplementation of
-existing functionality and be able to focus on novel parts of the
-implementation\footnote{The name of the \pn{Curt} system reflects this choice.
-It stands for \emph{\textbf{C}lever \textbf{u}se of \textbf{r}easoning
-\textbf{t}ools}.}. This also allows for great flexibility in adopting new
-solutions and improvements made in the field of inferencing tools for first
-order predicate logic.
+In contrast, \pn{CHAT-80} runs all its queries against a pre-built database
+without the ability to acquire new knowledge from the discourse. While a
+\abbr{QA} implementation will typically just acquire knowledge by consuming
+more input and analysing its statistical properties, programs employing deep
+semantic analysis will have to check their input for logical contradictions in
+to maintain their database in a reasonable\footnote{FIXME pun intended, but
+appropriate? %todo
+} state.
+
+\cite{prontoqa} introduce the \pn{Pronto QA System}, which couples traditional
+corpus-based \abbr{QA} techniques with deep semantic parsing based on
+\term{Discourse Representation Theory}.
+
+A very interesting project, called \pn{Godot} is introduced in \cite{godot}.
+\pn{Godot} is a so-called \term{embodied agent}, a robot with a sophisticated
+software driving interaction with the outer world. As such its conception of
+discourse not only relies on spoken dialogue, but also on sensory input.
+\pn{Godot} is focused on executing orders -- after evaluating their feasibility
+in its particular discourse model -- and does so far not support the answering
+of questions about its state.
 
 \subsection{Extending the Curt System}
 
 At the end of \cite{blackburnbos:cl1}, \curt is able to cope with a small
-grammar and provides some features for interacting with humans in natural
-language. It does only understand basic extensional transitive verbs - modal
-verbs or the treatment of questions are not implemented. Anaphora resolution
-still remains an open issue. The grammar is rather limited and \curt only comes
-with a basic vocabulary oriented around the setting of a popular movie.
+grammar and provides some features for interaction in natural
+language. It does only understand basic extensional transitive and intransitive
+verbs and its support for question answering remains limited.
+Anaphora resolution still remains an open issue.
 
-The aim of this paper is to introduce the reader into question semantics as it
-will be relevant for implementing a basic capability of treating intensional
-verbs like `to \stress{know} whether something is the case' and `to
-\stress{believe} that something might be the case' and then present such an
-implementation within the framework of the \curt system. Further and more
-advanced investigations will be dealt with at the end of this discussion or left
-for further research.
+In the course of this thesis, a new version of \curt will be developed, called
+\acurt. This version is not only aware of its own state, but can also gather
+information about the individuals it knows about. Furthermore, \acurt is
+able to account for several possible readings of a certain sentence at once and
+in parallel, which is a side-effect of the introduction of \term{intensionality}
+into the system.
 
-\section{Theory}
+\acurt is able to parse and, according to the theoretical background of section
+\ref{sec:theory}, correctly interpret sentences as the ones in
+\ref{ex:whemba}-\ref{ex:whembc}.
+
+\ex.
+\a.  Mia knows Vincent snorts.\label{ex:whemba}
+\b.  Mia knows who snorts.
+\b.  Vincent believes that Mia likes Jody.\label{ex:whembc}
+
+For this to work, the internal storage of \curt will have to be restructured
+significantly in order to deal with more than one possible world or situation.
+Its grammar will have to be enhanced so that it can handle \wh-embedding verbs
+like `know' and `believe' and its inferencing mechanisms will have to be
+enhanced.
+
+The following section explains the problems at hand and existing solutions. A
+subset thereof will be implemented in section \ref{sec:implementation}, which
+will also raise some pragmatic issues discussed later on in section
+\ref{sec:discussion}.
+
+\section{Theory}\label{sec:theory}
 
 This section first gives an overview over the terminology that will be used for
 the discussion of the formal treatment of questions. It then elaborates on the
@@ -212,34 +253,29 @@ with the implementation of section \label{sec:implementation} in mind.
 
 \subsection{Terminology}
 
-Following \cite{gs:q}, we will not use the natural natural language word
-``question'' but distinguish between \term{questions},
+Following \cite{gs:q}, we will not use the natural English word
+``question'' in its traditional sense, but distinguish between \term{questions},
 \term{interrogative sentences} and \term{interrogative acts} in the following
 way:
 
 \begin{termin}
   An \term{interrogative} is a certain type of sentence in natural language
-  distinguished by certain features\footnote{To quote \cite{gs:q}: \quote{[An
+  distinguished by certain characteristics\footnote{To quote \cite{gs:q}: \quote{[An
   interrogative sentence is] characterized by word order, intonation, question
   mark, the occurrence of interrogative pronouns}.}
   whereas an \term{interrogative act} refers to the utterance of an
-  \emph{interrogative}. Finally, a 
+  \term{interrogative}. Finally, a
   \term{question} will denote the semantic entity uttered by the
-  \emph{interrogative act}, whichever form it may have.
+  \term{interrogative act}, as it will be introduced in section
+  \ref{sec:protoq}
 \end{termin}
 
-\abbr{Ty2} is two-sorted type logic\footnote{See \cite{gallin:ty2} for a
+The following abbreviations will be used: 
+\abbr{Ty2} stands for two-sorted type logic\footnote{See \cite{gallin:ty2} for a
 discussion and \cite{gs:sqpa} for its usage in describing the semantics of
-questions}. \abbr{IL} is intensional logic\footnote{As used by \cite{ptq}}. 
-An embedded \wh-phrase looks
-like:%fixme
+questions}. \abbr{IL} stands for intensional logic\footnote{As used by \cite{ptq}}. 
 
-\ex. John \stress{knows} \emph{whether} good examples are hard to come up with.
-
-After having elaborated on the grounds of the implementation, we will now
-display the implementation's underlying concepts. % FIXME this sentence is too short
-
-%OUTLINE Presenting a conceptual overview, while arguing for and against stuff.
+%todo OUTLINE Presenting a conceptual overview, while arguing for and against stuff.
 
 First we will present a brief overview of the considerations regarding the
 choice of an appropriate formalism for the system in section \ref{sec:formal}
@@ -455,27 +491,6 @@ Like \emph{believe}.
 
 \section{Implementation}
 
-\subsection{Existing Implementations of Similar Systems}\label{sec:othercrap}
-
-Enhancing \curt by an implementation dealing with questions in natural language
-sparks interest in whether there have been similar efforts made in the past. No
-further extensions to the \curt system aiming at comparable goals are known to the
-author at the time of writing. However, there is a lively interest in providing
-so-called question answering or QA-systems since the early stages of computer
-science. % fixme; cite some ancient 60's paper
-This section discusses a few of the more elaborate approaches: first an early
-but already quite impressive implementation is shown, followed by a newer approach
-using embodied agents and finally an overview over the many database-based
-QA-systems is given. Finally, all this is compared what the current extension to
-\curt can do.
-
-
-\subsubsection{Godot, the Talking Robot}
-
-\subsubsection{CHAT-80}
-
-\subsubsection{Modern Intensional Database Approaches}
-
 \subsubsection{Advertent Curt}
 
 \acurt lends its name from the fact that it is not only aware of its own
@@ -509,8 +524,8 @@ The underlying theory for
 
 \subsubsection{Representing Intensionality in \prol}
 
-\prol programs can be self-modifying, or dynamic. This means that the program is
-able to change its own state and thus store information. 
+\prol programs can be self-modifying, or dynamic. In this way the program is
+able to change its own state and thus store information.
 
 \subsubsection{Disjunction and Ambiguity}
 Consider the following sentences:
@@ -550,32 +565,30 @@ technique employed here can be further refined. %todo: maybe add a footnote
 \curt parses sentences of natural language using an enhanced version of \pn{Cooper
 storage}\footnote{See \cite{cooper:storage2} for the original implementation.} as
 presented in \cite{keller:storage}. \cite{blackburnbos:cl1} call this version
-\pn{Keller storage}. That name will be used from here % FIXME sucks. Please change
+\pn{Keller Storage}. That name will be used from here % FIXME sucks. Please change
 to refer to this particular implementation as presented in
 \cite{blackburnbos:cl1}. 
 
-\pn{Keller storage} is already quite capable
+\pn{Keller Storage} is already quite capable
 of dealing with more complex constituents such as nested noun phrases, but it
 has its limitations. In particular, it can only handle quantifier scope
 ambiguities and does not take negation into account. Moreover, it overgenerates
 with some quantifier scope ambiguities\footnote{\cite{blackburnbos:cl1} mention
-sentences such as \ref{ex:kellersucks}, where Keller storage produces six
+sentences such as \ref{ex:kellersucks}, where Keller Storage produces six
 instead of the desired five readings.
 \ex. One criminal knows every owner of a hash bar\label{ex:kellersucks}
 
 Clearly, \example{a hash bar} cannot take scope over \example{every owner}, but
-Keller storage predicts this reading.}.
+Keller Storage predicts this reading.}.
 
 In order to cope with more complicated quantifier configurations, where
 constraints need to be enforced, and with other kinds of ambiguities,
 Blackburn and Bos present an approach utilizing underspecified representations and
 dominance relations, \pn{Hole Semantics}\footnote{Also presented in % todo:cite
 %Bos' paper
-}. Since, however, none of the cases discussed so far would require the enhanced
-expressive power of \pn{Hole Semantics} it was decided to go on using \pn{Keller
-Storage} instead, since this is what the original implementation of the \curt
-system relies on.
-%todo: fix capitalization in Keller storage all over the document
+}. However none of the cases discussed so far would require the enhanced
+expressive power of \pn{Hole Semantics} it was decided to not change the \curt
+implementation's current architecture which employs \pn{Keller Storage}.
 
 Enhancing the grammatic rules of the \curt system to cope with
 proposition-embedding verbs is made trivial by its elaborate grammatical back
@@ -609,14 +622,16 @@ We will, however depart from the path we have been following throughout this
 paper and first implement a theory for direct questions. Only then will we extend
 it to also cover embedded alternative questions.
 
-\section{Discussion}
+\section{Discussion}\label{sec:discussion}
 
 We have seen, the Curt system is quite capable of treating questions this way.
 Having implemented modality and possible worlds in such a fashion, let's go on
 and implement some even cooler stuff (tense, aspect, negation, comparatives,
 anaphora). Basing all this on a nice implementation of DRT (discussed in
 \cite{kampreyle:drt}) like the one given in \cite{blackburnbos:cl2} might be
-interesting.
+interesting. The Pronto \abbr{QA} system of \cite{prontoqa} already defines a
+means of representing questions and queries against a Discourse Representation
+Structure.
 
 \section{Appendix}
 
