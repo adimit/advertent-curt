@@ -142,21 +142,23 @@ domainSize(15).
 
 % fails if Old is not a curt world or empty
 interpret(Old,New,World) :-
-	getKnowledge(Old,New,BK)
-	, check(and(BK,New),'consistency',World)
+	getKnowledge(Old,New,BK,Others,Reading)
+	, check(and(BK,New),'consistency',BBModel)
 	, check(and(BK,not(New)),'informativity',_)
+	, BBModel = model(D,F)
+	, World = world(D,[curt|Others],Reading,F)
 	.
 
-getKnowledge(world([curt|_Others],Old,_Functions),New,and(BackgroundKnowledge,Old)) :- 
+getKnowledge(world([curt|Others],Old,_Functions),New,and(BackgroundKnowledge,Old),Others,and(Old,New)) :- 
 	backgroundKnowledge(and(Old,New),BackgroundKnowledge).
 
-getKnowledge([],New,BackgroundKnowledge) :- 
+getKnowledge([],New,BackgroundKnowledge,[],New) :- 
 	backgroundKnowledge(New,BackgroundKnowledge).
 
-check(Formula,Reason,Model) :-
+check(Formula,Job,Model) :-
 	domainSize(DomainSize)
 	, callTPandMB(not(Formula),Formula,DomainSize,Proof,Model,Engine)
-	, format('~nMessage (~p checking): ~p found a result.',[Reason,Engine])
+	, format('~nMessage (~p checking): ~p found a result.',[Job,Engine])
 	, \+ Proof=proof, Model=model([_|_],_)
 	.
 
