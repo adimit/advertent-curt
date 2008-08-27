@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 
 %\usepackage[english]{babel}
 
@@ -16,6 +16,7 @@
 \setromanfont [Ligatures={Common,Rare}, BoldFont={Fontin Bold}, ItalicFont={Fontin Italic}]{Fontin Regular}
 \setsansfont [Ligatures={Common}, BoldFont={Fontin Sans Bold}, ItalicFont={Fontin Sans Italic}]{Fontin Sans}
 
+\usepackage{tuebingerspruechle}
 
 \newcommand{\abbr}{\textsf} % how to render abbreviations like IL or Ty2
 \newcommand{\stress}{\textbf} % put stress somewhere (as opposed to \emph)
@@ -27,15 +28,28 @@
 
 % commonly used phrases
 \newcommand{\Disc}{\ensuremath{\mathcal{D}}} % the discourse
-\newcommand{\wh}{\textsc{wh}} %
+\newcommand{\wh}{\textsc{wh}}
 
 %names
-\newcommand{\curt}{\pn{Curt}\mbox{ }}
-\newcommand{\acurt}{\pn{Advertent Curt}\mbox{ }}
-\newcommand{\prol}{\pn{Prolog}\mbox{ }}
+\newcommand{\curt}{\pn{Curt}}
+\newcommand{\acurt}{\pn{Advertent Curt}}
+\newcommand{\prol}{\pn{Prolog}}
+\pagestyle{headings}
 
 %theorem environments
-\theoremstyle{remark} \newtheorem*{termin}{Terminology} % terminology.
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+\theoremstyle{remark}
+\newtheorem*{termin}{Terminology}
+
+\theoremstyle{definition}
+\newtheorem{definition}[thm]{Definition}
+
+\renewcommand{\labelenumi}{(\roman{enumi})}
 
 \bibliographystyle{plainnat}
 \bibpunct{(}{)}{;}{a}{,}{,}
@@ -45,13 +59,28 @@ $\langle$\href{mailto:aleks.dimitrov@googlemail.com}{aleks.dimitrov@googlemail.c
 \title{From Questions to Queries – Enhancing the Curt System by a Theory and Implementation of Embedded WH-Questions}
 
 \usepackage{fontspec}
-\usepackage[xetex,colorlinks,citecolor=magenta]{hyperref}
+\usepackage[xetex,colorlinks]{hyperref}
 \begin{document}
-
+\renewcommand{\thepage}{\roman{page}}
 \maketitle
+\thispagestyle{empty}
+\begin{center}
+  \vskip 4em
+  Thesis submitted for the Degree of Bachelor of Arts\\
+
+  \paragraph{Supervisor:} Dr. Frank Richter
+  \vskip 6em
+  Seminar für Sprachwissenschaft\\
+  Eberhard-Karls-Universität\\
+  Tübingen
+\end{center}
+\newpage
 \tableofcontents
 \newpage
-
+\SpruechleAufsagen{Aleksandar L. Dimitrov}
+\newpage
+\renewcommand{\thepage}{\arabic{page}}
+\setcounter{page}{1}
 \section{Introduction}
 
 
@@ -75,9 +104,9 @@ particular domain. Many such systems exist and they prove to be increasingly
 successful. Some of them will be discussed here and presenting an extension to
 one system in particular is the main matter of this Bachelor's thesis.
 
-\subsection{Premises}
+\subsection{Overview}
 
-The present work will aim to provide the \curt system of
+The present work will aim to provide the \curt{} system of
 \cite{blackburnbos:cl1} with the mechanics of dealing with more than one
 partition of its logical domain, viz. the ability to handle more than one
 \term{possible} or \term{accessible world}. As a ground for development of this
@@ -87,43 +116,51 @@ system's \emph{understanding} or representation of a universe of objects and
 relations.
 
 As the scope of a Bachelor's thesis is limited by its nature, not all of the
-theoretical background can be understood without background knowledge in some
+theory and reasoning can be understood without background knowledge in some
 rather divergent domains. In particular, a basic familiarity with traditional
 \term{natural language semantics} and \term{extensional} as well as
 \term{intensional logic} frameworks will be assumed. Furthermore, a basic
 acquaintance with \term{eroteric logic} will be helpful in understanding some of
 the reasoning in section \ref{sec:theory}.
-
-Some knowledge of the \prol programming language and a good overview of the
-architecture of the \curt system is imperative in order to understand the
+Some knowledge of the \prol{} programming language and a good overview of the
+architecture of the \curt{} system is imperative in order to understand the
 implementation itself.
 
-The first section gives a conceptual overview, introducing the \curt
-system and comparing it to other similar systems in existence. It then goes on
-to explain the target domain of natural language the implementation has to
-account for.
+The first section will give a conceptual overview of the technologies to date
+and the particular software, \curt, that will serve as a basis for extension.
 The next section concerns itself with a more detailed analysis of the theoretic
 assumptions of this implementation and justifies some choices and restrictions
 that had to be made due to the limited scope of this analysis. While the
 third section will display and document the actual implementation on top of the
-\curt system, the last section will discuss the results of this work and also
+\curt{} system, the last section will discuss the results of this work and also
 give a prospect on possible further work on the subject.
 
 
 \section{Concepts}
 
-todo: write something here... :-(
+Computational Semantics is a discipline that has  lately gained a wider
+focus in literature due to recent progress in different areas.
+Current development in computer hardware has made it possible to focus on
+theoretical soundness and important abstract designs and concepts. On the other
+hand, research in both computer science and linguistics has fueled new ideas and
+intriguing hypotheses emerge from the discussion on a very frequent basis.
+
+This section delineates the ground the software presented in this thesis is
+based on. \ref{sec:curt} introduces the base system of the implementation, \curt
+and \ref{sec:comparison} relates it to other similar systems in existence.
+\ref{sec:extension} then goes on to explain where the \curt{} system lacks in
+features and thus exhibits potential for extension.
 
 \subsection{The Curt System} \label{sec:curt}
 
-\curt, a system written in \prol that is able to interpret basic utterances
+\curt, a system written in \prol{} that is able to interpret basic utterances
 of English and store them in expressions of first order logic, is
 presented in \cite[chapter 6]{blackburnbos:cl1}. While relatively limited when
 compared to other systems presented in \ref{sec:comparison} in terms of lexical
 and grammatical coverage, it provides a sound basis for extended work because of
 its coherent design and relative simplicity.
 
-Besides parsing and translating utterances into logic, \curt is able to perform
+Besides parsing and translating utterances into logic, \curt{} is able to perform
 basic checks for \emph{consistency} and \emph{informativity} on the resulting
 formulae -- within the bounds of the tools it uses.
 It can thus detect incoherent discourse and would reject a sequence of
@@ -132,7 +169,7 @@ like Peter''}, claiming it found a contradiction in its input. The discourse is
 then said to be \term{inconsistent} with the new input.
 
 For every input
-sentence, \pn{Curt} will also try to infer whether the current discourse would
+sentence, \curt{} will also try to infer whether the current discourse would
 entail the information it contains and would thus be \term{uninformative} with
 respect to previous utterances – effectively allowing it to
 reduce the size of its internal representation of the discourse by avoiding to
@@ -140,7 +177,7 @@ add clauses to its database that would not contribute to the overall information
 already present in the program.
 
 The final chapter of \cite{blackburnbos:cl1} introduces the implementation
-incrementally, presenting new versions of \curt that add to the software's
+incrementally, presenting new versions of \curt{} that add to the software's
 feature set. Support for external inferencing via theorem provers and model
 builders is added right after the first naïve implementations and
 finally an ontology and a straight-forward way of parsing and answering direct
@@ -153,14 +190,19 @@ will be introduced one at a time.
 
 Generally, question answering and semantic parsing are not related and seldom
 interdependent in current implementations of similar systems, with a few notable
-exceptions.
+exceptions. As question answering becomes a more and more sophisticated task,
+the systems employed gather an increasing capability of \emph{understanding}
+their (input) domain. On the other side of the fence, interest in reasoning
+tools and inference engines operating on natural language have grown
+considerably over the past decade and some have stretched out to encompass more
+advanced domains of logic and discourse representation.
 
 \cite{chat} are among  the first to attempt creating a question answering system
 with deep semantic coverage. Their effort has been focused on the geographical
 domain, and their implementation, dubbed \pn{CHAT-80}, is written entirely in
 \prol. The lack of hardware resources of that time forced the system to be
 written with efficiency in mind. Moreover, it had to maintain a statical
-database of facts which was hand-crafted. The \curt system is built on  an
+database of facts which was hand-crafted. The \curt{} system is built on  an
 entirely different set of premises and aims to provide a proof-of-concept of a
 more general purpose system that is also able to extend its knowledge
 dynamically.
@@ -190,70 +232,83 @@ appropriate? %todo
 
 \cite{prontoqa} introduce the \pn{Pronto QA System}, which couples traditional
 corpus-based \abbr{QA} techniques with deep semantic parsing based on
-\term{Discourse Representation Theory}.
+\term{Discourse Representation Theory}. It is one of the few \abbr{QA} systems
+with a capability of reasoning about its input text. Unfortunately, there seems
+to be no working demo to date. The homepage of the ongoing efforts of Johan Bos
+and his team can be found at the following address:
+\href{http://svn.ask.it.usyd.edu.au/trac/candc/}{\url{http://svn.ask.it.usyd.edu.au/trac/candc/}}.
 
-A very interesting project, called \pn{Godot} is introduced in \cite{godot}.
+\pn{Godot}, a very interesting project, is introduced in \cite{godot}.
 \pn{Godot} is a so-called \term{embodied agent}, a robot with a sophisticated
 software driving interaction with the outer world. As such its conception of
 discourse not only relies on spoken dialogue, but also on sensory input.
 \pn{Godot} is focused on executing orders -- after evaluating their feasibility
-in its particular discourse model -- and does so far not support the answering
+in its particular discourse model -- and does so far not seem to support the answering
 of questions about its state.
 
-\subsection{Extending the Curt System}
+\subsection{Extending the Curt System}\label{sec:extension}
 
-At the end of \cite{blackburnbos:cl1}, \curt is able to cope with a small
+At the end of \cite{blackburnbos:cl1}, \curt{} is able to cope with a small
 grammar and provides some features for interaction in natural
 language. It does only understand basic extensional transitive and intransitive
 verbs and its support for question answering remains limited.
 Anaphora resolution still remains an open issue.
 
-In the course of this thesis, a new version of \curt will be developed, called
+In the course of this thesis, a new version of \curt{} will be developed, called
 \acurt. This version is not only aware of its own state, but can also gather
-information about the individuals it knows about. Furthermore, \acurt is
-able to account for several possible readings of a certain sentence at once and
-in parallel, which is a side-effect of the introduction of \term{intensionality}
-into the system.
+information about the individuals it knows about. Furthermore, \acurt{} is able
+to account for several possible readings of a certain sentence at once and in
+parallel, which is a side-effect of the introduction of the notion of
+\term{possible worlds} into the system.
 
-\acurt is able to parse and, according to the theoretical background of section
+\acurt{} is able to parse and, according to the theoretical background of section
 \ref{sec:theory}, correctly interpret sentences as the ones in
 \ref{ex:whemba}-\ref{ex:whembc}.
 
 \ex.
-\a.  Mia knows Vincent snorts.\label{ex:whemba}
+\a.  Mia knows (whether) Vincent snorts.\label{ex:whemba}
 \b.  Mia knows who snorts.
 \b.  Vincent believes that Mia likes Jody.\label{ex:whembc}
 
-For this to work, the internal storage of \curt will have to be restructured
+For this to work, the internal storage of \curt{} will have to be restructured
 significantly in order to deal with more than one possible world or situation.
 Its grammar will have to be enhanced so that it can handle \wh-embedding verbs
-like `know' and `believe' and its inferencing mechanisms will have to be
-enhanced.
-
-The following section explains the problems at hand and existing solutions. A
-subset thereof will be implemented in section \ref{sec:implementation}, which
-will also raise some pragmatic issues discussed later on in section
-\ref{sec:discussion}.
+like `know' and `believe' and its inferencing mechanisms are going to be
+employed in a different manner. %todo sucks.
 
 \section{Theory}\label{sec:theory}
 
-This section first gives an overview over the terminology that will be used for
-the discussion of the formal treatment of questions. It then elaborates on the
-differences between different logical formalisms employed in the treatment of
-natural language questions. After a small overview on the types of questions
-(and pointing out the subset of questions that will be treated), %fixme maybe a
-% bit sloppy
-the discussion
-turns to how those questions are best treated in the given formalism.
+Question semantics has traditionally been a very sophisticated field of
+linguistics and philosophy, with many different approaches arguing for and
+against each other. This section will not try to give an exhausting overview of
+the field of question semantics since this would be a task of considerable size
+and by far beyond the scope of this thesis\footnote{For a good summary of some
+of the literature, particularly the issue of whether questions are a concern of
+pragmatics or semantics, consider \cite[section 2 and 3]{gs:q}.}. Instead, it
+was chosen to roughly follow the work by Groenendijk and Stokhof, lending from
+other places where deemed appropriate or practical. As such, the theoretical
+framework of \acurt{} is not going to be an exact realization of any particular
+approach to question semantics, but rather an accumulation of interesting
+concepts from different sources. The main sources, however, are \cite{gs:q} and
+\cite{gs:sqpa}.
 
-The reader should note that all choices presented in this section have been made
-with the implementation of section \label{sec:implementation} in mind.
-% todo talk a bit more
+Following an overview of the terminology that will be used for the discussion of
+the formal treatment of questions, an  elaboration on the differences between
+different logical formalisms employed in the treatment of questions in natural
+language sets the stage for the discussion of some theoretical frameworks and
+issues. Then, the target domain of natural language is introduced by examples
+alongside the mechanisms employed to interpret them. 
 
+Note, however, that all choices presented in this section have been made
+with the implementation of section \ref{sec:implementation} in mind.
+Sometimes, theoretical soundness might suffer from these choices as the main
+goal of the present work is to provide a proof-of-concept of a software that is
+able to reason about possible worlds, employing first-order logic inferencing
+tools. % really? fix your title then, would you? … doh. fixme
 
 \subsection{Terminology}
 
-Following \cite{gs:q}, we will not use the natural English word
+Following \cite{gs:q}, we will not use the English word
 ``question'' in its traditional sense, but distinguish between \term{questions},
 \term{interrogative sentences} and \term{interrogative acts} in the following
 way:
@@ -270,85 +325,117 @@ way:
   \ref{sec:protoq}
 \end{termin}
 
+Furthermore, interrogatives are split into several major categories.
+
+\ex. \a. \label{ex:yesno} Q: Does Mia smoke? A: \emph{Yes.} or \emph{No.}
+\b. \label{ex:const} Q: Who smokes? A: \emph{Mia smokes.} or \emph{Vincent
+somkes.} or \emph{Nobody smokes.}
+
+Example \ref{ex:yesno} is considered an \term{alternative question} or
+\term{yes/no-interrogative} since only \emph{yes} and \emph{no} are possible
+answers to this interrogative. \ref{ex:const} on the other hand is considered a
+\term{\wh-question} or \term{constituent interrogative} since one of the
+sentences' nominal constituents is replaced by a \wh-pronoun, prompting an
+enumeration of possible fillers for the resulting gap as an answer.
+
 The following abbreviations will be used: 
 \abbr{Ty2} stands for two-sorted type logic\footnote{See \cite{gallin:ty2} for a
 discussion and \cite{gs:sqpa} for its usage in describing the semantics of
-questions}. \abbr{IL} stands for intensional logic\footnote{As used by \cite{ptq}}. 
+questions}. \abbr{IL} stands for intensional logic\footnote{As used by
+\cite{ptq}. See also \cite{gamut:2} for an excellent introduction to \abbr{IL}.},
+\abbr{FOL}  is used as an abbreviation for first order logic.
 
-%todo OUTLINE Presenting a conceptual overview, while arguing for and against stuff.
-
-First we will present a brief overview of the considerations regarding the
-choice of an appropriate formalism for the system in section \ref{sec:formal}
-to then compare it with already existing implementations of question answering
-systems in \ref{sec:othercrap}.
-
-\subsection{Formalism}\label{sec:formal}
-
-% FIXME if we have a `Terminology' section, all those `henceforths' aren't really
-% necessary anymore.
+\subsection{Formalism: Models}\label{sec:formal}
 
 Most of the traditional literature in natural language semantics follows
 \cite{ptq} and thus also makes use of its underlying formalism,
-\emph{Intensional Logic} (henceforth \abbr{IL}). \cite{gs:sqpa} (and many subsequent
-publications) however also use two-sorted type logic (henceforth \abbr{Ty2}) as
+\abbr{IL}. \cite{gs:sqpa} however use \abbr{Ty2} as it was
 proposed in \cite{gallin:ty2}. \cite{z:ilty2} discusses the differences and
 similarities in expressive power between \abbr{Ty2} and \abbr{IL} and comes to
 the conclusion that the set of expressions contained in the former but not in
 the latter might not be relevant for the treatment of natural language
 semantics. Although he proposes a translation scheme between both languages,
 translation from \abbr{Ty2} to \abbr{IL} seems to sometimes produce very complex
-\abbr{IL} terms and is therefore avoided here. In fact, \abbr{IL} will be only
-marginally relevant for the presentation of \acurt – only the type system
-presented in \cite{ptq} is carried over.
+\abbr{IL} terms.
 
-% OK till now, but the rest is a fixme :-(
-
-Since this paper is not concerned with possible extensions of the underlying
-theories of treating natural language questions, but rather with their
-implementation in the programming language \pn{Prolog} several additional
-constraints have to be considered. Among them the \emph{feasibility} of any
-possible approach takes highest precedence.
-
-To quote \cite{blackburnbos:cl1}:
-
-\begin{quote}
-  Questions, unlike assertions, don't have truth-values, so it would be
-  misleading to represent them as ordinary formulas.
-\end{quote}
-
-It is important to note that this claim is not undisputed and
-\cite{karttunen:1977}, argues against it. The present approach, however will
-base itself on this assumption and extend it by more formal approaches than the
-one given by Blackburn \& Bos. Specifically, the work by J. Groenendijk and M. Stokhof
-will lay ground to the implementation. But in order to realise their formal
-discussions computationally, modifications will have to be made, and even
-compromises.
-
-As was already mentioned in \ref{sec:curt}, Curt is based on an
-implementation and the use of external tools only capable of treating first
-order logic – an extensional framework. \prol on the other hand, is a language
-that can very well make use of higher order formalisms for
-calculation\footnote{The two most popular predicates in \prol used for
-implementing higher-order logic are
+As was already mentioned in \ref{sec:curt}, \curt{} is based on 
+the use of external tools only capable of treating first order logic – an
+extensional framework. \prol{} on the other hand, is a language that can very well
+make use of higher order formalisms for calculation\footnote{The two most
+popular predicates in \prol{} used for implementing higher-order logic are
 \code{call/n} and \code{apply/3}. This paper is based on \pn{SWI-Prolog} which
-provides an implementation of the former, but not of the latter. See
-\cite{naish:prolhio} for a discussion of higher order functional programming in
-\prol.}.
+provides an implementation of the former, but not of the latter. In addition
+\pn{SWI-Prolog} also defines several higher order aggregate functions, including
+\code{maplist/4}, which will be used later on. See \cite{naish:prolhio} for a
+discussion of higher order functional programming in \prol.}.  While there exist
+inferencing tools for modal logic\footnote{ The interested reader is referred to
+\pn{Molle} (\url{http://molle.sf.net}), a modal theorem prover that comes with a
+graphical user interface which allows interactive investigation of the
+constructed indices.}, a restructuring of the \curt{} system to take advantage
+of them would be beyond the scope of this thesis.  It was therefore decided to
+avoid modal logic and implement a pragmatic approach to representing the indices
+of higher-order logic.
 
-While there exist inferencing tools for modal logic\footnote{See %todo todo and todo 
-for discussions. The interested reader is also referred to \pn{Molle}
-(\url{http://molle.sf.net}), a modal theorem prover that comes with a graphical user
-interface which allows interactive investigation of the constructed indices.},
-a restructuring of the \pn{Curt} system to take advantage of them would be
-beyond the scope of this thesis.
+Some research on the logic of questions (eroteric logic) suggests that the
+treatment of interrogatives demands its own formalism.  \acurt{} employs a
+formalism that departs from both \abbr{IL} and \abbr{Ty2} in some ways. Most
+notably, the notion of a \term{model} is changed as follows, in order to
+accommodate the question operator introduced further on, which demands a set of
+possible worlds to be available.
 
-It was therefore decided to avoid modal logic and implement a pragmatic approach
-to representing the indices of higher-order logic in \prol in section
-\ref{sec:indices}. This logic however has to be augmented with question
-operators as already used by \cite{karttunen:1977}. % todo: writeme!
+\begin{definition}\label{Models}
+  \stress{Models\footnote{See also the Appendix, section \ref{sec:examplemodel}
+  for an example of such a model.}}
+  \begin{enumerate}
+    \item A model is a set of pairs of \term{indices} $i$ and \term{possible
+    worlds} $w$: $\pair{i,w} \in M$. 
+    \item A world $w$ at index $i$, $\pair{i,w} \in M$ is a triple of $D$, the set
+    of individuals, $F$, the set of functions, and $\varphi$ a first-order
+    logical formula that holds in this particular model: $w = \pair{D,F,\varphi}$
+    \item A \term{function} $f \in F$ is one of the following: 
+    \begin{itemize}
+      \item $f(a,\sigma,L)$, where $\sigma$ is the function symbol, $a$ denotes
+      the function symbol's arity and $L$, the set of arguments, for which the
+      following holds: $|L| = a$,
+      $L = \set{\pair{x_1,\ldots{},x_a}|x_1,\ldots{},x_a \in D}$
+      \item The special case $f(0,\sigma,c)$, where $c \in D$, which denotes the
+      assignment of a proper name $\sigma$ to $c$.
+    \end{itemize}
+    \item $\pair{i,w}, \pair{j,w'} \in M, w = w'$ iff $w = \pair{D,F,\varphi}, w' =
+    \pair{D',F',\varphi'}$ and $\varphi = \varphi'$.
+    \item If $W \in M$, then we say $\forall W$ quantifies over all members of $M$.
+    \item If $W \in M$, then we say $\exists W$ quantifies over the existence of
+    one member of $M$, namely $|M| \geq 1$ and $W \in M$.
+  \end{enumerate}
+\end{definition}
 
-\cite{g:is} presents an approach to implementing inquisitive semantics in
-predicate logic.
+One of the more important differences to the `traditional' notion of a model, is
+that it was decided to assign every world a unique domain of discourse referents
+or \term{individuals}. Note that there is no requirement $\pair{i,\pair{D,F}},
+\pair{j,\pair{D',F'}} \in M \wedge D\neq D'$, and most of the time, a model's
+possible worlds will indeed share many of their individuals or have entirely
+equal domains, but diversion in the world's domains will sometimes be useful and
+unavoidable.
+
+Moreover, every possible world carries a formula $\varphi$, to which $\pair{D,F}$
+is the minimal extensional model. This justifies the choice to define equality
+of possible worlds in terms of equality between the logic expressions $\varphi$
+they carry. This is also necessitated by the fact that \acurt{}  only reasons,
+i.e. runs its reasoning tools on these formulae and can therefore not make a
+difference between possible worlds in any other terms. $\pair{D,F}$ will serve
+only as a ground for answering questions. This entails, that the traditional
+difference between \term{models} and \term{readings} present in \curt, is not
+carried over, but instead the readings are now constituents of a model.
+
+Defining quantification over world-index pairs enables \acurt{} to make a
+distinction between \term{exhaustive} and \term{partial answers}. See section
+\ref{sec:answerhood}.
+
+Finally, logic expressions in \acurt{} do not typically carry any kind of type,
+since \prol{} does not employ a type system. The grammar rules of \curt{} (which
+\emph{do} have \stress{syntactic} types) ensure a correct application of
+unsaturated formulae. They belong in the domain of first-order predicate logic,
+with two enhancements, introduced in section \ref{sec:protoq} and \ref{sec:epistemic}
 
 \subsection{On the Proper Treatment of Questions}
 
@@ -360,6 +447,12 @@ of questions seems to demand that we introduce a new kind of logic formalism.
 But as interesting topics go, the semantics of questions has attracted many
 different views on this issue.
 
+This section is going to elaborate on some of the approaches in greater detail
+and also explain \acurt's notion of a question in particular. Note that the
+latter differs from the literature, but most differences are superficial.
+
+\subsubsection{The Question of Domain}
+
 Often question semantics has been reduced to a problem of
 pragmatics, treating direct interrogatives as nothing more than a
 paraphrase of embedded interrogatives.\cite{tichy}
@@ -370,53 +463,22 @@ different `attitude' in the speaker's utterance. Putting this attitude into
 context and making it yield the correct results would then be left to
 pragmatics.
 
-This approach has been challenged and proven unfeasible by \cite{gs:q},
-who have also proposed interesting extensions
-to the existing logic frameworks used in natural language semantics.
-More recent publications, such as \cite{gal:tmbi}
-address this topic and aim to introduce notions of \term{information change
-potential} as opposed to the traditional focus of natural language semantics on
-\term{truth values}.
+The issue is ultimately whether the answering of questions belongs in the realm
+of pragmatics or semantics. Tichy's approach has been challenged and proven
+unfeasible by \cite{gs:q}, who argue for a semantic interpretation of questions.
+They also propose certain adequacy criteria for theories of the semantics of
+questions in order to be able to compare different approaches made in the
+literature and also to defend their own solution. Their analysis is based on the
+introduction of another type of logical expression, an \term{interrogative}.
+In contrast to indicatives, interrogatives do not yield a truth value, but
+instead pose a \emph{question}. They will be formally introduced in section
+\ref{sec:protoq}.
 
-The present work will rely on \cite{gs:q} for providing the main guidelines for
-the theoretic aspects and also lend from earlier works, most importantly
-\cite{gs:sqpa}\footnotemark. Later on, in section \ref{sec:altq} we will also
-discuss the very newest (at the time of writing) developments in question
-semantics, depicted in \cite{g:is}.
-
-\footnotetext{\cite{gs:sqpa} is actually a series of three articles
-that have appeared before. Among them, we will mostly consider \cite{gs:sawhq}.
-Both, the earlier paper and the later dissertation (and many other papers
-originating in Amsterdam) have been kindly made
-available electronically, free of charge, by the Universiteit van Amsterdam at
-the following address: \url{http://dare.uva.nl}}
-
-
-\subsubsection{Pragmatics and Semantics of Questions}
-
-In choosing to treat only embedded questions, we can escape most pragmatic
-considerations and focus on the (implementation of) pure semantics of
-interrogatives.
-
-\subsection{Classification of Interrogatives}
-
-When treating questions one will be confronted with many different
-categorizations of questions. One of the first distinctions to make is the one
-between \term{embedded questions} as in \ref{ex:embed} and \term{direct
-questions} shown in \ref{ex:direct}.
-
-\ex. \a. John knows \emph{whether this sentence contains an embedded
-question}.\label{ex:embed}
-\b. Does this sentence pose a direct question?\label{ex:direct}
-
-As indicated already by the title, this paper will concern itself with the
-treatment of the former and only briefly comment on the latter. The reasons for
-this are numerous  %fixme I need a synonym for that
-and this section is going to name the most important ones.
-
-Early literature, such as \cite{karttunen:1977} only regards embedded
-\wh-phrases, treating direct questions as semantically equivalent. To quote
-Karttunen:
+It is important to note that \cite{karttunen:1977} attempts a treatment of
+questions in a similar manner, but also \emph{denies} a difference in logical
+type for questions as such. According to his hypothesis, direct questions are a
+syntactic variant of indirect (embedded) questions and yes/no interrogatives are
+a ``syntactically degenerate variant'' of constituent interrogatives.
 
 \begin{quote}A direct question can be treated as semantically equivalent to a
 certain kind of declarative sentence containing the corresponding indirect
@@ -424,24 +486,148 @@ question embedded under  a suitable `performative' verb.\end{quote}
 
 Using this strategy, Karttunen escapes the treatment of direct  questions and
 thus gives an approach for indirect questions only.
+In this respect, his analysis is in certain aspects similar to the one presented in
+\cite{gs:sawhq}, but the latter goes on to challenge certain aspects of his
+hypothesis.
 
-\subsubsection{An Ontology of Embedding Verbs}
+\cite{blackburnbos:cl1} treat interrogatives in a similar manner as \cite{gs:q},
+using a special operator. From chapter six of \cite{blackburnbos:cl1}:
 
-\cite{karttunen:1977} introduces means of classification for \wh-embedding
-verbs, the nature of which \cite{lahiri:diss} covers in a much broader scope.
-The different verb classes ask for different strategies of treating the
-\wh-clauses they embed and also pose different restrictions on the type of
-clause they expect.
+\begin{quote}
+  Questions, unlike assertions, don't have truth-values, so it would be
+  misleading to represent them as ordinary formulas.
+\end{quote}
 
-The present work will not consider a full analysis of \wh-embedding verbs, but
-confine itself on a few ones, namely \example{know}, \example{think} and
-\example{believe}. The grammar implementation of \acurt allows for \wh-embedding
-verbs to have a \code{type} field, determining their semantic denotation. The two
-types used so far are \code{assert} for assertive verbs such as \example{know}
-and \code{stipul} for stipulating verbs, such as \example{believe} and
-\example{think}.
+Their notion of questions will be extended for \acurt in order to account for
+yes/no interrogatives and larger sets of answers made possible by using model
+which allow for possible worlds.
 
-\subsubsection{Grammatic Constraints}
+
+Another important distinction in the definition of questions, is the definition
+of \term{answerhood}, or, what constitutes a valid answer to a given
+interrogative. The ground-laying work by \cite{hamblin:q} states that in knowing
+all possible answers to a question, one also knows the question itself. The
+notion of answerhood is going to be elaborated on in section \ref{sec:answerhood}
+
+One thing remains clear though, no matter what the notion of a question or
+finding an answer to it is; upon
+finding an answer, said answer has to be \emph{realized} in natural language
+using text or speech synthesis. When realizing an answer, many pragmatic
+considerations have to be taken into account.
+However, as the uttering of an embedded question does not prompt an
+answer\footnote{Unless, of course, the question is uttered as an
+\term{imperative} -- but this would pose an entirely different class of problem
+that is not discussed here.}, the present
+work will not directly concern itself with a solution to this problem.
+
+Constituent interrogatives also differ in what they ask for. One can assume the existence of at
+least three different types:
+
+\begin{enumerate}
+  \item NP-questions ask for a noun phrase, e.g. \example{Who shot Vincent?
+  Butch} or even more then one noun phrase at the same time \example{Who had
+  what in the hash bar?}
+  \item PP-questions ask for prepositional constituent, e.g. \example{Where did
+  Jules stay? In Amsterdam.}
+  \item VP-questions ask for an action performed by an individual, e.g.
+  \example{What did Butch do? He shot Vincent.}
+  \item Temporal questions ask for the date of a certain event, e.g.
+  \example{When did Butch shoot Vincent? When he entered the toilet.}
+  \item etc\ldots
+\end{enumerate}
+
+This classification of interrogatives can go on for quite some more entries,
+including temporal, modal, causal and all sorts of other questions. Out of all
+those categories, only NP-questions will be supported, with an option to
+integrate other sorts of questions at a later stage.
+
+The remainder of this section will mostly compare the first (purely extensional)
+approaches by \cite{blackburnbos:cl1} with the more general framework of
+\cite{gs:q} and come up with a representation of the latter within the lines of
+the implementation of the former. It will assume a modal logic as was discussed
+in section \ref{sec:formal}, but an effort is made to isolate the reasoning on
+possible worlds in just a few rules, so the rest of the framework can stay
+extensional and thus benefit from \curt's external reasoning tools and present
+internal mechanisms.
+
+\subsubsection{The Semantics of Interrogatives: The ? Operator}\label{sec:protoq}
+
+\pn{Helpful Curt}, the most advanced version of \curt{} \cite{blackburnbos:cl1}
+present, only addresses the problem of direct constituent interrogatives and
+does neither treat yes/no interrogatives nor embedded questions. \acurt treats
+embedded questions by embedding a special construct, a \term{proto-question},
+under verbs of certain types (which are going to be discussed in
+\ref{sec:ontology}). Furthermore, the yes/no interrogative is considered a
+special case of the constituent interrogative.
+
+\begin{definition}\label{def:qop}
+  \stress{The Question Operator}
+  \begin{enumerate}
+    \item If $\varphi$ is a proposition in which the free variables
+    $x_1,\ldots,x_n$ for arbitrary values of $n \geq 1$ occur,
+    $?\pair{x_1,\ldots,x_n}.\varphi$ denotes a \term{question}, associated with
+    a constituent interrogative.
+    \item If $\varphi$ does not contain any free variables, $?.\varphi$ is
+    considered a question associated wit a yes/no interrogative.
+    \item The question operator does \emph{not combine} with any other operator.
+  \end{enumerate}
+\end{definition}
+
+To give two examples of the use of the question operator:
+
+\ex. \a. Who shot Vincent?
+\b. $?x.shot(x,vincent)$
+
+\ex. \a. (Does) Vincent snort(s) or smoke(s)?
+\b. $?.snort(vincent) \vee smoke(vincent)$
+
+In the latter example, English grammar in written form will demand the phrase to
+contain the auxiliary verb \emph{does}, although spoken form would permit
+\example{Vincent \stress{snorts}?} as a question with a certain intonation
+pattern on the verb. This is not of relevance to the treatment of embedded
+questions, where the auxiliary is not needed.
+
+Note that the last clause of definition \ref{def:qop} enforces the question operator to
+always be the last operator of a formula of propositional logic. Embedded
+questions will thus not have to operate on the questions directly, but rather on
+their value (answers), or the set of propositions they denote.
+
+As was already mentioned, \pn{Helpful Curt} already has a certain albeit limited
+support for evaluating NP constituent interrogatives. Blackburn and Bos adopt a
+sort of pseudo-notation of the question operator in what they call an
+extra-logical form which does not itself a yield a truth value, but is
+internally evaluated in a special case.
+
+
+They treat a question as a sort of \emph{quantification
+over a certain individual $X$, for which $R$ and $S$ must hold.} Thus a parse of
+a sentence like \ref{ex:bbqueexa} and \ref{ex:bbqueexb} would yield the representation given in
+\ref{ex:bbqueparsea} and \ref{ex:bbqueparseb}.
+
+\ex. \a. \label{ex:bbqueexa} Which boxer likes Jody?
+\b. \label{ex:bbqueparsea} \code{que(X, boxer(X), like(X, jody))}
+
+\ex. \a. \label{ex:bbqueexb} Who shot Vincent?
+\b. \label{ex:bbqueparseb} \code{que(X, person(X), shoot(X, vincent))}
+
+The aforementioned special case in \pn{Helpful Curt} only evaluates a question
+against the extensional model which is used as a representation of \curt's state
+and knowledge. In this it differs substantially from the approaches made by
+Groenendijk and Stokhof and also later approaches by \cite{g:is}. \acurt will
+bridge the gap between the two.
+
+\subsubsection{What Answers the Question?}\label{sec:answerhood}
+
+from questions...
+                   Hamblin’s postulates read as follows:
+     (i) An answer to a question is a sentence, or statement.
+    (ii) The possible answers to a question form an exhaustive set of mutually
+exclusive possibilities.
+   (iii) To know the meaning of a question is to know what counts as an answer to
+that question.
+
+
+\subsubsection{The Syntax of Questions}
 
 With this ontology in mind, the next step is to analyse and enumerate the sorts
 of grammatic constructions that are to be treated. The following examples will
@@ -472,9 +658,45 @@ Nevertheless, both are treated in the following analysis, but with a focus on
 the treatment of assertive \wh-embedding verbs.
 
 
-\subsubsection{Extensional WH-embedding Verbs}
+\subsection{Embedded Questions}
 
-Like \emph{know}.
+When treating questions one will be confronted with many different
+categorizations of questions. One of the first distinctions to make is the one
+between \term{embedded questions} as in \ref{ex:embed} and \term{direct
+questions} shown in \ref{ex:direct}.
+
+\ex. \a. John knows \emph{whether this sentence contains an embedded
+question}.\label{ex:embed}
+\b. Does this sentence pose a direct question?\label{ex:direct}
+
+As indicated already by the title, this paper will concern itself with the
+treatment of the former and only briefly comment on the latter. The reasons for
+this are numerous  %fixme I need a synonym for that
+and this section is going to name the most important ones.
+
+Early literature, such as \cite{karttunen:1977} only regards embedded
+\wh-phrases, treating direct questions as semantically equivalent. To quote
+Karttunen:
+
+
+
+\subsubsection{Types of Facts, Assertions and Interrogatives}
+
+\subsubsection{Towards an Ontology of Embedding Verbs}\label{sec:ontology}
+
+\cite{karttunen:1977} introduces means of classification for \wh-embedding
+verbs, the nature of which \cite{lahiri:diss} covers in a much broader scope.
+The different verb classes ask for different strategies of treating the
+\wh-clauses they embed and also pose different restrictions on the type of
+clause they expect.
+
+The present work will not consider a full analysis of \wh-embedding verbs, but
+confine itself on a few ones, namely \example{know}, \example{think} and
+\example{believe}. The grammar implementation of \acurt{} allows for \wh-embedding
+verbs to have a \code{type} field, determining their semantic denotation. The two
+types used so far are \code{assert} for assertive verbs such as \example{know}
+and \code{stipul} for stipulating verbs, such as \example{believe} and
+\example{think}.
 
 We first derive know(john,all(X,imp(woman(X),love(X,john)))) from the syntax of
 john knows whether every woman loves john, then we see if
@@ -485,15 +707,51 @@ not true. If it's true, we assert he knows that.
 For whether we can ridicule him if it's not true (inconsistent).
 The MB/TP do a comparison \Disc to all(X,imp(woman(X),love(X,john)))
 
-\subsubsection{Intensional WH-embedding Verbs}
+\subsubsection{Modeling Knowledge}\label{sec:epistemic}
 
-Like \emph{believe}.
+\subsection{Treating Disjunction}
 
-\section{Implementation}
+\subsection{Inquisitive Semantics}\label{sec:altq}
+
+The very latest research now focusses on providing an adequate logical semantics
+for treating questions and even discourse within a dialogue. Groenendijk, in his
+theory he calls ``Inquisitive Semantics'', argues for a completely new of of
+treating dialogues (``Dialogue Management'') -- which naturally includes a
+treatment of questions. His work on this topic has been prepared in \cite{g:is}
+and is further developed in the notes to his course held at ESSLLI in Hamburg
+(\cite{g:isdm}), just two weeks before work on this paper was to be finished.
+Because of this time constraint, and because the latter paper is to date an
+unfinished document, his theory could not be considered as a ground for the
+implementation of \acurt. His findings, however, may very well serve as a ground
+for further research on dialogue systems.
+
+\subsubsection{The Rest}
+
+
+The present work will rely on \cite{gs:q} for providing the main guidelines for
+the theoretic aspects and also lend from earlier works, most importantly
+\cite{gs:sqpa}\footnotemark. Later on, in section \ref{sec:altq} we will also
+discuss the very newest (at the time of writing) developments in question
+semantics, depicted in \cite{g:is}.
+
+\footnotetext{\cite{gs:sqpa} is actually a series of three articles
+that have appeared before. Among them, we will mostly consider \cite{gs:sawhq}.
+Both, the earlier paper and the later dissertation (and many other papers
+originating in Amsterdam) have been kindly made
+available electronically, free of charge, by the Universiteit van Amsterdam at
+the following address: \url{http://dare.uva.nl}}
+
+
+\section{Implementation} \label{sec:implementation}
+
+Originally, \prol{} was conceptualized as a programming language for a subset of
+first-order logic. This entails the predominant usage of \abbr{FOL} in section
+\ref{sec:implementation}, but some higher order predicates introduced to the
+language in recent years will also be put to use.
 
 \subsubsection{Advertent Curt}
 
-\acurt lends its name from the fact that it is not only aware of its own
+\acurt{} lends its name from the fact that it is not only aware of its own
 knowledge and presuppositions, but `knows' about what individuals in its
 model of the world are aware of. It is not in this sense a question
 \emph{answering} system, but it may be seen as an early effort towards providing
@@ -522,9 +780,9 @@ knowledge in order to be able to discriminate people's knowledge and beliefs.
 
 The underlying theory for 
 
-\subsubsection{Representing Intensionality in \prol}
+\subsubsection{Representing Intensionality in \prol{}}
 
-\prol programs can be self-modifying, or dynamic. In this way the program is
+\prol{} programs can be self-modifying, or dynamic. In this way the program is
 able to change its own state and thus store information.
 
 \subsubsection{Disjunction and Ambiguity}
@@ -540,7 +798,7 @@ generate \emph{one} possible answer to both questions, effectively accounting on
 for one possible constituent of the disjunction, prefixing it with a `maybe' to
 indicate its uncertainty.
 
-Another example where \curt has to sacrifice exhaustiveness over its one-world
+Another example where \curt{} has to sacrifice exhaustiveness over its one-world
 representation of the world is given in \ref{ex:ambig}
 
 \ex.\label{ex:ambig} Every boxer likes a woman.
@@ -548,10 +806,10 @@ representation of the world is given in \ref{ex:ambig}
 This will generally generate two readings, but only one model -- with only one
 world. And further discourse will have to choose between one of the readings and
 stick with the minimal model constructed by the model builder. This is not
-really satisfactory and extending the dimensions of knowledge within \curt seems
+really satisfactory and extending the dimensions of knowledge within \curt{} seems
 necessary in order to treat such examples.
 
-The previous work on \acurt enables it to generate a \term{choice point} -- and
+The previous work on \acurt{} enables it to generate a \term{choice point} -- and
 moreover, not pursue only one path of it, but both at the same time, by
 generating more than one world in its model.
 Unfortunately, this will build up very large models over time and computations
@@ -562,7 +820,7 @@ technique employed here can be further refined. %todo: maybe add a footnote
 
 \subsubsection{Defining the Grammar Rules}
 
-\curt parses sentences of natural language using an enhanced version of \pn{Cooper
+\curt{} parses sentences of natural language using an enhanced version of \pn{Cooper
 storage}\footnote{See \cite{cooper:storage2} for the original implementation.} as
 presented in \cite{keller:storage}. \cite{blackburnbos:cl1} call this version
 \pn{Keller Storage}. That name will be used from here % FIXME sucks. Please change
@@ -587,10 +845,10 @@ Blackburn and Bos present an approach utilizing underspecified representations a
 dominance relations, \pn{Hole Semantics}\footnote{Also presented in % todo:cite
 %Bos' paper
 }. However none of the cases discussed so far would require the enhanced
-expressive power of \pn{Hole Semantics} it was decided to not change the \curt
+expressive power of \pn{Hole Semantics} it was decided to not change the \curt{}
 implementation's current architecture which employs \pn{Keller Storage}.
 
-Enhancing the grammatic rules of the \curt system to cope with
+Enhancing the grammatic rules of the \curt{} system to cope with
 proposition-embedding verbs is made trivial by its elaborate grammatical back
 end. \ref{ex:kel1} is an example of the logic behind the grammar that is put to
 use.
@@ -607,24 +865,9 @@ use.
 \cite{gs:sawhq}, which extends the system given in \cite{ptq} by $\bar{t}$ to
 denote embedded \wh-constituents.}
 
-\subsection{Treatment of Baker Ambiguities}
-
-\subsection{Alternative Questions – Inquisitive Semantics}\label{sec:altq}
-
-\cite{g:is} introduces a novel approach to treating questions in natural
-semantics: \pn{Inquisitive Semantics}. He presents a new logic
-formalism aimed at providing a wider coverage of the intentions of question in
-human language. The main source of the ``inquisitiveness'' of statements is
-given by the interpretation of \emph{disjunction}. We will now show how to
-incorporate this novel approach into the \pn{Curt} system.
-
-We will, however depart from the path we have been following throughout this
-paper and first implement a theory for direct questions. Only then will we extend
-it to also cover embedded alternative questions.
-
 \section{Discussion}\label{sec:discussion}
 
-We have seen, the Curt system is quite capable of treating questions this way.
+We have seen, the \curt{} system is quite capable of treating questions this way.
 Having implemented modality and possible worlds in such a fashion, let's go on
 and implement some even cooler stuff (tense, aspect, negation, comparatives,
 anaphora). Basing all this on a nice implementation of DRT (discussed in
@@ -637,7 +880,23 @@ Structure.
 
 \subsection{The Source Code}
 
-\subsection{Whatnot}
+\subsection{Examples}
+
+\subsubsection{An Example Model} \label{sec:examplemodel}
+
+\begin{eqnarray*}
+  M &=& \set{\pair{1,\pair{D_1,F_1,\varphi_1}},\pair{2,D_2,F_2,\varphi_2}} \\
+  D_1 &=& \set{d_1,d_2,d_3} \\
+  F_1 &=& \{f(0,mia,d_1), f(0,vincent,d_2), f(0,jody,d_3),\\
+  && f(1,woman,\set{ d_1,d_3 }), f(1,man,\set{ d_2 }),
+  f(2,like,\set{\pair{d_2,d_1},\pair{d_3,d_2}})\} \\
+  \phi &=& \exists x,y,z [mia(x)\wedge woman(x)\wedge \wedge vincent(y)\wedge
+  man(y)\wedge jody(z)\wedge woman(z) \\&&\wedge x \neq y \wedge x\neq z \wedge z
+  \neq y\wedge like(x)(y)\wedge like(y)(z)]\\
+  D_2 &=& 
+\end{eqnarray*}
+
+\newpage
 
 \bibliography{aleksbib}
 
