@@ -107,9 +107,9 @@ probably even philosophy.
 
 Development of exhaustive systems in this area appears to be a daunting task of
 quite some scope. Therefore most approaches have been focused on providing
-coverage of a small fragment of natural language often with respect to a
+coverage of a small fragment of natural language, often with respect to a
 particular domain. Many such systems exist and they prove to be increasingly
-successful. Some of them will be discussed here and presenting an extension to
+successful. Some of them will be discussed here, and presenting an extension to
 one system in particular is the main matter of this Bachelor's thesis.
 
 \subsection{Overview}
@@ -117,7 +117,7 @@ one system in particular is the main matter of this Bachelor's thesis.
 The present work will aim to provide the \curt{} system of
 \cite{blackburnbos:cl1} with the mechanics of dealing with more than one
 partition of its logical domain, viz. the ability to handle more than one
-\term{possible} or \term{accessible world}. As a ground for development of this
+\term{possible} or \term{accessible world}. As a ground for the development of this
 work, the treatment of \term{embedded questions} was chosen as one that
 naturally demands a possibility to account for more than one division in a
 system's \emph{understanding} or representation of a universe of objects and
@@ -168,17 +168,17 @@ increase readability:
 
 Computational Semantics is a discipline that has  lately gained a wider focus in
 literature due to recent progress in different areas.  Current development in
-computer hardware has made it possible to focus on theoretical soundness and
-important abstract designs and concepts of logic and the theory of meaning
+computer hardware has made it possible to focus on theoretical soundness,
+important abstract designs, and concepts of logic and the theory of meaning,
 rather than being able to simply implement a system that is able to do basic
 computations in a reasonable amount of time. On the other hand, research in both
 computer science and linguistics has fueled new ideas and intriguing hypotheses
-emerge from lively discussion in their respective fields on a very frequent
+emerge from lively discussions in their respective fields on a very frequent
 basis.
 
 This section delineates the ground the software presented in this thesis is
 based on. \ref{sec:curt} introduces the base system of the implementation,
-\curt{}
+\curt{},
 and \ref{sec:comparison} relates it to other similar systems in existence.
 \ref{sec:extension} then goes on to explain where the \curt{} system lacks in
 features and thus exhibits potential for extension.
@@ -214,8 +214,8 @@ feature set one at a time. Support for inferencing via external theorem provers
 and model builders is added right after the first, rather limited implementations.
 Finally an ontology and a straight-forward way of parsing and answering direct
 questions for noun phrases conclude its development. The theory and
-implementation of this paper is meant as a replacement and enhancement for the
-latter feature. This will also happen in an incremental manner and new features
+implementation of this paper are meant as a replacement and enhancement for the
+latter feature. Their introduction will also happen in an incremental manner and new features
 are introduced one at a time during section \ref{sec:implementation}.
 
 \subsection{Comparison of the Curt System}\label{sec:comparison}
@@ -260,23 +260,23 @@ and his team can be found at the following address:
 \href{http://svn.ask.it.usyd.edu.au/trac/candc/}{\url{http://svn.ask.it.usyd.edu.au/trac/candc/}}.
 
 Interestingly, earlier attempts at providing a software capable of answering
-questions in natural language where also mostly coupled with the usage of
+questions in natural language were mostly coupled with the usage of
 semantic analysis instead of statistical methods.
 \cite{chat} are among  the first to attempt creating a question answering system
-with reasonable semantic coverage. Their effort has been focused on the geographical
+with reasonable coverage. Their effort has been focused on the geographical
 domain, and their implementation, dubbed \pn{CHAT-80}, is written entirely in
 \prol. The lack of hardware resources of that time forced the system to be
 written with efficiency in mind. Moreover, it had to maintain a statical
 database of facts which was hand-crafted. As such, it falls more into the
 category of question answering systems than dialogue systems.
 
-Today it seems that question answering systems make inroads to the search market,
+Today it seems that statistical question answering systems make inroads to the search market,
 and some argue that they are bound to eventually supplant current document/term-based
 search engines. Even though \abbr{QA} systems also operate on the domain of
 answering questions, their approach to resolving them differs in most aspects
 from that of dialogue systems. The latter have a much higher obligation to
 correctness, since their results are typically not subject to peer
-review and server an entirely different purpose.
+review and serve an entirely different purpose.
 
 \pn{Godot}, a very interesting project, is introduced in \cite{godot}.
 \pn{Godot} is a so-called \term{embodied agent}, a robot with a sophisticated
@@ -289,7 +289,7 @@ dialogue system.
 in its particular discourse model -- and does so far not seem to support the answering
 of questions about its state.
 
-\curt{} is a dialogue system and thus based on an entirely different set of
+\curt{} is a prototype dialogue system and as such it is based on an entirely different set of
 premises than \abbr{QA} systems. Moreover, it differs from \pn{Godot} in some
 major points, the most distinctive of which is that \curt{} only exists inside a
 regular computer and has no access to sensory input. Also, \curt's
@@ -306,11 +306,12 @@ language. It does only understand basic extensional transitive and intransitive
 verbs and its support for question answering remains limited.
 Anaphora resolution still remains an open issue.
 
-In the course of this thesis, a new version of \curt{} will be developed, called
-\acurt. This version is not only aware of its own state, but can also gather
-information about the individuals it knows about. Furthermore, \acurt{} is able
-to account for several possible readings of a certain sentence at once and in
-parallel, which is a side-effect of the introduction of the notion of
+In the course of this thesis, a new version of \curt{} is introduced, called
+\acurt. This version is not only aware of its own state of knowledge, as was the
+original \curt{} implementation, but can also gather information about the
+knowledge and beliefs of individuals it knows about. Furthermore, \acurt{} is
+able to account for several possible readings of a certain sentence at once and
+in parallel, which is a side-effect of the introduction of the notion of
 \term{possible worlds} into the system.
 
 \acurt{} is able to parse and, according to the theoretical background of section
@@ -326,23 +327,24 @@ For this to work, the internal storage of \curt{} will have to be restructured
 significantly in order to deal with more than one possible world or situation.
 Its grammar will have to be enhanced so that it can handle \wh-embedding verbs
 like `know' and `believe' and its inferencing mechanisms are going to be
-employed in a different manner. %todo sucks.
+employed in a different manner, to encompass a wider range of functionality.
 
 \section{Theory}\label{sec:theory}
 
-Question semantics has traditionally been a very sophisticated field of
-linguistics and philosophy, with many different approaches arguing for and
-against each other. This section will not try to give an exhausting overview of
-the field of question semantics since this would be a task of considerable size
-and by far beyond the scope of this thesis\footnote{For a good summary of some
-of the literature, particularly the issue of whether questions are a concern of
-pragmatics or semantics, consider \cite[section 2 and 3]{gs:q}.}. Instead, it
-was chosen to roughly follow the work by Groenendijk and Stokhof, lending from
-other places where deemed appropriate or practical. As such, the theoretical
-framework of \acurt{} is not going to be an exact realization of any particular
-approach to question semantics, but rather an accumulation of interesting
-concepts from different sources. The main sources, however, are \cite{gs:q} and
-\cite{gs:sqpa}.
+The semantics of questions has traditionally been a very sophisticated field of
+linguistics,  philosophy and logics, with many different approaches arguing for
+and against each other. This section will not try to give an exhausting overview
+of the field of question semantics since this would be a task of considerable
+size and by far beyond the scope of this thesis\footnote{For a good summary of
+some of the literature, particularly the issue of whether questions are a
+concern of pragmatics or semantics, consider \cite[section 2 and 3]{gs:q}.}.
+Instead, it was chosen to roughly follow the work by Groenendijk and Stokhof,
+who present one of the best-established and recognized theories in the field,
+and also lending from other places where deemed appropriate or practical. As
+such, the theoretical framework of \acurt{} is not going to be an exact
+realization of any particular approach to question semantics, but rather an
+accumulation of interesting concepts from different sources. The main sources,
+however, are \cite{gs:q} and \cite{gs:sqpa}.
 
 Following an overview of the terminology that will be used for the discussion of
 the formal treatment of questions, an  elaboration on the differences between
@@ -356,21 +358,23 @@ with the implementation of section \ref{sec:implementation} in mind.
 Sometimes, theoretical soundness might suffer from these choices as the main
 goal of the present work is to provide a proof-of-concept of a software that is
 able to reason about possible worlds, employing first-order logic inferencing
-tools. % really? fix your title then, would you? … doh. fixme
+tools in order to realize an approach to the treatment of embedded questions and
+questions in general.
 
 \subsection{Terminology}
 
-Following \cite{gs:q}, we will not use the English word
-``question'' in its traditional sense, but distinguish between \term{questions},
+Following \cite{gs:q}, the English word ``question'' is not used in its
+traditional sense, but a distinction is made between \term{questions},
 \term{interrogative sentences} and \term{interrogative acts} in the following
 way:
 
 \begin{termin}
-  An \term{interrogative} is a certain type of sentence in natural language
+  An \term{interrogative sentence}, or simply \term{interrogative}, is a
+  type of sentence in natural language
   distinguished by certain characteristics
   \footnote{To quote \cite{gs:q}: \quotesf{[An
   interrogative sentence is] characterized by word order, intonation, question
-  mark, the occurrence of interrogative pronouns}.}
+  mark, the occurrence of interrogative pronouns}.},
   whereas an \term{interrogative act} refers to the utterance of an
   \term{interrogative}. Finally, a
   \term{question} will denote the semantic entity uttered by the
@@ -394,15 +398,16 @@ enumeration of possible fillers for the resulting gap as an answer.
 The following abbreviations will be used: 
 \abbr{Ty2} stands for two-sorted type logic\footnote{See \cite{gallin:ty2} for a
 discussion and \cite{gs:sqpa} for its usage in describing the semantics of
-questions}. \abbr{IL} stands for intensional logic\footnote{As used by
+questions}, \abbr{IL} stands for intensional logic\footnote{As used by
 \cite{ptq}. See also \cite{gamut:2} for an excellent introduction to \abbr{IL}.},
-\abbr{FOL}  is used as an abbreviation for first order logic.
+\abbr{FOL}  is used as an abbreviation for first order logic. As an alternative
+term for \term{possible world}, sometimes the expression \term{index} is used.
 
 \subsection{Formalism: Models}\label{sec:formal}
 
 Most of the traditional literature in natural language semantics follows
 \cite{ptq} and thus also makes use of its underlying formalism,
-\abbr{IL}. \cite{gs:sqpa} however use \abbr{Ty2} as it was
+\abbr{IL}. \cite{gs:sqpa}, however, use \abbr{Ty2} as it was
 proposed in \cite{gallin:ty2}. \cite{z:ilty2} discusses the differences and
 similarities in expressive power between \abbr{Ty2} and \abbr{IL} and comes to
 the conclusion that the set of expressions contained in the former but not in
@@ -412,7 +417,7 @@ translation from \abbr{Ty2} to \abbr{IL} seems to sometimes produce very complex
 \abbr{IL} terms.
 
 As was already mentioned in \ref{sec:curt}, \curt{} is based on 
-the use of external tools only capable of treating first order logic – an
+the use of external tools. These tools are only capable of treating first order logic – an
 extensional framework. \prol{} on the other hand, is a language that can very well
 make use of higher order formalisms for calculation\footnote{The two most
 popular predicates in \prol{} used for implementing higher-order logic are
@@ -426,23 +431,23 @@ inferencing tools for modal logic\footnote{ The interested reader is referred to
 graphical user interface which allows interactive investigation of the
 constructed indices.}, a restructuring of the \curt{} system to take advantage
 of them would be beyond the scope of this thesis.  It was therefore decided to
-avoid modal logic and implement a pragmatic approach to representing the indices
-of higher-order logic.
+avoid modal logic and implement a pragmatic approach to representing indices in
+order to increase the expressive power of the system.
 
-Some research on the logic of questions (eroteric logic) suggests that the
-treatment of interrogatives demands its own formalism.  \acurt{} employs a
-formalism that departs from both \abbr{IL} and \abbr{Ty2} in some ways. Most
-notably, the notion of a \term{model} is changed as follows, in order to
-accommodate the question operator introduced further on, which demands a set of
-possible worlds to be available.
+Some research on the logic of questions (sometimes also referred to as eroteric
+logic) suggests that the treatment of interrogatives demands its own formalism.
+\acurt{} employs a formalism that departs from both \abbr{IL} and \abbr{Ty2} in
+some ways. Most notably, the notion of a \term{model} is changed as follows, in
+order to accommodate the question operator introduced further on, which demands
+a set of possible worlds to be available.
 
 \begin{definition}\label{Models}
   \stress{Models\footnote{See also the Appendix, section \ref{sec:examplemodel}
   for an example of such a model.}}
   \begin{enumerate}
-    \item A model is a set of pairs of \term{indices} $i$ and \term{possible
+    \item A model $M$ is a set of pairs of \term{indices} $i$ and \term{possible
     worlds} $w$: $\pair{i,w} \in M$. 
-    \item A world $w$ at index $i$, $\pair{i,w} \in M$ is a triple of $D$, the set
+    \item A world $w$ at index $i$, $\pair{i,w} \in M$, is a triple of $D$, the set
     of individuals, $F$, the set of functions, and $\varphi$ a first-order
     logical formula that holds in this particular model: $w = \pair{D,F,\varphi}$
     \item A \term{function} $f \in F$ is one of the following: 
@@ -458,11 +463,11 @@ possible worlds to be available.
     \pair{D',F',\varphi'}$ and $\varphi = \varphi'$.
     \item If $W \in M$, then we say $\forall W$ quantifies over all members of $M$.
     \item If $W \in M$, then we say $\exists W$ quantifies over the existence of
-    one member of $M$, namely $|M| \geq 1$ and $W \in M$.
+    one member of $M$, so $|M| \geq 1$ and $W \in M$.
   \end{enumerate}
 \end{definition}
 
-One of the more important differences to the `traditional' notion of a model, is
+One of the more important differences to the `traditional', \abbr{FOL}, notion of a model, is
 that it was decided to assign every world a unique domain of discourse referents
 or \term{individuals}. Note that there is no requirement $\pair{i,\pair{D,F}},
 \pair{j,\pair{D',F'}} \in M \wedge D\neq D'$, and most of the time, a model's
@@ -961,7 +966,9 @@ Yet still, all is not solved. The following example, taken from \cite[example
 \a. Jill believed a certain hypothesis. Hence, Jill believed that hypothesis
 to be true.
 \b. Jill discovered a certain hypothesis. It \emph{does not follow} that Jill
-discovered that hypothesis to be true. \cite{ginzburg} defends an analysis that
+discovered that hypothesis to be true. 
+
+\cite{ginzburg} defends an analysis that
 introduces another distinction in the nature of indicatives: the distinction
 between \term{facts} and \term{propositions} -- where in \ref{ex:ginzburg} the
 embedded clause is treated as a proposition and not as a fact.
@@ -1017,19 +1024,19 @@ being present in the current discourse.
 
   \[ \rho = \varphi \vee \psi, \textrm{ then } \rho' = \set{\varphi, \psi}\]
 
-  Every other operator or function can take a set of propositions of the type of
-  $\rho'$ to produce a set of propositions containing \emph{all possible
-  permutations} of $\rho'$. For every possible operator $\sem{$\cdot$}$ with arity
-  $n$ and arguments $\sem{$\cdot$}(\set{\varphi,\psi})$
+  %Every other operator or function can take a set of propositions of the type of
+  %$\rho'$ to produce a set of propositions containing \emph{all possible
+  %permutations} of $\rho'$. For every possible operator $\sem{$\cdot$}$ with arity
+  %$n$ and arguments $\sem{$\cdot$}(\set{\varphi,\psi})$
 
   todo: more generic: just go from 1 to j, which is rho, then from j+1 to n
 
   \begin{eqnarray*}
-    \sem{$\cdot$}(\rho') \mapsto \set{\varphi,\psi}\\
-    \sem{$\cdot$}(\sigma_1,\dots,\sigma_j,\rho )
-
-    \sigma \wedge \set{\varphi, \psi} \mapsto \set{\sigma\wedge\varphi,\sigma\wedge\psi}\\
-    \sigma \to \set{\varphi, \psi} \mapsto \set{\sigma\to\varphi,\sigma\to\psi}\\
+    %\sem{$\cdot$}(\rho') \mapsto \set{\varphi,\psi}\\
+    %\sem{$\cdot$}(\sigma_1,\dots,\sigma_j,\rho )
+    \varphi
+    %\sigma \wedge \set{\varphi, \psi} \mapsto \set{\sigma\wedge\varphi,\sigma\wedge\psi}\\
+    %\sigma \to \set{\varphi, \psi} \mapsto \set{\sigma\to\varphi,\sigma\to\psi}\\
   \end{eqnarray*}
 \end{definition}
 
