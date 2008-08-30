@@ -93,16 +93,16 @@ $\langle$\href{mailto:aleks.dimitrov@googlemail.com}{aleks.dimitrov@googlemail.c
 
 As access to vast amounts of information becomes more and more ubiquitous, and
 the information accessible to humans grows more diverse every day, users
-struggle to find what they need among the vast amounts of data. Current
-search technologies aim to provide easy access to a constantly changing pool of
-knowledge, yet they are hardly beyond the stage of looking for exact text
-matches. Machine processing still fails to \emph{understand} the information it
-has to deal with and sees data as nothing more than a set of strings. But often
-a user's demands do not ask for a piece of text, but for an abstract concept, or
-a relation. Knowing that natural language is most likely infinite, such
-relations are virtually endless in number, and  one can only
-conclude that trying to enumerate all human knowledge in gargantuan databases is
-bound to be a never-ending task.
+struggle to find what they need among the vast amounts of data available to
+them. Current search technologies aim to provide easy access to a constantly
+changing pool of knowledge, yet they are hardly beyond the stage of looking for
+exact text matches. Machine processing still fails to \emph{understand} the
+information it has to deal with and sees data as nothing more than a set of
+strings. But often a user's demands do not ask for a piece of text, but for an
+abstract concept, or a relation. Knowing that natural language is most likely
+infinite, such relations are virtually endless in number, and  one can only
+conclude that trying to enumerate all relations between the bits of  human
+knowledge in gargantuan databases is bound to be a never-ending task.
 
 Growing efforts have thus been made to provide a technology that is (going to
 be) able to extract logical formulae from sentences of ordinary language and
@@ -110,7 +110,9 @@ establish relations between objects of their logical representation. In addition
 providing a means to compute with said representations will eventually enable
 the machine-processing of an abstract concept of meaning. In doing so, the
 ultimate goal may be to enable a man-made system to \emph{understand} what
-humans communicate.
+humans communicate. Then, these representations of knowledge could be queried, and
+infer from their knowledge, what an optimal answer to a given query might be --
+maybe even inventing an answer to a question never posed before along the way.
 
 Exploration of this  interesting field of linguistics has shown that
 the notion of \emph{understanding} is far more than a linguistic concern, and
@@ -230,7 +232,7 @@ implementation of this paper are meant as a replacement and enhancement for the
 latter feature. Their introduction will also happen in an incremental manner and new features
 are introduced one at a time during section \ref{sec:implementation}.
 
-\subsection{Comparison of the Curt System}\label{sec:comparison}
+\subsection{Inferencing, Question Answering, and Dialogue Systems Today}\label{sec:comparison}
 
 Generally, software that concerns itself with answering questions formulated in
 ordinary human language falls in two main categories: \term{information
@@ -271,6 +273,27 @@ to be no working demo to date. The homepage of the ongoing efforts of Johan Bos
 and his team can be found at the following address:
 \href{http://svn.ask.it.usyd.edu.au/trac/candc/}{\url{http://svn.ask.it.usyd.edu.au/trac/candc/}}.
 
+\cite{tenCate} present a tableaux method for resolving questions and also
+propose an algorithm in \prol{} as an implementation. Their approach is a more
+theoretical one, and they do not provide any particular implementation of their
+work. Although their methods seems promising, to say the least, it was chosen to
+avoid the implementation of a specialized inferencing system. \cite{bosgabdsil}
+mention the combinatorial explosion that lurks behind the treatment of questions
+and this is a considerable threat to any implementation of deep semantic
+\abbr{QA} systems. By using external inferencing tools, an implementation of
+the semantics of questions can focus on more essential issues than the
+resolution of formulae. % too offending. fixme
+
+Discourse Representation Theory is also used in \cite{bosgabdsil}, who present
+an approach to question answering quite similar to what is presented in this
+paper. In contrast to \cite{tenCate}, who use their own internal inferencing
+method to resolve questions, Bos and Gabdsil also use external inferencing very
+similar to the \curt{} system. Their results will be discussed later on, and
+explicitly compared to the present results.
+
+An attempt to bring inferencing to the world of \abbr{QA} systems can be found
+in \cite{webber}.
+
 Interestingly, earlier attempts at providing a software capable of answering
 questions in natural language were mostly coupled with the usage of
 semantic analysis instead of statistical methods.
@@ -282,13 +305,13 @@ written with efficiency in mind. Moreover, it had to maintain a statical
 database of facts which was hand-crafted. As such, it falls more into the
 category of question answering systems than dialogue systems.
 
-Today it seems that statistical question answering systems make inroads to the search market,
-and some argue that they are bound to eventually supplant current document/term-based
-search engines. Even though \abbr{QA} systems also operate on the domain of
-answering questions, their approach to resolving them differs in most aspects
-from that of dialogue systems. The latter have a much higher obligation to
-correctness, since their results are typically not subject to peer
-review and serve an entirely different purpose.
+Today it is clear that statistical question answering systems make inroads to
+the search market, and not many doubt that they are bound to eventually replace
+current document/term-based search engines. Even though \abbr{QA} systems also
+operate on the domain of answering questions, their approach to resolving them
+differs in most aspects from that of dialogue systems. The latter have a much
+higher obligation to correctness, since their results are typically not subject
+to peer review and serve an entirely different purpose.
 
 \pn{Godot}, a very interesting project, is introduced in \cite{godot}.
 \pn{Godot} is a so-called \term{embodied agent}, a robot with a sophisticated
