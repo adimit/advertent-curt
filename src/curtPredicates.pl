@@ -117,8 +117,9 @@ clearHistory:-
 ========================================================================*/
 
 updateReadings(R):-
-   retract(curt:readings(_)),
+   retractall(curt:readings(_)),
    assert(curt:readings(R)).
+
 
 
 /*========================================================================
@@ -126,7 +127,7 @@ updateReadings(R):-
 ========================================================================*/
 
 updateModels(R):-
-   retract(curt:models(_)),
+   retractall(curt:models(_)),
    assert(curt:models(R)).
 
 

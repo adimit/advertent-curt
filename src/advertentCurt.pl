@@ -46,6 +46,8 @@ history([]).
 readings([]).
 models([]).
 
+% domain size for model builders
+domainSize(15).
 
 /*========================================================================
    Start Curt
@@ -75,8 +77,8 @@ curtTalk(run):-
 curtUpdate([],[clarify],run):- !.
 
 curtUpdate([bye],[bye],quit):- !,
-   updateReadings([]),
-   updateModels([]),
+   %updateReadings([]),
+   %updateModels([]),
    clearHistory.
 
 curtUpdate([new],[],run):- !,
@@ -132,25 +134,30 @@ curtUpdate(Input,Moves,run) :-
 	, flatten(Nested,Readings)
 	, updateHistory(Input)
 	, interpretReadings(Readings,Model)
+	,
+	(
+		\+ Model = []
+		, updateModels(Model), !
+		, Moves = [accept]
+	;
+		Moves = [reject]
+	)
 	.
 
 curtUpdate(_,[noparse],run).
 
-domainSize(15).
-
 interpretReadings(Readings,Model) :-
-	model(Old)
+	models(Old)
 	, interpretReadings(Old,Readings,Model)
-	, assert(curt:model(Model))
 	.
 
-interpretReadings([],Readings,Ws) :-
-	maplist(curt:interpret([]),Readings,Ws)
+interpretReadings([],Readings,Model) :-
+	include(curt:interpret([]),Readings,Model)
 	.
 
 
 interpretReadings([(_Index,World)|Worlds],Readings,NewWorlds) :-
-	maplist(curt:interpret(World),Readings,W1)
+	include(curt:interpret(World),Readings,W1)
 	,
 	(
 		\+ Worlds = []
@@ -175,12 +182,12 @@ interpret(Old,New,World) :-
 			, BBModel = model(D,F)
 			, World = (_,world(D,F,Reading))
 		;
-			format('~nFound uninformative reading. Dropping world.',[])
-			, World = []
+			format('~nFound uninformative reading. Dropping reading.',[])
+			, fail
 		)
 	;
 		format('~nFound inconsistency. Dropping world.',[])
-		, World = []
+		, fail
 	)
 	.
 
