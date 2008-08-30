@@ -218,7 +218,7 @@ vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP]) -->
 	, tbar([sem:TBAR]) % embedded sentence
 	,
 	{
-		TBAR = [app(lam(X,que(_,_,X)),X)]
+		TBAR = [que(_,_,_)]
 		, combine(vp:VP,[ivtbar:IVTBAR,tbar:TBAR])
 	}
 	.
@@ -228,7 +228,7 @@ vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP]) -->
 	, tbar([sem:TBAR]) % embedded sentence
 	,
 	{
-		\+ TBAR = [app(lam(X,que(_,_,X)),X)]
+		\+ TBAR = [que(_,_,_)]
 		, combine(vp:VP,[ivtbar:IVTBAR,tbar:TBAR])
 	}
 	.

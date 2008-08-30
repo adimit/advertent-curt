@@ -54,18 +54,17 @@ combine(q:Q,[whnp:[A|S1],vp:[B|S2]]):-
 combine(q:Q,[sinv:Q]):-
    Q=que(_,_,_).
 
-
-combine(tbar:[app(WH,SRed)],[whemb:[WH],s:S]) :-
-	betaConvert(S,SRed)
-.
+combine(tbar:[SRed],[whemb:[WH],s:S]) :-
+	betaConvert(app(WH,S),SRed)
+	.
 
 combine(tbar:[SRed],[s:S]) :-
 	betaConvert(S,SRed)
-.
+	.
 
 combine(tbar:[QRed],[q:Q]) :-
 	betaConvert(Q,QRed)
-.
+	.
 
 combine(np:A,[pn:A]).
 combine(np:A,[qnp:A]).
