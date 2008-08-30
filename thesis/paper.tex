@@ -10,6 +10,8 @@
 \usepackage{fontspec}
 \usepackage{xltxtra,xunicode}
 
+\usepackage{listings}
+
 \usepackage{mathpazo}
 % font specifications (don't overuse ;-)
 \defaultfontfeatures{Mapping=tex-text} % converts LaTeX specials (``quotes'' --- dashes etc.) to unicode
@@ -69,6 +71,7 @@ $\langle$\href{mailto:aleks.dimitrov@googlemail.com}{aleks.dimitrov@googlemail.c
 \usepackage{fontspec}
 \usepackage[xetex,colorlinks]{hyperref}
 \begin{document}
+\lstset{language=Prolog,numbers=left,numberstyle=\tiny,numbersep=5pt,stepnumber=2,basicstyle=\ttfamily,identifierstyle=\textbf,keywordstyle=\underbar}
 \renewcommand{\thepage}{\roman{page}}
 \maketitle
 \thispagestyle{empty}
@@ -801,7 +804,7 @@ Correctly answering a direct question with respect to relevance and other
 pragmatic factors is a task left as a task for turning \curt{} into a complete
 dialogue system more potent of dealing with queries to its knowledge.
 
-\subsection{Embedded Questions}
+\subsection{Embedded Questions}\label{sec:embed}
 
 After having agreed on a treatment of interrogatives, the next step is to
 construct a framework for embedding the result under certain verbs. The main
@@ -980,7 +983,7 @@ in no way guaranteed to be true.
 So, another distinction has to be made. Restating the last clause of definition
 \ref{def:embed1}:
 
-\begin{definition}
+\begin{definition}\label{def:embed2}
   Resolutive and factive predicates:
   \begin{itemize}
   \item \term{Factive predicates} take both, questions and propositions, and
@@ -1016,6 +1019,18 @@ further research.
 
 \subsubsection{Modeling Knowledge}\label{sec:epistemic}
 
+We have seen that some embedding verbs may not be interpreted without
+implementing a higher order formalism that is able to model the notion of
+\emph{possible} and \emph{accessible} worlds. While foobar %fixme! Nelken &
+% Francez 2001
+argue for an extensional treatment of questions, they already % n & f 2006
+retract their claims and admit that a ``minimal account of intensionality'' has
+to be assumed. While they propose a two-world system later adopted in
+\cite{g:is}, this is not going to suffice if we want to model each individual's
+knowledge in order to be able to discriminate people's knowledge and beliefs.
+%fixme bla bla
+
+The underlying theory for 
 TODO Discussion of Lewis' paper.
 
 \subsection{Treating Disjunction}
@@ -1091,6 +1106,42 @@ for further research on dialogue systems.
 
 \subsubsection{The Rest}
 
+\prol{} programs can be self-modifying, or dynamic. In this way the program is
+able to change its own state and thus store information.
+
+\subsubsection{Disjunction and Ambiguity}
+Consider the following sentences:
+
+\ex. \label{ex:disjunction} \a. Mia or Jody dances
+\b. Either Butch snores or Vincent is using the chainsaw
+
+\pn{Helpful Curt}, with its unpartitioned logical space and its lack of
+the awareness of more than one (possible) world, would generate only one model
+to represent the facts of \ref{ex:disjunction}. It is therefore only able to
+generate \emph{one} possible answer to both questions, effectively accounting only
+for one possible constituent of the disjunction, prefixing it with a `maybe' to
+indicate its uncertainty.
+
+Another example where \curt{} has to sacrifice exhaustiveness over its one-world
+representation of the world is given in \ref{ex:ambig}
+
+\ex.\label{ex:ambig} Every boxer likes a woman.
+
+This will generally generate two readings, but only one model -- with only one
+world. And further discourse will have to choose between one of the readings and
+stick with the minimal model constructed by the model builder. This is not
+really satisfactory and extending the dimensions of knowledge within \curt{} seems
+necessary in order to treat such examples.
+
+The previous work on \acurt{} enables it to generate a \term{choice point} -- and
+moreover, not pursue only one path of it, but both at the same time, by
+generating more than one world in its model.
+Unfortunately, this will build up very large models over time and computations
+with it might prove to be very complex and resource demanding. Adding such a
+functionality to the system, however, is not a hard task and hopefully the
+technique employed here can be further refined. %todo: maybe add a footnote
+%about future prospects or so
+
 We first derive know(john,all(X,imp(woman(X),love(X,john)))) from the syntax of
 john knows whether every woman loves john, then we see if
 all(X,imp(woman(X),love(X,john))) is valid (uninformative) and ridicule John, if
@@ -1146,7 +1197,7 @@ first-order logic. This entails the predominant usage of \abbr{FOL} in section
 \ref{sec:implementation}, but some higher order predicates introduced to the
 language in recent years will also be put to use.
 
-\subsubsection{Advertent Curt}
+\subsection{Advertent Curt}
 
 \acurt{} lends its name from the fact that it is not only aware of its own
 knowledge and presuppositions, but `knows' about what individuals in its
@@ -1161,7 +1212,7 @@ is mostly a first-order logic computing environment.
 It is also not constrained to being useful in a particular domain, like
 \pn{CHAT-80} is.
 
-\subsubsection{The Syntax of Questions}
+\subsection{The Syntax of Embedded Questions}
 
 The internal structure of the subset of interrogative sentences that will be
 considered here is not a very complicated one. Since yes/no interrogatives  embed
@@ -1170,70 +1221,18 @@ need to be made to the grammar in order to account for the latter. Constituent
 interrogatives were already covered by \pn{Helpful Curt} and their syntactic
 treatment does not differ in \acurt{}.
 
-However, the syntax of embedded interrogatives is a more delicate matter.
-
-\subsection{Modality and Possible Worlds}
-\label{sec:indices}
-
-We have seen that some embedding verbs may not be interpreted without
-implementing a higher order formalism that is able to model the notion of
-\emph{possible} and \emph{accessible} worlds. While foobar %fixme! Nelken &
-% Francez 2001
-argue for an extensional treatment of questions, they already % n & f 2006
-retract their claims and admit that a ``minimal account of intensionality'' has
-to be assumed. While they propose a two-world system later adopted in
-\cite{g:is}, this is not going to suffice if we want to model each individual's
-knowledge in order to be able to discriminate people's knowledge and beliefs.
-%fixme bla bla
-
-The underlying theory for 
-
-\subsubsection{Representing Intensionality in \prol{}}
-
-\prol{} programs can be self-modifying, or dynamic. In this way the program is
-able to change its own state and thus store information.
-
-\subsubsection{Disjunction and Ambiguity}
-Consider the following sentences:
-
-\ex. \label{ex:disjunction} \a. Mia or Jody dances
-\b. Either Butch snores or Vincent is using the chainsaw
-
-\pn{Helpful Curt}, with its unpartitioned logical space and its lack of
-the awareness of more than one (possible) world, would generate only one model
-to represent the facts of \ref{ex:disjunction}. It is therefore only able to
-generate \emph{one} possible answer to both questions, effectively accounting only
-for one possible constituent of the disjunction, prefixing it with a `maybe' to
-indicate its uncertainty.
-
-Another example where \curt{} has to sacrifice exhaustiveness over its one-world
-representation of the world is given in \ref{ex:ambig}
-
-\ex.\label{ex:ambig} Every boxer likes a woman.
-
-This will generally generate two readings, but only one model -- with only one
-world. And further discourse will have to choose between one of the readings and
-stick with the minimal model constructed by the model builder. This is not
-really satisfactory and extending the dimensions of knowledge within \curt{} seems
-necessary in order to treat such examples.
-
-The previous work on \acurt{} enables it to generate a \term{choice point} -- and
-moreover, not pursue only one path of it, but both at the same time, by
-generating more than one world in its model.
-Unfortunately, this will build up very large models over time and computations
-with it might prove to be very complex and resource demanding. Adding such a
-functionality to the system, however, is not a hard task and hopefully the
-technique employed here can be further refined. %todo: maybe add a footnote
-%about future prospects or so
-
-\subsubsection{Defining the Grammar Rules}
+However, the syntax of embedded interrogatives is a more delicate matter. Since,
+as was discussed in section \ref{sec:embed}, not every embedding verb can embed
+every type of sentence (recall definition \ref{def:embed1} and definition
+\ref{def:embed2}), a type system has to be established in order to account for
+the different behaviour of the verbs, and said type system has to be integrated
+into the process of syntactic and semantic parsing of the system.
 
 \curt{} parses sentences of natural language using an enhanced version of \pn{Cooper
 storage}\footnote{See \cite{cooper:storage2} for the original implementation.} as
 presented in \cite{keller:storage}. \cite{blackburnbos:cl1} call this version
-\pn{Keller Storage}. That name will be used from here % FIXME sucks. Please change
-to refer to this particular implementation as presented in
-\cite{blackburnbos:cl1}. 
+\pn{Keller Storage}. The remainder of this section will follow the nomenclature
+of \cite{blackburnbos:cl1}. 
 
 \pn{Keller Storage} is already quite capable
 of dealing with more complex constituents such as nested noun phrases, but it
@@ -1252,18 +1251,115 @@ constraints need to be enforced, and with other kinds of ambiguities,
 Blackburn and Bos present an approach utilizing underspecified representations and
 dominance relations, \pn{Hole Semantics}\footnote{Also presented in % todo:cite
 %Bos' paper
-}. However none of the cases discussed so far would require the enhanced
+}. 
+However none of the cases discussed so far would require the enhanced
 expressive power of \pn{Hole Semantics} it was decided to not change the \curt{}
 implementation's current architecture which employs \pn{Keller Storage}.
 
 Enhancing the grammatic rules of the \curt{} system to cope with
-proposition-embedding verbs is made trivial by its elaborate grammatical back
-end. \ref{ex:kel1} is an example of the logic behind the grammar that is put to
-use.
+proposition-embedding verbs is made easy by its elaborate grammatical back
+end. In particular, four files are enhanced with rules to enable interpretation
+of embedded questions: \code{englishGrammar.pl}, which holds generic \abbr{DCG}
+rules for syntactic parsing, \code{englishLexicon.pl}, a dictionary that uses
+feature structures to keep track of agreement, and two \pn{Keller Storage}
+specific files, \code{semLexStorage.pl} and \code{semRulesKeller.pl}.
 
-\footnotetext{Note that \ref{ex:kel1} is shown using the same syntactic type system used in
-\cite{gs:sawhq}, which extends the system given in \cite{ptq} by $\bar{t}$ to
-denote embedded \wh-constituents.}
+The grammatic rules are extended by the introduction of three new categories,
+\code{whemb}, \code{tbar} and \code{ivtbar}.
+
+The \code{whemb} and \code{ivtbar} categories have a \code{type} parameter, that dictates
+their behaviour, although their respective type systems never cooperate with
+each other. The type of the \code{whemb} category can hold the values
+\code{propos}, for a proposition embedding complementizer, like \example{that},
+and \code{question}, for a complementizer that turns a proposition into a yes/no
+interrogative, like \example{if} and \example{whether} (listing \ref{whemb}).
+
+\begin{lstlisting}[label=whemb,caption={Syntactic and Lexical Rules for Complementizers},float]
+whemb([sem:Sem]) -->
+    {lexEntry(whemb,[syntax:Word,type:T])}
+    , Word
+    , {semLex(whemb,[sem:Sem,type:T])}
+    .
+lexEntry(whemb,[syntax:[that],type:propos]).
+lexEntry(whemb,[syntax:[whether],type:question]).
+\end{lstlisting}
+
+\begin{lstlisting}[label=whembsemLex,caption={Semantic Rules for Complementizers},float]
+semLex(whemb,M) :-
+    M = [sem:[lam(S,S)],type:propos]
+    .
+semLex(whemb,M) :-
+    M = [sem:[lam(Q, que([],[],Q))],type:question]
+    .
+\end{lstlisting}
+
+The types now determine whether to produce an embedded yes/no
+interrogative or just pass through as a simple proposition (in which case a
+simple $\lambda S. S$ serves as an identity function), and the
+\code{semLex/2} predicate takes care of this (listing \ref{whembsemLex}). In the
+latter case, a new sort of question is introduced, namely one that does not
+quantify over a free variable. It has the form \lstinline!que([],[],Q)! and is
+representative of $?.\varphi$.
+
+The \code{tbar} rule has three different right hand sides. 
+In one of them, it first parses a \code{whemb} and combines it with a sentential
+category \code{s} (listing \ref{tbar}, line 1). The second case omits the
+complementizer and just passes the sentence as a normal proposition (line 7).
+Next, the final rule takes care of embedding questions (line 12).
+
+In every case, the sentence embedded is first fully reduced by the predicates
+shown in listing \ref{tbarCombine}. This has to be done in order to avoid
+unsaturated formulae in the end result. Thus the $\bar{t}$ category can   produce
+one of the following: $\varphi$, $?.\varphi$ or $?x.\varphi$.
+
+\begin{lstlisting}[label=tbar,caption={Semantic Rules for $\bar{t}$},float]
+tbar([sem:TBar]) -->
+    whemb([sem:WHemb])
+    , s([coord:no,sem:S])
+    , { combine(tbar:TBar,[whemb:WHemb,s:S]) } .
+
+tbar([sem:TBar]) -->
+    s([coord:no,sem:S])
+    , { combine(tbar:TBar,[s:S]) } .
+ 
+tbar([sem:TBar]) -->
+    q([sem:Q])
+    , { combine(tbar:TBar,[s:Q]) } .
+\end{lstlisting}
+
+\begin{lstlisting}[label=tbarCombine,caption={$\bar{t}$ is responsible for beta-converting the embedded sentence.},float]
+combine(tbar:[app(WH,SRed)],[whemb:[WH],s:S]) :-
+    betaConvert(S,SRed).
+
+combine(tbar:[SRed],[s:S]) :-
+    betaConvert(S,SRed).
+\end{lstlisting}
+
+As a final step, \code{ivtbar} (or $IV/\bar{t})$ in a formal type system), takes
+the result of \code{tbar} and embeds it under a suitable verb, taking the verb
+type (one of \code{factive}, \code{resolutive}, \code{question} and
+\code{propos}) and the nature of the embedded sentence into account. Listing
+\ref{ivtbar} shows only one case, for \code{question} embedding verbs, and the
+(semantic) lexical rules have been omitted. See the
+appendix %todo: section number
+for the full definition.
+
+\begin{lstlisting}[label=ivtbar,caption={A question embedding VP requires its antecedent to be a question.},float]
+vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP]) -->
+    ivtbar([inf:Inf,num:Num,sem:IVTBAR,type:question])
+   , tbar([sem:TBAR])
+   , { TBAR = [app(lam(X,que(_,_,X)),X)]
+       , combine(vp:VP,[ivtbar:IVTBAR,tbar:TBAR])
+     }.
+\end{lstlisting}
+
+\subsection{Modality and Possible Worlds}
+\label{sec:indices}
+
+
+\subsubsection{Representing Intensionality in \prol{}}
+
+
 
 \section{Discussion}\label{sec:discussion}
 
