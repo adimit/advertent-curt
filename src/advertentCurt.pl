@@ -131,29 +131,64 @@ curtUpdate(Input,Moves,run) :-
 	, maplist(disjunk,Rs,Nested)
 	, flatten(Nested,Readings)
 	, updateHistory(Input)
-	,
-	% TODO: Write Answer Code
-	interpret(Model,Readings,Moves)
+	, interpretReadings(Readings,Model)
 	.
 
 curtUpdate(_,[noparse],run).
 
 domainSize(15).
 
-% fails if Old is not a curt world or empty
-interpret(Old,New,World) :-
-	getKnowledge(Old,New,BK,Others,Reading)
-	, check(and(BK,New),'consistency',BBModel)
-	, check(and(BK,not(New)),'informativity',_)
-	, BBModel = model(D,F)
-	, World = world(D,[curt|Others],Reading,F)
+interpretReadings(Readings,Model) :-
+	model(Old)
+	, interpretReadings(Old,Readings,Model)
+	, assert(curt:model(Model))
 	.
 
-getKnowledge(world([curt|Others],Old,_Functions),New,and(BackgroundKnowledge,Old),Others,and(Old,New)) :- 
-	backgroundKnowledge(and(Old,New),BackgroundKnowledge).
+interpretReadings([],Readings,Ws) :-
+	maplist(curt:interpret([]),Readings,Ws)
+	.
 
-getKnowledge([],New,BackgroundKnowledge,[],New) :- 
+
+interpretReadings([(_Index,World)|Worlds],Readings,NewWorlds) :-
+	maplist(curt:interpret(World),Readings,W1)
+	,
+	(
+		\+ Worlds = []
+		, interpretReadings(Worlds,Readings,Ws)
+		, append(W1,Ws,NewWorlds)
+	;
+		Worlds = []
+		, NewWorlds = W1
+	)
+	.
+
+% Interpret one old reading (may be the empty list) wrt to one new reading
+% and gives back an index/world pair
+interpret(Old,New,World) :-
+	getKnowledge(Old,New,BK,Reading)
+	,
+	(
+		check(and(BK,New),'consistency',BBModel), !
+		,
+		(
+			check(and(BK,not(New)),'informativity',_), !
+			, BBModel = model(D,F)
+			, World = (_,world(D,F,Reading))
+		;
+			format('~nFound uninformative reading. Dropping world.',[])
+			, World = []
+		)
+	;
+		format('~nFound inconsistency. Dropping world.',[])
+		, World = []
+	)
+	.
+
+getKnowledge([],New,BackgroundKnowledge,New) :- 
 	backgroundKnowledge(New,BackgroundKnowledge).
+
+getKnowledge(world(_D,_F,Old),New,and(BackgroundKnowledge,Old),and(Old,New)) :- 
+	backgroundKnowledge(and(Old,New),BackgroundKnowledge).
 
 check(Formula,Job,Model) :-
 	domainSize(DomainSize)
