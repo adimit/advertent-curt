@@ -6,7 +6,7 @@
 %
 % Aleksandar Dimitrov
 
-module(functionalPredicates,
+:- module(functionalPredicates,
 	[filter/3
 	, converse/4
 	, compose/4

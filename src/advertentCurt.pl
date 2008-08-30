@@ -146,18 +146,24 @@ curtUpdate(Input,Moves,run) :-
 
 curtUpdate(_,[noparse],run).
 
+noEmpties([],[]).
+noEmpties([[]|Xs],L) :- !, noEmpties(Xs,L).
+noEmpties([X|Xs],[X|L]) :- noEmpties(Xs,L).
+
 interpretReadings(Readings,Model) :-
 	models(Old)
-	, interpretReadings(Old,Readings,Model)
+	, interpretReadings(Old,Readings,M)
+	, noEmpties(M,Model)
 	.
 
 interpretReadings([],Readings,Model) :-
-	include(curt:interpret([]),Readings,Model)
+	maplist(curt:interpret([]),Readings,M)
+	, noEmpties(M,Model)
 	.
 
 
 interpretReadings([(_Index,World)|Worlds],Readings,NewWorlds) :-
-	include(curt:interpret(World),Readings,W1)
+	maplist(curt:interpret(World),Readings,W1)
 	,
 	(
 		\+ Worlds = []
@@ -183,11 +189,11 @@ interpret(Old,New,World) :-
 			, World = (_,world(D,F,Reading))
 		;
 			format('~nFound uninformative reading. Dropping reading.',[])
-			, fail
+			, World = (_,Old)
 		)
 	;
 		format('~nFound inconsistency. Dropping world.',[])
-		, fail
+		, World = []
 	)
 	.
 
