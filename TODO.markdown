@@ -1,4 +1,4 @@
-* Start!
+* Choice functions sound worth investigating.
 
 ==
 
