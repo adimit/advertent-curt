@@ -55,16 +55,16 @@ combine(q:Q,[sinv:Q]):-
    Q=que(_,_,_).
 
 
-combine(tbar:[app(WH,SRed)|S1],[whemb:[WH],s:[S|S1]])
-:-	betaConvert(S,SRed)
+combine(tbar:[app(WH,SRed)],[whemb:[WH],s:S]) :-
+	betaConvert(S,SRed)
 .
 
-combine(tbar:[SRed],[s:S])
-:-	betaConvert(S,SRed)
+combine(tbar:[SRed],[s:S]) :-
+	betaConvert(S,SRed)
 .
 
-combine(tbar:[QRed],[q:Q])
-:-	betaConvert(Q,QRed)
+combine(tbar:[QRed],[q:Q]) :-
+	betaConvert(Q,QRed)
 .
 
 combine(np:A,[pn:A]).

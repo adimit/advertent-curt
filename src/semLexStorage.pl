@@ -67,14 +67,13 @@ semLex(ivtbar,M)
 .
 
 % a simple unit rule for assertive embedders
-semLex(whemb,M)
-:-	M = [sem:[lam(S,S),type:assert]]
+semLex(whemb,M) :-
+	M = [sem:[lam(S,S)],type:propos]
 .
 
-% a more complex rule for yes/no embedders
-semLex(whemb,M)
-:-	M = [sem:[lam(S,or(S,not(S))),type:altern]]
-.
+semLex(whemb,M) :-
+	M = [sem:[lam(Q, que([],[],Q))],type:question]
+	.
 
 semLex(qnp,M):-
    M = [type:wh,
