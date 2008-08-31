@@ -159,12 +159,12 @@ interpretReadings(Readings,Model) :-
 	.
 
 interpretReadings([],Readings,Model) :-
-	maplist(curt:interpret([]),Readings,M)
+	maplist(curt:interpret((_,[])),Readings,M)
 	, noEmpties(M,Model)
 	.
 
 
-interpretReadings([(_Index,World)|Worlds],Readings,NewWorlds) :-
+interpretReadings([World|Worlds],Readings,NewWorlds) :-
 	maplist(curt:interpret(World),Readings,W1)
 	,
 	(
@@ -179,10 +179,10 @@ interpretReadings([(_Index,World)|Worlds],Readings,NewWorlds) :-
 
 % Interpret one old reading (may be the empty list) wrt to one new reading
 % and gives back an index/world pair
-interpret(Old,New,World) :-
+interpret((Index,Old),New,World) :-
 	(
-		beAdvertent(Old,New), !
-		, World = (_,Old)
+		beAdvertent((Index,Old),New), !
+		, World = (Index,Old)
 	;
 		getKnowledge(Old,New,BK,Reading)
 		,
@@ -192,10 +192,10 @@ interpret(Old,New,World) :-
 			(
 				check(and(BK,not(New)),'informativity',_), !
 				, BBModel = model(D,F)
-				, World = (_,world(D,F,Reading))
+				, World = (Index,world(D,F,Reading))
 			;
 				format('~nFound uninformative reading. Dropping reading.',[])
-				, World = (_,Old)
+				, World = (Index,Old)
 			)
 		;
 			format('~nFound inconsistency. Dropping world.',[])
@@ -210,34 +210,70 @@ getKnowledge([],New,BackgroundKnowledge,New) :-
 getKnowledge(world(_D,_F,Old),New,and(BackgroundKnowledge,Old),and(Old,New)) :- 
 	backgroundKnowledge(and(Old,New),BackgroundKnowledge).
 
-beAdvertent(world(_D,_F,Background),knowledge(X,P)) :-
+getEpistemicBG(X,I,world(D,F,R)) :-
+	epistemic(E), !
+	, delete(E,(X,I,world(D,F,R)),Rest)
+	, \+ Rest = E
+	, retract(epistemic(_)), !
+	, assert(epistemic(Rest))
+	.
+
+getDoxasticBG(X,I,world(D,F,R)) :-
+	doxastic(E), !
+	, delete(E,(X,I,world(D,F,R)),Rest)
+	, \+ Rest = E
+	, retract(doxastic(_)), !
+	, assert(doxastic(Rest))
+	.
+
+beAdvertent((Index,world(_D,_F,Background)),knowledge(X,P)) :-
 	(
 		P = que(_,alt,Q)
 		, !
-		, backgroundKnowledge(and(Q,Background),BK2)
 		,
 		(
-			\+ check(and(and(Background,BK2),not(Q)),'yes/ interrogative: informativity',_)
+			getEpistemicBG(X,I,world(_,_,EBG))
 			, !
-			, backgroundKnowledge(Q,BK)
-			, check(and(Q,BK),'preparing world: consistency', model(D,F))
+			, BG = and(Q,EBG)
+			, NBG = and(not(Q),EBG)
 		;
-			\+ check(and(and(Background,BK2),Q),'/no interrogative: informativity',_)
-			, backgroundKnowledge(Q,BK)
-			, check(and(not(Q),BK),'preparing world: consistency', model(D,F))
+			BG = Q
+			, NBG = not(Q)
+
 		)
-		, World = (X,world(D,F,Q))
+		, backgroundKnowledge(and(BG,Background),BK2)
+		,
+		(
+			\+ check(and(and(Background,BK2),not(BG)),'yes/ interrogative: informativity',_)
+			, !
+			, backgroundKnowledge(BG,BK)
+			, check(and(BG,BK),'preparing world: consistency', model(D,F))
+			, World = (X,Index,world(D,F,BG))
+		;
+			\+ check(and(and(Background,BK2),BG),'/no interrogative: informativity',_)
+			, backgroundKnowledge(NBG,BK)
+			, check(and(NBG,BK),'preparing world: consistency', model(D,F))
+			, World = (X,Index,world(D,F,NBG))
+		)
 		, addEpistemic(World)
 	;
 		P = que(_Y,_Domain,_Body)
 		, !
 		, fail
 	;
-		backgroundKnowledge(and(P,Background),BK2)
-		, \+ check(and(and(Background,BK2),not(P)),'embedded proposition: informativity',_)
-		, backgroundKnowledge(P,BK)
-		, check(and(P,BK),'preparing world: consistency', model(D,F))
-		, World = (X,world(D,F,Q))
+		(
+			getEpistemicBG(X,I,world(_,_,EBG))
+			, !
+			, Q = and(P,EBG)
+		;
+			Q = P
+		)
+		,
+		backgroundKnowledge(and(Q,Background),BK2)
+		, \+ check(and(and(Background,BK2),not(Q)),'embedded proposition: informativity',_)
+		, backgroundKnowledge(Q,BK)
+		, check(and(Q,BK),'preparing world: consistency', model(D,F))
+		, World = (X,Index,world(D,F,Q))
 		, addEpistemic(World)
 	)
 	.
