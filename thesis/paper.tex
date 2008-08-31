@@ -94,28 +94,30 @@ $\langle$\href{mailto:aleks.dimitrov@googlemail.com}{aleks.dimitrov@googlemail.c
 \setcounter{page}{1}
 \section{Introduction}
 
-As access to vast amounts of information becomes more and more ubiquitous, and
+As access to vast amounts of information becomes increasingly ubiquitous, and
 the information accessible to humans grows more diverse every day, users
-struggle to find what they need among the vast amounts of data available to
-them. Current search technologies aim to provide easy access to a constantly
-changing pool of knowledge, yet they are hardly beyond the stage of looking for
-exact text matches. Machine processing still fails to \emph{understand} the
-information it has to deal with and sees data as nothing more than a set of
-strings. But often a user's demands do not ask for a piece of text, but for an
-abstract concept, or a relation. Knowing that natural language is most likely
-infinite, such relations are virtually endless in number, and  one can only
-conclude that trying to enumerate all relations between the bits of  human
-knowledge in gargantuan databases is bound to be a never-ending task.
+struggle to find what they need among the vast amounts of data available.
+Current search technologies aim to address this problem by providing quick and
+easy access to a constantly changing pool of knowledge, yet they are hardly
+beyond the stage of looking for exact text matches. Machine processing still
+fails to \emph{understand} the information it has to deal with and often sees data as
+nothing more than a set of strings. But what if a user's demands do not ask for a
+piece of text, but for an abstract concept, or a relation? Knowing that natural
+language is most likely infinite, such relations are virtually endless in
+number, and  one can only conclude that trying to enumerate all relations
+between the bits of  human knowledge in gargantuan databases is bound to be a
+never-ending task.
 
 Growing efforts have thus been made to provide a technology that is (going to
 be) able to extract logical formulae from sentences of ordinary language and
-establish relations between objects of their logical representation. In addition,
-providing a means to compute with said representations will eventually enable
-the machine-processing of an abstract concept of meaning. In doing so, the
-ultimate goal may be to enable a man-made system to \emph{understand} what
-humans communicate. Then, these representations of knowledge could be queried, and
-infer from their knowledge, what an optimal answer to a given query might be --
-maybe even inventing an answer to a question never posed before along the way.
+establish relations between objects of their logical representation. In
+addition, providing a means to compute with said representations will eventually
+enable the machine-processing of an abstract concept of meaning. In doing so,
+the ultimate goal may be to enable a man-made system to \emph{understand} what
+humans communicate.  These systems could then be queried and, given a capability
+of performing logical inference on their domains of knowledge, they could
+compute what an optimal answer to any given query might be -- perhaps even
+by inventing an answer to a question never posed before.
 
 Exploration of this  interesting field of linguistics has shown that
 the notion of \emph{understanding} is far more than a linguistic concern, and
@@ -131,34 +133,35 @@ one system in particular is the main matter of this Bachelor's thesis.
 
 \subsection{Overview}
 
-The present work will aim to provide the \curt{} system of
-\cite{blackburnbos:cl1} with the mechanics of dealing with more than one
-partition of its logical domain, viz. the ability to handle more than one
-\term{possible} or \term{accessible world}. As a ground for the development of this
-work, the treatment of \term{embedded questions} was chosen as one that
-naturally demands a possibility to account for more than one division in a
-system's \emph{understanding} or representation of a universe of objects and
-relations.
+The present work aims to provide the \curt{} system of
+\cite{blackburnbos:cl1} with the mechanics of dealing with \term{embedded
+questions}, which enables it to reason not only about its own knowledge, but
+also about the knowledge of individuals in its target domain.
+For this, the system will have to enhanced with the capability of handling more
+than one partition of its logical domain, viz. the ability to handle several
+\term{possible} or \term{accessible worlds}.
 
 As the scope of a Bachelor's thesis is limited by its nature, not all of the
-theory and reasoning can be understood without background knowledge in some
-rather divergent domains. In particular, a basic familiarity with traditional
-\term{natural language semantics} and \term{extensional} as well as
+theory and reasoning can be explained and background knowledge in some rather
+divergent domains is assumed. In particular, a basic familiarity with
+traditional \term{natural language semantics} and \term{extensional} as well as
 \term{intensional logic} or \term{modal} frameworks will be assumed.
-Furthermore, a basic acquaintance with \term{eroteric logic} will be helpful,
+Furthermore, a basic acquaintance with theories of the logic of questions will be helpful,
 but not strictly necessary in understanding some of the reasoning in section
 \ref{sec:theory}.  Some knowledge of the \prol{} programming language and a good
 overview of the architecture of the \curt{} system is imperative in order to
 understand the implementation itself.
 
-The first section will give a conceptual overview of the technologies to date
-and the particular software, \curt, that will serve as a basis for extension.
-The next section concerns itself with a more detailed analysis of the theoretic
-assumptions of this implementation and justifies some choices and restrictions
-that had to be made due to the limited scope of this analysis. While the
-third section will display and document the actual implementation on top of the
-\curt{} system, the last section will discuss the results of this work and also
-give a prospect on possible further work on the subject.
+Section \ref{sec:concepts}  gives a conceptual overview of the technologies to
+date and the particular software, \curt, that will serve as a basis for
+extension.  The next section concerns itself with a more detailed analysis of
+the theoretic assumptions of this implementation and justifies some choices and
+restrictions that had to be made due to the limited scope of this analysis.
+While the section \ref{sec:implementation} displays and documents the actual
+implementation on top of the \curt{} system, the last section discusses the
+results of the previous sections and also give a prospect on possible further work on the
+subject. Finally, the appendix holds the sources code and some example
+computations and models that show the basic functionality of \curt.
 
 \subsection{Typographic Conventions}
 
@@ -171,8 +174,10 @@ increase readability:
   \item Proper names, names of technologies, and abbreviations are typeset in a
   regular sans serif font: \acurt, \prol, \pn{Ty2}
   \item Code is written in a monospace font, resembling the look of a font class most
-  programmers are used to:\\
-  \code{lam(P, lam(Q, all(X, imp(app(P,X),app(Q,X)))))}.
+  programmers are used to:
+  \begin{lstlisting}
+    lam(P, lam(Q, all(X, imp(app(P,X),app(Q,X)))))
+  \end{lstlisting}
   \item Logical formulae are typeset in a different serif font from the rest of
   the text:\\
     Assume $k = (\lambda x.\neg xx)$. Then $ kk = (\lambda x .\neg xx)k = \neg kk$
@@ -181,7 +186,7 @@ increase readability:
 \end{itemize}
 
 
-\section{Concepts}
+\section{Concepts}\label{sec:concepts}
 
 Computational Semantics is a discipline that has  lately gained a wider focus in
 literature due to recent progress in different areas.  Current development in
@@ -194,9 +199,9 @@ emerge from lively discussions in their respective fields on a very frequent
 basis.
 
 This section delineates the ground the software presented in this thesis is
-based on. \ref{sec:curt} introduces the base system of the implementation,
-\curt{},
-and \ref{sec:comparison} relates it to other similar systems in existence.
+based on while putting it into this rapidly evolving context. \ref{sec:curt}
+introduces the base system of the implementation, \curt{}, and
+\ref{sec:comparison} relates it to other similar systems in existence.
 \ref{sec:extension} then goes on to explain where the \curt{} system lacks in
 features and thus exhibits potential for extension.
 
@@ -211,7 +216,11 @@ its coherent design and relative simplicity.
 
 Besides parsing and translating utterances into logic, \curt{} is able to perform
 basic checks for \emph{consistency} and \emph{informativity} on the resulting
-formulae -- within the bounds of the tools it uses.
+formulae -- within the bounds of the tools it uses\footnote{\curt{} makes use
+of (among others) the \pn{Otter} theorem prover and the \pn{mace2} model
+builder. During the process of the implementation of section
+\ref{sec:implementation}, it was ported to also make use of the \pn{Prover9}
+theorem prover.}.
 It can thus detect incoherent discourse and would reject a sequence of
 sentences such as \emph{``Mary likes every man. Peter is a man. Mary does not
 like Peter''}, claiming it found a contradiction in its input. The discourse is
@@ -232,8 +241,9 @@ and model builders is added right after the first, rather limited implementation
 Finally an ontology and a straight-forward way of parsing and answering direct
 questions for noun phrases conclude its development. The theory and
 implementation of this paper are meant as a replacement and enhancement for the
-latter feature. Their introduction will also happen in an incremental manner and new features
-are introduced one at a time during section \ref{sec:implementation}.
+latter feature. 
+%Their introduction will also happen in an incremental manner and new features
+%are introduced one at a time during section \ref{sec:implementation}.
 
 \subsection{Inferencing, Question Answering, and Dialogue Systems Today}\label{sec:comparison}
 
@@ -242,18 +252,17 @@ ordinary human language falls in two main categories: \term{information
 retrieval systems}, also known as \abbr{QA} (question answering) systems, and
 \term{dialogue systems}.
 
-The purpose of the former is in most cases twofold, although present
-\abbr{QA} systems vary in the functionality they offer
-and results they actually deliver. One goal is to enable their users to
-query for information without the need for a special query language or at least
-using a query language that would be easy and natural to use even for the
-uninitiated user. This way the user can pose direct questions to a system
-instead of having to search for a keyword to occur in the plain text of a
-document, like they would have to do with traditional information
-retrieval systems. The second feature provides \abbr{QA} systems with another important
-distinction, viz. the ability to utilize ontologies in order to relate query
-terms akin, but not equal to words in target documents and thus deliver
-satisfactory results even for fuzzy queries.
+The purpose of the former is in most cases twofold, although present \abbr{QA}
+systems vary in the functionality they offer and results they actually deliver.
+One goal is to enable their users to query for more complex information without
+the need for a special query language or at least using a query language that
+would be easy and natural to use even for the uninitiated user. The second
+feature provides \abbr{QA} systems with another important distinction, viz. the
+ability to utilize ontologies in order to relate query terms akin, but not equal
+to words in target documents and thus deliver satisfactory results even for
+fuzzy queries. This way the user can pose direct questions to a system instead
+of having to search for a keyword to occur in the plain text of a document, like
+they would have to do with traditional information retrieval systems. 
 
 These systems typically do not try to \emph{reason} about
 their input, but gain `knowledge' from applying statistical methods on large
@@ -269,52 +278,60 @@ their corpus. Their knowledge base is typically not interactively modifiable,
 and acquiring knowledge and answering questions are two entirely separated
 tasks.
 
+\cite{webber}, argue that \abbr{QA} systems would undoubtedly benefit from
+introducing inferencing to their capability set. They analyse some of the
+typical \abbr{QA} tasks and give examples to show that \emph{reasoning},
+i.e. logical inferencing on the unstructured text that underlies modern
+\abbr{QA} systems would enhance their functionality.
+
+Interestingly, early attempts at providing a software capable of answering
+questions in natural language were mostly coupled with the usage of semantic
+analysis rather than statistical methods.  \cite{chat} are among  the first to
+attempt creating a question answering system with reasonable coverage. Their
+effort has been focused on the geographical domain, and their implementation,
+dubbed \pn{CHAT-80}, is written entirely in \prol. The lack of hardware
+resources of that time forced the system to be written with efficiency in mind.
+Moreover, it had to maintain a statical database of facts which was
+hand-crafted. As such, it falls more into the category of question answering
+systems than dialogue systems. Within its domain, \pn{CHAT-80} can deliver quite
+impressive results for different types of questions, including questions about
+the nature of relations between objects in its database.  This way, the system
+can answer a user's question as \example{Which country is borders at least two
+oceans?} without having a list of countries that border two oceans at its
+disposal.
+
 \cite{prontoqa} introduce the \pn{Pronto QA System}, which couples traditional
-corpus-based \abbr{QA} techniques with deep semantic parsing based on
-\term{Discourse Representation Theory}. Unfortunately, there seems
-to be no working demo to date. The homepage of the ongoing efforts of Johan Bos
-and his team can be found at the following address:
+corpus-based \abbr{QA} techniques with deep semantic parsing, utilizing
+\term{Discourse Representation Theory} as a data structure. Unfortunately, there
+seems to be no working demo to date. The homepage of the ongoing efforts of
+Johan Bos and his team can be found at the following address:
 \href{http://svn.ask.it.usyd.edu.au/trac/candc/}{\url{http://svn.ask.it.usyd.edu.au/trac/candc/}}.
 
-\cite{tenCate} present a tableaux method for resolving questions and also
-propose an algorithm in \prol{} as an implementation. Their approach is a more
-theoretical one, and they do not provide any particular implementation of their
-work. Although their methods seems promising, to say the least, it was chosen to
-avoid the implementation of a specialized inferencing system. \cite{bosgabdsil}
-mention the combinatorial explosion that lurks behind the treatment of questions
-and this is a considerable threat to any implementation of deep semantic
-\abbr{QA} systems. By using external inferencing tools, an implementation of
-the semantics of questions can focus on more essential issues than the
-resolution of formulae. % too offending. fixme
-
 Discourse Representation Theory is also used in \cite{bosgabdsil}, who present
-an approach to question answering quite similar to what is presented in this
-paper. In contrast to \cite{tenCate}, who use their own internal inferencing
-method to resolve questions, Bos and Gabdsil also use external inferencing very
-similar to the \curt{} system. Their results will be discussed later on, and
-explicitly compared to the present results.
+an approach to question answering to a certain extend similar to what is pursued
+in this paper. They choose to pursue the theoretical background compiled by
+\cite{gs:sqpa} and several later publications, including \cite{gs:q}. Moreover,
+they also use external first-order inferencing tools to perform computations on
+the consistency and informativity of the system's DRS models, which for this
+purpose are first translated to first order logic.  Their results will be
+discussed later on, and explicitly compared to the present results.
 
-An attempt to bring inferencing to the world of \abbr{QA} systems can be found
-in \cite{webber}.
+\cite{tenCate} present a tableaux method for resolving questions via inferenceand also
+propose an algorithm in \prol{} as an implementation. Although their methods
+seems promising, it was chosen to
+the present approach will avoid the implementation of a specialized inferencing
+system and rely on external inferencing tools.
 
-Interestingly, earlier attempts at providing a software capable of answering
-questions in natural language were mostly coupled with the usage of
-semantic analysis instead of statistical methods.
-\cite{chat} are among  the first to attempt creating a question answering system
-with reasonable coverage. Their effort has been focused on the geographical
-domain, and their implementation, dubbed \pn{CHAT-80}, is written entirely in
-\prol. The lack of hardware resources of that time forced the system to be
-written with efficiency in mind. Moreover, it had to maintain a statical
-database of facts which was hand-crafted. As such, it falls more into the
-category of question answering systems than dialogue systems.
-
-Today it is clear that statistical question answering systems make inroads to
-the search market, and not many doubt that they are bound to eventually replace
-current document/term-based search engines. Even though \abbr{QA} systems also
-operate on the domain of answering questions, their approach to resolving them
-differs in most aspects from that of dialogue systems. The latter have a much
-higher obligation to correctness, since their results are typically not subject
-to peer review and serve an entirely different purpose.
+Today it is clear that question answering systems make inroads to the search
+market, and not many doubt that they are bound to eventually replace current
+document/term-based search engines. Dialogue systems, are still not capable of
+convincing a larger user base. Among other things, their representation of
+knowledge and capability to interact with stored information is still considered
+to be lacking.  Even though \abbr{QA} systems also operate on the domain of
+answering questions, their approach to resolving them differs from that of
+dialogue systems. The latter have a much higher obligation to correctness, since
+their results are typically not subject to peer review and serve an entirely
+different purpose.
 
 \pn{Godot}, a very interesting project, is introduced in \cite{godot}.
 \pn{Godot} is a so-called \term{embodied agent}, a robot with a sophisticated
@@ -327,9 +344,9 @@ dialogue system.
 in its particular discourse model -- and does so far not seem to support the answering
 of questions about its state.
 
-\curt{} is a prototype dialogue system and as such it is based on an entirely different set of
-premises than \abbr{QA} systems. Moreover, it differs from \pn{Godot} in some
-major points, the most distinctive of which is that \curt{} only exists inside a
+\curt{} is a prototype teaching system, designed to showcase the possibilities
+of a full-fledged dialogue system. It differs from \pn{Godot} in some major
+points, the most distinctive of which is that \curt{} only exists inside a
 regular computer and has no access to sensory input. Also, \curt's
 representation of knowledge differs from that of \pn{Godot} or the \pn{Pronto QA
 System} in that it does not use discourse representation theory (yet). \acurt{}
@@ -341,7 +358,7 @@ broader feature set for it.
 At the end of \cite{blackburnbos:cl1}, \curt{} is able to cope with a small
 grammar and provides some features for interaction in natural
 language. It does only understand basic extensional transitive and intransitive
-verbs and its support for question answering remains limited.
+verbs and its support for question answering is only rudimentary.
 Anaphora resolution still remains an open issue.
 
 In the course of this thesis, a new version of \curt{} is introduced, called
@@ -361,15 +378,18 @@ in parallel, which is a side-effect of the introduction of the notion of
 \b.  Mia knows who snorts.
 \b.  Vincent believes that Mia likes Jody.\label{ex:whembc}
 
-For this to work, the internal storage of \curt{} will have to be restructured
+For this to work, the internal storage of \curt{} had to be restructured
 significantly in order to deal with more than one possible world or situation.
-Its grammar will have to be enhanced so that it can handle \wh-embedding verbs
-like `know' and `believe' and its inferencing mechanisms are going to be
-employed in a different manner, to encompass a wider range of functionality.
+Its grammar had to be enhanced so that it can handle \wh-embedding verbs
+like \example{know} and \example{believe} and its inferencing functionality had
+to be ported to the new system.
+
+The next two sections explain, in order, the theoretical background and
+practical operation of \acurt{}.
 
 \section{Theory}\label{sec:theory}
 
-The semantics of questions has traditionally been a very sophisticated field of
+The semantics of questions have traditionally been a very sophisticated field of
 linguistics,  philosophy and logics, with many different approaches arguing for
 and against each other. This section will not try to give an exhausting overview
 of the field of question semantics since this would be a task of considerable
@@ -377,12 +397,13 @@ size and by far beyond the scope of this thesis\footnote{For a good summary of
 some of the literature, particularly the issue of whether questions are a
 concern of pragmatics or semantics, consider \cite[section 2 and 3]{gs:q}.}.
 Instead, it was chosen to roughly follow the work by Groenendijk and Stokhof,
-who present one of the best-established and recognized theories in the field,
-and also lending from other places where deemed appropriate or practical. As
-such, the theoretical framework of \acurt{} is not going to be an exact
-realization of any particular approach to question semantics, but rather an
-accumulation of interesting concepts from different sources. The main sources,
-however, are \cite{gs:q} and \cite{gs:sqpa}.
+who present one of the best-established and recognized theories in the field.
+In parts, the framework of the next sections is lending from other places, where
+deemed appropriate or practical. As such, the theoretical framework of \acurt{}
+is not going to be an exact realization of any particular approach to question
+semantics, but rather an accumulation of interesting, and, most of all,
+practicable concepts from different sources. The main sources, however, are
+\cite{gs:q} and \cite{gs:sqpa}.
 
 Following an overview of the terminology that will be used for the discussion of
 the formal treatment of questions, an  elaboration on the differences between
@@ -416,7 +437,7 @@ way:
   whereas an \term{interrogative act} refers to the utterance of an
   \term{interrogative}. Finally, a
   \term{question} will denote the semantic entity uttered by the
-  \term{interrogative act}, as it will be introduced in section
+  \term{interrogative act}, and is introduced in section
   \ref{sec:protoq}
 \end{termin}
 
@@ -428,15 +449,15 @@ somkes.} or \emph{Nobody smokes.}
 
 Example \ref{ex:yesno} is considered an \term{alternative question} or
 \term{yes/no-interrogative} since only \emph{yes} and \emph{no} are possible
-answers to this interrogative. \ref{ex:const} on the other hand is considered a
-\term{\wh-question} or \term{constituent interrogative} since one of the
+answers to this interrogative. \ref{ex:const}, on the other hand, is considered a
+\term{\wh-question} or \term{constituent interrogative}, since one of the
 sentences' nominal constituents is replaced by a \wh-pronoun, prompting an
 enumeration of possible fillers for the resulting gap as an answer.
 
-The following abbreviations will be used: 
-\abbr{Ty2} stands for two-sorted type logic\footnote{See \cite{gallin:ty2} for a
+The following abbreviations are used: 
+\abbr{Ty2}, for two-sorted type logic\footnote{See \cite{gallin:ty2} for a
 discussion and \cite{gs:sqpa} for its usage in describing the semantics of
-questions}, \abbr{IL} stands for intensional logic\footnote{As used by
+questions}, \abbr{IL}, for intensional logic\footnote{As used by
 \cite{ptq}. See also \cite{gamut:2} for an excellent introduction to \abbr{IL}.},
 \abbr{FOL}  is used as an abbreviation for first order logic. As an alternative
 term for \term{possible world}, sometimes the expression \term{index} is used.
@@ -475,9 +496,7 @@ order to increase the expressive power of the system.
 Some research on the logic of questions (sometimes also referred to as eroteric
 logic) suggests that the treatment of interrogatives demands its own formalism.
 \acurt{} employs a formalism that departs from both \abbr{IL} and \abbr{Ty2} in
-some ways. Most notably, the notion of a \term{model} is changed as follows, in
-order to accommodate the question operator introduced further on, which demands
-a set of possible worlds to be available.
+some ways. Most notably, the notion of a \term{model} is changed as follows.
 
 \begin{definition}\label{Models}
   \stress{Models\footnote{See also the Appendix, section \ref{sec:examplemodel}
@@ -1371,6 +1390,8 @@ anaphora). Basing all this on a nice implementation of DRT (discussed in
 interesting. The Pronto \abbr{QA} system of \cite{prontoqa} already defines a
 means of representing questions and queries against a Discourse Representation
 Structure.
+
+Burhans and Shapiro
 
 \section{Appendix}
 
