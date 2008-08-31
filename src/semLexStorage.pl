@@ -72,7 +72,7 @@ semLex(whemb,M) :-
 .
 
 semLex(whemb,M) :-
-	M = [sem:[lam(Q, que([],[],Q))],type:question]
+	M = [sem:[lam(Q, que([],alt,Q))],type:question]
 	.
 
 semLex(qnp,M):-

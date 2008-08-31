@@ -212,7 +212,7 @@ getKnowledge(world(_D,_F,Old),New,and(BackgroundKnowledge,Old),and(Old,New)) :-
 
 beAdvertent(world(_D,_F,Background),knowledge(X,P)) :-
 	(
-		P = que(_,[],Q)
+		P = que(_,alt,Q)
 		, !
 		, backgroundKnowledge(and(Q,Background),BK2)
 		,
