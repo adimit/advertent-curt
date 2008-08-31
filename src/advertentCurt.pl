@@ -20,7 +20,7 @@
 
 :- use_module(kellerStorage,[kellerStorage/2]).
 
-:- use_module(intensionalModels,[satisfy/4]).
+:- use_module(modelChecker2,[satisfy/4]).
 
 :- use_module(backgroundKnowledge,[backgroundKnowledge/2]).
 
@@ -40,11 +40,13 @@
    Dynamic Predicates
 ========================================================================*/
 
-:- dynamic history/1, readings/1, models/1.
+:- dynamic history/1, readings/1, models/1, epistemic/1, doxastic/1.
 
 history([]).
 readings([]).
 models([]).
+epistemic([]).
+doxastic([]).
 
 % domain size for model builders
 domainSize(15).
@@ -178,22 +180,27 @@ interpretReadings([(_Index,World)|Worlds],Readings,NewWorlds) :-
 % Interpret one old reading (may be the empty list) wrt to one new reading
 % and gives back an index/world pair
 interpret(Old,New,World) :-
-	getKnowledge(Old,New,BK,Reading)
-	,
 	(
-		check(and(BK,New),'consistency',BBModel), !
+		beAdvertent(Old,New), !
+		, World = (_,Old)
+	;
+		getKnowledge(Old,New,BK,Reading)
 		,
 		(
-			check(and(BK,not(New)),'informativity',_), !
-			, BBModel = model(D,F)
-			, World = (_,world(D,F,Reading))
+			check(and(BK,New),'consistency',BBModel), !
+			,
+			(
+				check(and(BK,not(New)),'informativity',_), !
+				, BBModel = model(D,F)
+				, World = (_,world(D,F,Reading))
+			;
+				format('~nFound uninformative reading. Dropping reading.',[])
+				, World = (_,Old)
+			)
 		;
-			format('~nFound uninformative reading. Dropping reading.',[])
-			, World = (_,Old)
+			format('~nFound inconsistency. Dropping world.',[])
+			, World = []
 		)
-	;
-		format('~nFound inconsistency. Dropping world.',[])
-		, World = []
 	)
 	.
 
@@ -203,11 +210,55 @@ getKnowledge([],New,BackgroundKnowledge,New) :-
 getKnowledge(world(_D,_F,Old),New,and(BackgroundKnowledge,Old),and(Old,New)) :- 
 	backgroundKnowledge(and(Old,New),BackgroundKnowledge).
 
+beAdvertent(world(_D,_F,Background),knowledge(X,P)) :-
+	(
+		P = que([],[],Q)
+		, !
+		, backgroundKnowledge(and(Q,Background),BK2)
+		,
+		(
+			check(and(and(Background,BK2),not(Q)),'yes/ interrogative: informativity',_)
+			, !
+			, backgroundKnowledge(Q,BK)
+			, check(and(Q,BK),'preparing world: consistency', model(D,F))
+		;
+			check(and(and(Background,BK2),Q),'/no interrogative: informativity',_)
+			, backgroundKnowledge(Q,BK)
+			, check(and(not(Q),BK),'preparing world: consistency', model(D,F))
+		)
+		, World = (X,world(D,F,Q))
+		, addEpistemic(World)
+	;
+		P = que(_Y,_Domain,_Body)
+		, !
+		, fail
+	;
+		backgroundKnowledge(and(P,Background),BK2)
+		, check(and(and(Background,BK2),not(P)),'embedded proposition: informativity',_)
+		, backgroundKnowledge(P,BK)
+		, check(and(P,BK),'preparing world: consistency', model(D,F))
+		, World = (X,world(D,F,Q))
+		, addEpistemic(World)
+	)
+	.
+
 check(Formula,Job,Model) :-
 	domainSize(DomainSize)
 	, callTPandMB(not(Formula),Formula,DomainSize,Proof,Model,Engine)
 	, format('~nMessage (~p checking): ~p found a result.',[Job,Engine])
 	, \+ Proof=proof, Model=model([_|_],_)
+	.
+
+addEpistemic(World) :-
+	retract(epistemic(Model))
+	, append(Model,[World],New)
+	, assert(epistemic(New))
+	.
+
+addDoxastic(World) :-
+	retract(doxastic(Model))
+	, append(Model,[World],New)
+	, assert(doxastic(New))
 	.
 
 /*========================================================================
