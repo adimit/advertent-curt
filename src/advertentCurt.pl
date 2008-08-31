@@ -229,8 +229,7 @@ beAdvertent((Index,world(D,F,Background)),knowledge(X,P)) :-
 	(
 		P = que(_,alt,Q)
 		, !
-		,
-		(
+		, (
 			getEpistemicBG(X,I,world(_,_,EBG))
 			, !
 			, BG = and(Q,EBG)
@@ -238,11 +237,9 @@ beAdvertent((Index,world(D,F,Background)),knowledge(X,P)) :-
 		;
 			BG = Q
 			, NBG = not(Q)
-
 		)
 		, backgroundKnowledge(and(BG,Background),BK2)
-		,
-		(
+		, (
 			\+ check(and(and(Background,BK2),not(BG)),'yes/ interrogative: informativity',_)
 			, !
 			, backgroundKnowledge(BG,BK)
@@ -262,7 +259,27 @@ beAdvertent((Index,world(D,F,Background)),knowledge(X,P)) :-
 		, \+ Result = undef
 		, !
 		, findall(A,satisfy(and(Domain,Body),model(D,F),[g(Y,A)],pos),Answers)
-		, realiseAnswer(Answers,que(Y,Domain,Body),model(D,F),String)
+		, realiseAnswer(Answers,que(Y,Domain,Body),world(D,F,Background),String)
+		,
+		(
+			String = none, !
+			, beAdvertent((Index,world(D,F,Background)),knowledge(X,que([],alt,some(Y,Body))))
+		;
+			Y = String
+			, (
+				getEpistemicBG(X,I,world(_,_,EBG))
+				, !
+				, BG = and(Body,EBG)
+				, NBG = and(not(Body),EBG)
+			;
+				BG = Body
+				, NBG = not(Body)
+			) 
+			, backgroundKnowledge(BG,BK)
+			, check(and(BG,BK),'preparing world: consistency', model(D2,F2))
+			, World = (X, Index,world(D2,F2,BG))
+			, addEpistemic(World)
+		)
 	;
 		(
 			getEpistemicBG(X,I,world(_,_,EBG))
@@ -271,8 +288,7 @@ beAdvertent((Index,world(D,F,Background)),knowledge(X,P)) :-
 		;
 			Q = P
 		)
-		,
-		backgroundKnowledge(and(Q,Background),BK2)
+		, backgroundKnowledge(and(Q,Background),BK2)
 		, \+ check(and(and(Background,BK2),not(Q)),'embedded proposition: informativity',_)
 		, backgroundKnowledge(Q,BK)
 		, check(and(Q,BK),'preparing world: consistency', model(D2,F2))
@@ -353,10 +369,9 @@ realiseAnswer([Value1,Value2|Values],Q,Model,String):-
 realiseString(que(X,R,S),Value,world(D,F,Reading),String):-
    kellerStorage:lexEntry(pn,[symbol:Symbol,syntax:Answer|_]),
    satisfy(eq(Y,Symbol),model(D,F),[g(Y,Value)],pos), !,
-   checkAnswer(some(X,and(eq(X,Symbol),and(R,S))),Reading,Proof),
    (
-      Proof=proof, !,
-      list2string(Answer,String)
+      \+ checkAnswer(some(X,and(eq(X,Symbol),and(R,S))),Reading), !
+      , list2string(Answer,String)
    ;
       list2string([maybe|Answer],String)
    ).
@@ -365,10 +380,9 @@ realiseString(que(X,R,S),Value,world(D,F,Reading),String):-
    kellerStorage:lexEntry(noun,[symbol:Symbol,syntax:Answer|_]), 
    compose(Formula,Symbol,[X]),
    satisfy(Formula,model(D,F),[g(X,Value)],pos), !,
-   checkAnswer(some(X,and(Formula,and(R,S))),Reading,Proof),
    (
-      Proof=proof, !,
-      list2string([a|Answer],String)
+      \+ checkAnswer(some(X,and(Formula,and(R,S))),Reading), !
+      , list2string([a|Answer],String)
    ;
       list2string([maybe,a|Answer],String)
    ).
@@ -380,10 +394,10 @@ realiseString(_,Value,_,Value).
    Answer Checking
 ========================================================================*/
 
-checkAnswer(Answer,F,Proof):-
+checkAnswer(Answer,F):-
    backgroundKnowledge(F,BK),
-   callTP(imp(and(F,BK),Answer),Proof,Engine),
-   format('~nMessage (answer checking): ~p found result "~p".',[Engine,Proof]).
+   check(not(imp(and(F,BK),Answer)),'answer deduction: consistency checking',_)
+   .
 
 
 /*========================================================================
