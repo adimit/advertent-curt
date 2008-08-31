@@ -102,7 +102,7 @@ curtUpdate([select,X],[],run):-
    readings(R1),
    selectReadings(X,R1,R2), !,
    updateReadings(R2),
-   models(M1),
+   models(M1), !,
    selectReadings(X,M1,M2),
    updateModels(M2).
 
@@ -153,7 +153,7 @@ noEmpties([[]|Xs],L) :- !, noEmpties(Xs,L).
 noEmpties([X|Xs],[X|L]) :- noEmpties(Xs,L).
 
 interpretReadings(Readings,Model) :-
-	models(Old)
+	models(Old) , !
 	, interpretReadings(Old,Readings,M)
 	, noEmpties(M,Model)
 	.
@@ -212,17 +212,17 @@ getKnowledge(world(_D,_F,Old),New,and(BackgroundKnowledge,Old),and(Old,New)) :-
 
 beAdvertent(world(_D,_F,Background),knowledge(X,P)) :-
 	(
-		P = que([],[],Q)
+		P = que(_,[],Q)
 		, !
 		, backgroundKnowledge(and(Q,Background),BK2)
 		,
 		(
-			check(and(and(Background,BK2),not(Q)),'yes/ interrogative: informativity',_)
+			\+ check(and(and(Background,BK2),not(Q)),'yes/ interrogative: informativity',_)
 			, !
 			, backgroundKnowledge(Q,BK)
 			, check(and(Q,BK),'preparing world: consistency', model(D,F))
 		;
-			check(and(and(Background,BK2),Q),'/no interrogative: informativity',_)
+			\+ check(and(and(Background,BK2),Q),'/no interrogative: informativity',_)
 			, backgroundKnowledge(Q,BK)
 			, check(and(not(Q),BK),'preparing world: consistency', model(D,F))
 		)
@@ -234,7 +234,7 @@ beAdvertent(world(_D,_F,Background),knowledge(X,P)) :-
 		, fail
 	;
 		backgroundKnowledge(and(P,Background),BK2)
-		, check(and(and(Background,BK2),not(P)),'embedded proposition: informativity',_)
+		, \+ check(and(and(Background,BK2),not(P)),'embedded proposition: informativity',_)
 		, backgroundKnowledge(P,BK)
 		, check(and(P,BK),'preparing world: consistency', model(D,F))
 		, World = (X,world(D,F,Q))
