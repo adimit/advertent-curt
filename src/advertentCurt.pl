@@ -163,7 +163,6 @@ interpretReadings([],Readings,Model) :-
 	, noEmpties(M,Model)
 	.
 
-
 interpretReadings([World|Worlds],Readings,NewWorlds) :-
 	maplist(curt:interpret(World),Readings,W1)
 	,
@@ -226,7 +225,7 @@ getDoxasticBG(X,I,world(D,F,R)) :-
 	, assert(doxastic(Rest))
 	.
 
-beAdvertent((Index,world(_D,_F,Background)),knowledge(X,P)) :-
+beAdvertent((Index,world(D,F,Background)),knowledge(X,P)) :-
 	(
 		P = que(_,alt,Q)
 		, !
@@ -247,19 +246,23 @@ beAdvertent((Index,world(_D,_F,Background)),knowledge(X,P)) :-
 			\+ check(and(and(Background,BK2),not(BG)),'yes/ interrogative: informativity',_)
 			, !
 			, backgroundKnowledge(BG,BK)
-			, check(and(BG,BK),'preparing world: consistency', model(D,F))
-			, World = (X,Index,world(D,F,BG))
+			, check(and(BG,BK),'preparing world: consistency', model(D2,F2))
+			, World = (X,Index,world(D2,F2,BG))
 		;
 			\+ check(and(and(Background,BK2),BG),'/no interrogative: informativity',_)
 			, backgroundKnowledge(NBG,BK)
-			, check(and(NBG,BK),'preparing world: consistency', model(D,F))
-			, World = (X,Index,world(D,F,NBG))
+			, check(and(NBG,BK),'preparing world: consistency', model(D2,F2))
+			, World = (X,Index,world(D2,F2,NBG))
 		)
 		, addEpistemic(World)
 	;
-		P = que(_Y,_Domain,_Body)
+		P = que(Y,Domain,Body)
 		, !
-		, fail
+		, satisfy(some(Y,and(Domain,Body)),model(D,F),[],Result)
+		, \+ Result = undef
+		, !
+		, findall(A,satisfy(and(Domain,Body),model(D,F),[g(Y,A)],pos),Answers)
+		, realiseAnswer(Answers,que(Y,Domain,Body),model(D,F),String)
 	;
 		(
 			getEpistemicBG(X,I,world(_,_,EBG))
@@ -272,8 +275,8 @@ beAdvertent((Index,world(_D,_F,Background)),knowledge(X,P)) :-
 		backgroundKnowledge(and(Q,Background),BK2)
 		, \+ check(and(and(Background,BK2),not(Q)),'embedded proposition: informativity',_)
 		, backgroundKnowledge(Q,BK)
-		, check(and(Q,BK),'preparing world: consistency', model(D,F))
-		, World = (X,Index,world(D,F,Q))
+		, check(and(Q,BK),'preparing world: consistency', model(D2,F2))
+		, World = (X,Index,world(D2,F2,Q))
 		, addEpistemic(World)
 	)
 	.
@@ -347,10 +350,10 @@ realiseAnswer([Value1,Value2|Values],Q,Model,String):-
     Realise a single answer
 ========================================================================*/
 
-realiseString(que(X,R,S),Value,Model,String):-
+realiseString(que(X,R,S),Value,world(D,F,Reading),String):-
    kellerStorage:lexEntry(pn,[symbol:Symbol,syntax:Answer|_]),
-   satisfy(eq(Y,Symbol),Model,[g(Y,Value)],pos), !,
-   checkAnswer(some(X,and(eq(X,Symbol),and(R,S))),Proof),
+   satisfy(eq(Y,Symbol),model(D,F),[g(Y,Value)],pos), !,
+   checkAnswer(some(X,and(eq(X,Symbol),and(R,S))),Reading,Proof),
    (
       Proof=proof, !,
       list2string(Answer,String)
@@ -358,11 +361,11 @@ realiseString(que(X,R,S),Value,Model,String):-
       list2string([maybe|Answer],String)
    ).
 
-realiseString(que(X,R,S),Value,Model,String):-
+realiseString(que(X,R,S),Value,world(D,F,Reading),String):-
    kellerStorage:lexEntry(noun,[symbol:Symbol,syntax:Answer|_]), 
    compose(Formula,Symbol,[X]),
-   satisfy(Formula,Model,[g(X,Value)],pos), !,
-   checkAnswer(some(X,and(Formula,and(R,S))),Proof),
+   satisfy(Formula,model(D,F),[g(X,Value)],pos), !,
+   checkAnswer(some(X,and(Formula,and(R,S))),Reading,Proof),
    (
       Proof=proof, !,
       list2string([a|Answer],String)
@@ -377,8 +380,7 @@ realiseString(_,Value,_,Value).
    Answer Checking
 ========================================================================*/
 
-checkAnswer(Answer,Proof):-
-   readings([F|_]),
+checkAnswer(Answer,F,Proof):-
    backgroundKnowledge(F,BK),
    callTP(imp(and(F,BK),Answer),Proof,Engine),
    format('~nMessage (answer checking): ~p found result "~p".',[Engine,Proof]).
