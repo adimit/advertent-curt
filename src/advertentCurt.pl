@@ -130,21 +130,16 @@ curtUpdate([history],[],run):- !,
    printRepresentations(H).
 
 curtUpdate(Input,Moves,run) :-
-	kellerStorage(Input,Rs)
+	kellerStorage(Input,Readings)
 	, !
-	, maplist(disjunk,Rs,Nested)
-	, flatten(Nested,Readings)
 	, updateHistory(Input)
 	, interpretReadings(Readings,Model)
-	,
-	(
+	, (
 		\+ Model = []
 		, updateModels(Model), !
 		, Moves = [accept]
 	;
-		Moves = [reject]
-	)
-	.
+		Moves = [reject]).
 
 curtUpdate(_,[noparse],run).
 
