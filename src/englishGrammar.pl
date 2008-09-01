@@ -107,23 +107,23 @@ q([sem:Sem])-->
  */
 
 %todo: really coord:no for s? Bill knows that either Jane loves Mary or …
-tbar([sem:TBar])
--->	whemb([sem:WHemb])
+tbar([sem:TBar]) -->
+	whemb([sem:WHemb])
 	, s([coord:no,sem:S])
 	, { combine(tbar:TBar,[whemb:WHemb,s:S]) }
-.
+	.
 
-% for empty complementizers
-tbar([sem:TBar])
--->	s([coord:no,sem:S])
+% for empty complementizers 'Mia knows Vincent snorts'
+tbar([sem:TBar]) -->
+	s([coord:no,sem:S])
 	, { combine(tbar:TBar,[s:S]) }
-.
+	.
 
 % for 'mia knows who likes vincent'
-tbar([sem:TBar])
--->	q([sem:Q])
+tbar([sem:TBar]) -->
+	q([sem:Q])
 	, { combine(tbar:TBar,[q:Q]) }
-.
+	.
 
 /*========================================================================
    Noun Phrases
@@ -213,11 +213,37 @@ nmod([sem:Sem])-->
    Verb Phrases
 ========================================================================*/
 
-vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP])
--->	ivtbar([inf:Inf,num:Num,sem:IVTBAR]) % verb
+vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP]) -->
+	ivtbar([inf:Inf,num:Num,sem:IVTBAR,type:question]) % verb
 	, tbar([sem:TBAR]) % embedded sentence
-	, {combine(vp:VP,[ivtbar:IVTBAR,tbar:TBAR])}
-.
+	,
+	{
+		TBAR = [que(_,_,_)]
+		, combine(vp:VP,[ivtbar:IVTBAR,tbar:TBAR])
+	}
+	.
+
+vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP]) -->
+	ivtbar([inf:Inf,num:Num,sem:IVTBAR,type:propos]) % verb
+	, tbar([sem:TBAR]) % embedded sentence
+	,
+	{
+		\+ TBAR = [que(_,_,_)]
+		, combine(vp:VP,[ivtbar:IVTBAR,tbar:TBAR])
+	}
+	.
+
+vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP]) -->
+	ivtbar([inf:Inf,num:Num,sem:IVTBAR,type:resolutive]) % verb
+	, tbar([sem:TBAR]) % embedded sentence
+	, { combine(vp:VP,[ivtbar:IVTBAR,tbar:TBAR]) }
+	.
+
+vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP]) -->
+	ivtbar([inf:Inf,num:Num,sem:IVTBAR,type:factive]) % verb
+	, tbar([sem:TBAR]) % embedded sentence
+	, { combine(vp:VP,[ivtbar:IVTBAR,tbar:TBAR]) }
+	.
 
 vp([coord:yes,inf:Inf,num:Num,gap:[],sem:VP])--> 
    vp([coord:no,inf:Inf,num:Num,gap:[],sem:VP1]), 
@@ -274,10 +300,10 @@ iv([inf:Inf,num:Num,sem:Sem])-->
    Word,
    {semLex(iv,[symbol:Sym,sem:Sem])}.
 
-ivtbar([inf:Inf,num:Num,sem:Sem])
--->	{lexEntry(ivtbar,[symbol:Sym,syntax:Word,inf:Inf,num:Num])}
+ivtbar([inf:Inf,num:Num,sem:Sem,type:Type])
+-->	{lexEntry(ivtbar,[symbol:Sym,syntax:Word,inf:Inf,num:Num,type:Type])}
 	, Word
-	, {semLex(ivtbar,[symbol:Sym,sem:Sem])}
+	, {semLex(ivtbar,[symbol:Sym,sem:Sem,type:Type])}
 .
 
 tv([inf:Inf,num:Num,sem:Sem])--> 

@@ -54,6 +54,18 @@ combine(q:Q,[whnp:[A|S1],vp:[B|S2]]):-
 combine(q:Q,[sinv:Q]):-
    Q=que(_,_,_).
 
+combine(tbar:[SRed],[whemb:[WH],s:S]) :-
+	betaConvert(app(WH,S),SRed)
+	.
+
+combine(tbar:[SRed],[s:S]) :-
+	betaConvert(S,SRed)
+	.
+
+combine(tbar:[QRed],[q:Q]) :-
+	betaConvert(Q,QRed)
+	.
+
 combine(np:A,[pn:A]).
 combine(np:A,[qnp:A]).
 combine(np:[lam(P,app(P,X)),bo([app(A,B)|S],X)],[det:[A],n:[B|S]]).
@@ -81,6 +93,8 @@ combine(vp:A,[iv:A]).
 combine(vp:[app(A,B)|S],[tv:[A],np:[B|S]]).
 combine(vp:[app(app(B,A),C)|S3],[vp:[A|S1],coord:[B],vp:[C|S2]]):-
 	appendLists(S1,S2,S3).
+
+combine(vp:[app(A,B)|S],[ivtbar:[A],tbar:[B|S]]).
 
 combine(pp:[app(A,B)|S],[prep:[A],np:[B|S]]).
 

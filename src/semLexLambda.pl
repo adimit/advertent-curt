@@ -53,7 +53,12 @@ semLex(tv,M):-
    compose(Formula,Sym,[Y,X]).
 
 semLex(ivtbar,M)
-:-	M = [symbol:Sym,sem:lam(S,lam(X,app(S,lam(Y,Formula))))]
+:-	M = [symbol:Sym,sem:lam(S,lam(X,app(lam(Y,and(Formula,S)),S))),type:assert]
+	, compose(Formula,Sym,[X,Y])
+.
+
+semLex(ivtbar,M)
+:-	M = [symbol:Sym,sem:lam(S,lam(X,app(lam(Y,Formula),S))),type:_]
 	, compose(Formula,Sym,[X,Y])
 .
 

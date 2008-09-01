@@ -25,17 +25,21 @@
  * wh-embedding verbs
  * cf karttunen 77 for the complete classification according to 'type'
  */
-lexEntry(ivtbar,[symbol:knowi,syntax:[know],inf:inf,num:sg]).
-lexEntry(ivtbar,[symbol:knowi,syntax:[knows],inf:fin,num:sg]).
-lexEntry(ivtbar,[symbol:knowi,syntax:[know],inf:fin,num:pl]).
+lexEntry(ivtbar,[symbol:knowledge,syntax:[know],inf:inf,num:sg,type:factive]).
+lexEntry(ivtbar,[symbol:knowledge,syntax:[knows],inf:fin,num:sg,type:factive]).
+lexEntry(ivtbar,[symbol:knowledge,syntax:[know],inf:fin,num:pl,type:factive]).
 
-lexEntry(ivtbar,[symbol:believei,syntax:[believe],inf:inf,num:sg]).
-lexEntry(ivtbar,[symbol:believei,syntax:[believes],inf:fin,num:sg]).
-lexEntry(ivtbar,[symbol:believei,syntax:[believe],inf:fin,num:pl]).
+lexEntry(ivtbar,[symbol:report,syntax:[report],inf:inf,num:sg,type:resolutive]).
+lexEntry(ivtbar,[symbol:report,syntax:[reports],inf:fin,num:sg,type:resolutive]).
+lexEntry(ivtbar,[symbol:report,syntax:[report],inf:fin,num:pl,type:resolutive]).
 
-lexEntry(ivtbar,[symbol:thinki,syntax:[think],inf:inf,num:sg]).
-lexEntry(ivtbar,[symbol:thinki,syntax:[thinks],inf:fin,num:sg]).
-lexEntry(ivtbar,[symbol:thinki,syntax:[think],inf:fin,num:pl]).
+lexEntry(ivtbar,[symbol:believe,syntax:[believe],inf:inf,num:sg,type:propos]).
+lexEntry(ivtbar,[symbol:believe,syntax:[believes],inf:fin,num:sg,type:propos]).
+lexEntry(ivtbar,[symbol:believe,syntax:[believe],inf:fin,num:pl,type:propos]).
+
+lexEntry(ivtbar,[symbol:wonder,syntax:[wonder],inf:inf,num:sg,type:question]).
+lexEntry(ivtbar,[symbol:wonder,syntax:[wonders],inf:fin,num:sg,type:question]).
+lexEntry(ivtbar,[symbol:wonder,syntax:[wonder],inf:fin,num:pl,type:question]).
 
 /*========================================================================
    Determiners
@@ -273,9 +277,9 @@ lexEntry(relpro,[syntax:[that]]).
 /*
  * wh-embedders
  */
-lexEntry(whemb,[syntax:[that],type:assert]).
-lexEntry(whemb,[syntax:[whether],type:altern]).
-lexEntry(whemb,[syntax:[if],type:altern]).
+lexEntry(whemb,[syntax:[that],type:propos]).
+lexEntry(whemb,[syntax:[whether],type:question]).
+lexEntry(whemb,[syntax:[if],type:question]).
 
 /*========================================================================
    Coordinations
