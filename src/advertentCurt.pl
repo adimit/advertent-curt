@@ -178,12 +178,8 @@ interpret((Index,Old),New,World) :-
 		beAdvertent((Index,Old),New), !
 		, World = (Index,Old)
 	;
-		getKnowledge(Old,New,BK,Reading)
-		,
-		(
-			check(and(BK,New),'consistency',BBModel), !
-			,
-			(
+		getKnowledge(Old,New,BK,Reading) , (
+			check(and(BK,New),'consistency',BBModel), !  , (
 				check(and(BK,not(New)),'informativity',_), !
 				, BBModel = model(D,F)
 				, World = (Index,world(D,F,Reading))
@@ -193,10 +189,7 @@ interpret((Index,Old),New,World) :-
 			)
 		;
 			format('~nFound inconsistency. Dropping world.',[])
-			, World = []
-		)
-	)
-	.
+			, World = [])) .
 
 getKnowledge([],New,BackgroundKnowledge,New) :- 
 	backgroundKnowledge(New,BackgroundKnowledge).
@@ -234,8 +227,6 @@ checkPartitions(Reading,[X|Xs],F) :-
 		, F = X
 	)
 	.
-
-
 
 beAdvertent((_Index,world(_D,F,R)),que(X,Domain,Body),Answer) :-
 	findBuddies(F,Buddies)
