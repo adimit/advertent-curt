@@ -21,6 +21,26 @@
 
 *************************************************************************/
 
+/*
+ * wh-embedding verbs
+ * cf karttunen 77 for the complete classification according to 'type'
+ */
+lexEntry(ivtbar,[symbol:knowledge,syntax:[know],inf:inf,num:sg,type:factive]).
+lexEntry(ivtbar,[symbol:knowledge,syntax:[knows],inf:fin,num:sg,type:factive]).
+lexEntry(ivtbar,[symbol:knowledge,syntax:[know],inf:fin,num:pl,type:factive]).
+
+lexEntry(ivtbar,[symbol:report,syntax:[report],inf:inf,num:sg,type:resolutive]).
+lexEntry(ivtbar,[symbol:report,syntax:[reports],inf:fin,num:sg,type:resolutive]).
+lexEntry(ivtbar,[symbol:report,syntax:[report],inf:fin,num:pl,type:resolutive]).
+
+lexEntry(ivtbar,[symbol:believe,syntax:[believe],inf:inf,num:sg,type:propos]).
+lexEntry(ivtbar,[symbol:believe,syntax:[believes],inf:fin,num:sg,type:propos]).
+lexEntry(ivtbar,[symbol:believe,syntax:[believe],inf:fin,num:pl,type:propos]).
+
+lexEntry(ivtbar,[symbol:wonder,syntax:[wonder],inf:inf,num:sg,type:question]).
+lexEntry(ivtbar,[symbol:wonder,syntax:[wonders],inf:fin,num:sg,type:question]).
+lexEntry(ivtbar,[symbol:wonder,syntax:[wonder],inf:fin,num:pl,type:question]).
+
 /*========================================================================
    Determiners
 ========================================================================*/
@@ -205,7 +225,7 @@ lexEntry(tv,[symbol:pickup,syntax:[picks,up],inf:fin,num:sg]).
 lexEntry(tv,[symbol:pickup,syntax:[pick,up],inf:fin,num:pl]).
 
 lexEntry(tv,[symbol:shoot,syntax:[shot],inf:inf,num:sg]).
-lexEntry(tv,[symbol:shoot,syntax:[shot],inf:fin,num:sg]).
+lexEntry(tv,[symbol:shoot,syntax:[shot],inf:fin,num:sg]). % interesting. they allow past tense :-)
 lexEntry(tv,[symbol:shoot,syntax:[shoots],inf:fin,num:sg]).
 lexEntry(tv,[symbol:shoot,syntax:[shoot],inf:fin,num:pl]).
 
@@ -254,6 +274,12 @@ lexEntry(adj,[symbol:tall,syntax:[tall]]).
 lexEntry(relpro,[syntax:[who]]).
 lexEntry(relpro,[syntax:[that]]).
 
+/*
+ * wh-embedders
+ */
+lexEntry(whemb,[syntax:[that],type:propos]).
+lexEntry(whemb,[syntax:[whether],type:question]).
+lexEntry(whemb,[syntax:[if],type:question]).
 
 /*========================================================================
    Coordinations

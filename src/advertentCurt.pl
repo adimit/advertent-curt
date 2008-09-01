@@ -1,4 +1,6 @@
 %% Advertent Curt. Here to answer your questions.
+% Aleksandar Dimitrov
+% based on Helpful Curt
 
 :- module(curt,[curt/0,infix/0,prefix/0]).
 
@@ -13,6 +15,8 @@
                                 compose/3,
 				selectFromList/3,
 				printRepresentations/1]).
+
+:- use_module(or,[disjunk/2]).
 
 :- use_module(kellerStorage,[kellerStorage/2]).
 
@@ -36,12 +40,16 @@
    Dynamic Predicates
 ========================================================================*/
 
-:- dynamic history/1, readings/1, models/1.
+:- dynamic history/1, readings/1, models/1, epistemic/1, doxastic/1.
 
 history([]).
 readings([]).
 models([]).
+epistemic([]).
+doxastic([]).
 
+% domain size for model builders
+domainSize(15).
 
 /*========================================================================
    Start Curt
@@ -71,8 +79,8 @@ curtTalk(run):-
 curtUpdate([],[clarify],run):- !.
 
 curtUpdate([bye],[bye],quit):- !,
-   updateReadings([]),
-   updateModels([]),
+   %updateReadings([]),
+   %updateModels([]),
    clearHistory.
 
 curtUpdate([new],[],run):- !,
@@ -94,7 +102,7 @@ curtUpdate([select,X],[],run):-
    readings(R1),
    selectReadings(X,R1,R2), !,
    updateReadings(R2),
-   models(M1),
+   models(M1), !,
    selectReadings(X,M1,M2),
    updateModels(M2).
 
@@ -105,10 +113,10 @@ curtUpdate([summary],[],run):-
    updateModels([]).
 
 curtUpdate([knowledge],[],run):-
-   readings(R), 
+   readings(R),
    findall(K,(memberList(F,R),backgroundKnowledge(F,K)),L),
    printRepresentations(L).
-   
+
 curtUpdate([readings],[],run):- !,
    readings(R),
    printRepresentations(R).
@@ -121,40 +129,196 @@ curtUpdate([history],[],run):- !,
    history(H),
    printRepresentations(H).
 
-curtUpdate(Input,Moves,run):-
-   kellerStorage(Input,Readings), !,
-   updateHistory(Input),
-   (
-      Readings=[que(X,R,S)|_],
-      models(OldModels),
-      answerQuestion(que(X,R,S),OldModels,Moves)
-   ;  
-      \+ Readings=[que(_,_,_)|_],
-      consistentReadings(Readings,[]-ConsReadings,[]-Models),
-      (
-         ConsReadings=[],
-         Moves=[contradiction]
-      ;
-         \+ ConsReadings=[],
-         informativeReadings(ConsReadings,[]-InfReadings),   
-         (
-            InfReadings=[],
-            Moves=[obvious]
-         ;  
-            \+ InfReadings=[],
-            Moves=[accept]
-         ),
-         combine(ConsReadings,CombinedReadings), 
-         updateReadings(CombinedReadings),
-         updateModels(Models)
-      )
-   ).
+curtUpdate(Input,Moves,run) :-
+	kellerStorage(Input,Rs)
+	, !
+	, maplist(disjunk,Rs,Nested)
+	, flatten(Nested,Readings)
+	, updateHistory(Input)
+	, interpretReadings(Readings,Model)
+	,
+	(
+		\+ Model = []
+		, updateModels(Model), !
+		, Moves = [accept]
+	;
+		Moves = [reject]
+	)
+	.
 
 curtUpdate(_,[noparse],run).
 
+noEmpties([],[]).
+noEmpties([[]|Xs],L) :- !, noEmpties(Xs,L).
+noEmpties([X|Xs],[X|L]) :- noEmpties(Xs,L).
+
+interpretReadings(Readings,Model) :-
+	models(Old) , !
+	, interpretReadings(Old,Readings,M)
+	, noEmpties(M,Model)
+	.
+
+interpretReadings([],Readings,Model) :-
+	maplist(curt:interpret((_,[])),Readings,M)
+	, noEmpties(M,Model)
+	.
+
+interpretReadings([World|Worlds],Readings,NewWorlds) :-
+	maplist(curt:interpret(World),Readings,W1)
+	,
+	(
+		\+ Worlds = []
+		, interpretReadings(Worlds,Readings,Ws)
+		, append(W1,Ws,NewWorlds)
+	;
+		Worlds = []
+		, NewWorlds = W1
+	)
+	.
+
+% Interpret one old reading (may be the empty list) wrt to one new reading
+% and gives back an index/world pair
+interpret((Index,Old),New,World) :-
+	(
+		beAdvertent((Index,Old),New), !
+		, World = (Index,Old)
+	;
+		getKnowledge(Old,New,BK,Reading)
+		,
+		(
+			check(and(BK,New),'consistency',BBModel), !
+			,
+			(
+				check(and(BK,not(New)),'informativity',_), !
+				, BBModel = model(D,F)
+				, World = (Index,world(D,F,Reading))
+			;
+				format('~nFound uninformative reading. Dropping reading.',[])
+				, World = (Index,Old)
+			)
+		;
+			format('~nFound inconsistency. Dropping world.',[])
+			, World = []
+		)
+	)
+	.
+
+getKnowledge([],New,BackgroundKnowledge,New) :- 
+	backgroundKnowledge(New,BackgroundKnowledge).
+
+getKnowledge(world(_D,_F,Old),New,and(BackgroundKnowledge,Old),and(Old,New)) :- 
+	backgroundKnowledge(and(Old,New),BackgroundKnowledge).
+
+getEpistemicBG(X,I,world(D,F,R)) :-
+	epistemic(E), !
+	, delete(E,(X,I,world(D,F,R)),Rest)
+	, \+ Rest = E
+	, retract(epistemic(_)), !
+	, assert(epistemic(Rest))
+	.
+
+getDoxasticBG(X,I,world(D,F,R)) :-
+	doxastic(E), !
+	, delete(E,(X,I,world(D,F,R)),Rest)
+	, \+ Rest = E
+	, retract(doxastic(_)), !
+	, assert(doxastic(Rest))
+	.
+
+beAdvertent((Index,world(D,F,Background)),knowledge(X,P)) :-
+	(
+		P = que(_,alt,Q)
+		, !
+		, (
+			getEpistemicBG(X,I,world(_,_,EBG))
+			, !
+			, BG = and(Q,EBG)
+			, NBG = and(not(Q),EBG)
+		;
+			BG = Q
+			, NBG = not(Q)
+		)
+		, backgroundKnowledge(and(BG,Background),BK2)
+		, (
+			\+ check(and(and(Background,BK2),not(BG)),'yes/ interrogative: informativity',_)
+			, !
+			, backgroundKnowledge(BG,BK)
+			, check(and(BG,BK),'preparing world: consistency', model(D2,F2))
+			, World = (X,Index,world(D2,F2,BG))
+		;
+			\+ check(and(and(Background,BK2),BG),'/no interrogative: informativity',_)
+			, backgroundKnowledge(NBG,BK)
+			, check(and(NBG,BK),'preparing world: consistency', model(D2,F2))
+			, World = (X,Index,world(D2,F2,NBG))
+		)
+		, addEpistemic(World)
+	;
+		P = que(Y,Domain,Body)
+		, !
+		, satisfy(some(Y,and(Domain,Body)),model(D,F),[],Result)
+		, \+ Result = undef
+		, !
+		, findall(A,satisfy(and(Domain,Body),model(D,F),[g(Y,A)],pos),Answers)
+		, realiseAnswer(Answers,que(Y,Domain,Body),world(D,F,Background),String)
+		,
+		(
+			String = none, !
+			, beAdvertent((Index,world(D,F,Background)),knowledge(X,que([],alt,some(Y,Body))))
+		;
+			Y = String
+			, (
+				getEpistemicBG(X,I,world(_,_,EBG))
+				, !
+				, BG = and(Body,EBG)
+				, NBG = and(not(Body),EBG)
+			;
+				BG = Body
+				, NBG = not(Body)
+			) 
+			, backgroundKnowledge(BG,BK)
+			, check(and(BG,BK),'preparing world: consistency', model(D2,F2))
+			, World = (X, Index,world(D2,F2,BG))
+			, addEpistemic(World)
+		)
+	;
+		(
+			getEpistemicBG(X,I,world(_,_,EBG))
+			, !
+			, Q = and(P,EBG)
+		;
+			Q = P
+		)
+		, backgroundKnowledge(and(Q,Background),BK2)
+		, \+ check(and(and(Background,BK2),not(Q)),'embedded proposition: informativity',_)
+		, backgroundKnowledge(Q,BK)
+		, check(and(Q,BK),'preparing world: consistency', model(D2,F2))
+		, World = (X,Index,world(D2,F2,Q))
+		, addEpistemic(World)
+	)
+	.
+
+check(Formula,Job,Model) :-
+	domainSize(DomainSize)
+	, callTPandMB(not(Formula),Formula,DomainSize,Proof,Model,Engine)
+	, format('~nMessage (~p checking): ~p found a result.',[Job,Engine])
+	, \+ Proof=proof, Model=model([_|_],_)
+	.
+
+addEpistemic(World) :-
+	retract(epistemic(Model))
+	, append(Model,[World],New)
+	, assert(epistemic(New))
+	.
+
+addDoxastic(World) :-
+	retract(doxastic(Model))
+	, append(Model,[World],New)
+	, assert(doxastic(New))
+	.
 
 /*========================================================================
    Combine New Utterances with History
+   TODO: add a call to the summary command
 ========================================================================*/
 
 combine(New,New):-
@@ -163,76 +327,6 @@ combine(New,New):-
 combine(Readings,Updated):-
    readings([Old|_]),
    findall(and(Old,New),memberList(New,Readings),Updated).
-
-
-/*========================================================================
-   Select Consistent Readings
-========================================================================*/
-
-consistentReadings([],C-C,M-M).
-
-consistentReadings([New|Readings],C1-C2,M1-M2):-
-   readings(Old),
-   (
-      consistent(Old,New,Model), !,
-      consistentReadings(Readings,[New|C1]-C2,[Model|M1]-M2) 
-   ;
-      consistentReadings(Readings,C1-C2,M1-M2) 
-   ).
-
-
-/*========================================================================
-   Consistency Checking calling Theorem Prover and Model Builder
-========================================================================*/
-
-consistent([Old|_],New,Model):-
-   backgroundKnowledge(and(Old,New),BK),
-   DomainSize=15,
-   callTPandMB(not(and(and(BK,Old),New)),and(and(BK,Old),New),DomainSize,Proof,Model,Engine),
-   format('~nMessage (consistency checking): ~p found a result.',[Engine]),
-   \+ Proof=proof, Model=model([_|_],_).
-
-consistent([],New,Model):-
-   backgroundKnowledge(New,BK),
-   DomainSize=15,
-   callTPandMB(not(and(BK,New)),and(BK,New),DomainSize,Proof,Model,Engine),
-   format('~nMessage (consistency checking): ~p found a result.',[Engine]),
-   \+ Proof=proof, Model=model([_|_],_).
-
-
-/*========================================================================
-   Select Informative Readings
-========================================================================*/
-
-informativeReadings([],I-I).
-
-informativeReadings([New|L],I1-I2):-
-   readings(Old),
-   (
-      informative(Old,New), !,
-      informativeReadings(L,[New|I1]-I2) 
-   ;
-      informativeReadings(L,I1-I2) 
-   ).
-
-
-/*========================================================================
-   Informativity Checking calling Theorem Prover
-========================================================================*/
-
-informative([Old|_],New):-
-   backgroundKnowledge(and(Old,New),BK),
-   DomainSize=15,
-   callTPandMB(not(and(and(BK,Old),not(New))),and(and(BK,Old),not(New)),DomainSize,Proof,Model,Engine),
-   format('~nMessage (informativity checking): ~p found a result.',[Engine]),
-   \+ Proof=proof, Model=model([_|_],_).  
-
-informative([],New):-
-   backgroundKnowledge(New,BK),
-   DomainSize=15,
-   callTPandMB(not(and(BK,not(New))),and(BK,not(New)),DomainSize,Proof,Model,Engine),
-   format('~nMessage (informativity checking): ~p found a result.',[Engine]),
-   \+ Proof=proof, Model=model([_|_],_).
 
 
 /*========================================================================
@@ -272,25 +366,23 @@ realiseAnswer([Value1,Value2|Values],Q,Model,String):-
     Realise a single answer
 ========================================================================*/
 
-realiseString(que(X,R,S),Value,Model,String):-
+realiseString(que(X,R,S),Value,world(D,F,Reading),String):-
    kellerStorage:lexEntry(pn,[symbol:Symbol,syntax:Answer|_]),
-   satisfy(eq(Y,Symbol),Model,[g(Y,Value)],pos), !,
-   checkAnswer(some(X,and(eq(X,Symbol),and(R,S))),Proof),
+   satisfy(eq(Y,Symbol),model(D,F),[g(Y,Value)],pos), !,
    (
-      Proof=proof, !,
-      list2string(Answer,String)
+      \+ checkAnswer(some(X,and(eq(X,Symbol),and(R,S))),Reading), !
+      , list2string(Answer,String)
    ;
       list2string([maybe|Answer],String)
    ).
 
-realiseString(que(X,R,S),Value,Model,String):-
+realiseString(que(X,R,S),Value,world(D,F,Reading),String):-
    kellerStorage:lexEntry(noun,[symbol:Symbol,syntax:Answer|_]), 
    compose(Formula,Symbol,[X]),
-   satisfy(Formula,Model,[g(X,Value)],pos), !,
-   checkAnswer(some(X,and(Formula,and(R,S))),Proof),
+   satisfy(Formula,model(D,F),[g(X,Value)],pos), !,
    (
-      Proof=proof, !,
-      list2string([a|Answer],String)
+      \+ checkAnswer(some(X,and(Formula,and(R,S))),Reading), !
+      , list2string([a|Answer],String)
    ;
       list2string([maybe,a|Answer],String)
    ).
@@ -302,11 +394,10 @@ realiseString(_,Value,_,Value).
    Answer Checking
 ========================================================================*/
 
-checkAnswer(Answer,Proof):-
-   readings([F|_]),
+checkAnswer(Answer,F):-
    backgroundKnowledge(F,BK),
-   callTP(imp(and(F,BK),Answer),Proof,Engine),
-   format('~nMessage (answer checking): ~p found result "~p".',[Engine,Proof]).
+   check(not(imp(and(F,BK),Answer)),'answer deduction: consistency checking',_)
+   .
 
 
 /*========================================================================

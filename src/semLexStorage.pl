@@ -56,6 +56,25 @@ semLex(tv,M):-
         sem:[lam(K,lam(Y,app(K,lam(X,Formula))))]], 
    compose(Formula,Sym,[Y,X]).
 
+semLex(ivtbar,M)
+:-	M = [symbol:Sym,sem:[lam(S,lam(X,app(lam(Y,and(S,Formula)),S)))],type:assert]
+	, !
+	, compose(Formula,Sym,[X,Y])
+.
+semLex(ivtbar,M)
+:-	M = [symbol:Sym,sem:[lam(S,lam(X,app(lam(Y,Formula),S)))],type:_T]
+	, compose(Formula,Sym,[X,Y])
+.
+
+% a simple unit rule for assertive embedders
+semLex(whemb,M) :-
+	M = [sem:[lam(S,S)],type:propos]
+.
+
+semLex(whemb,M) :-
+	M = [sem:[lam(Q, que([],alt,Q))],type:question]
+	.
+
 semLex(qnp,M):-
    M = [type:wh,
         symbol:Sym,
