@@ -225,76 +225,88 @@ getDoxasticBG(X,I,world(D,F,R)) :-
 	, assert(doxastic(Rest))
 	.
 
-beAdvertent((Index,world(D,F,Background)),knowledge(X,P)) :-
+%beAdvertent((Index,world(D,F,R)),que([],[],B)) :-
+	%fail
+	%.
+
+checkPartitions(Reading,[X|Xs],F) :-
 	(
-		P = que(_,alt,Q)
-		, !
-		, (
-			getEpistemicBG(X,I,world(_,_,EBG))
-			, !
-			, BG = and(Q,EBG)
-			, NBG = and(not(Q),EBG)
-		;
-			BG = Q
-			, NBG = not(Q)
-		)
-		, backgroundKnowledge(and(BG,Background),BK2)
-		, (
-			\+ check(and(and(Background,BK2),not(BG)),'yes/ interrogative: informativity',_)
-			, !
-			, backgroundKnowledge(BG,BK)
-			, check(and(BG,BK),'preparing world: consistency', model(D2,F2))
-			, World = (X,Index,world(D2,F2,BG))
-		;
-			\+ check(and(and(Background,BK2),BG),'/no interrogative: informativity',_)
-			, backgroundKnowledge(NBG,BK)
-			, check(and(NBG,BK),'preparing world: consistency', model(D2,F2))
-			, World = (X,Index,world(D2,F2,NBG))
-		)
-		, addEpistemic(World)
+		backgroundKnowledge(and(Reading,X),BK)
+		, \+ check(and(and(Reading,BK),X),'~npartition checking: informativity',_), !
+		, checkPartitions(Reading,Xs,F)
 	;
-		P = que(Y,Domain,Body)
-		, !
-		, satisfy(some(Y,and(Domain,Body)),model(D,F),[],Result)
-		, \+ Result = undef
-		, !
-		, findall(A,satisfy(and(Domain,Body),model(D,F),[g(Y,A)],pos),Answers)
-		, realiseAnswer(Answers,que(Y,Domain,Body),world(D,F,Background),String)
-		,
-		(
-			String = none, !
-			, beAdvertent((Index,world(D,F,Background)),knowledge(X,que([],alt,some(Y,Body))))
-		;
-			Y = String
-			, (
-				getEpistemicBG(X,I,world(_,_,EBG))
-				, !
-				, BG = and(Body,EBG)
-				, NBG = and(not(Body),EBG)
-			;
-				BG = Body
-				, NBG = not(Body)
-			) 
-			, backgroundKnowledge(BG,BK)
-			, check(and(BG,BK),'preparing world: consistency', model(D2,F2))
-			, World = (X, Index,world(D2,F2,BG))
-			, addEpistemic(World)
-		)
-	;
-		(
-			getEpistemicBG(X,I,world(_,_,EBG))
-			, !
-			, Q = and(P,EBG)
-		;
-			Q = P
-		)
-		, backgroundKnowledge(and(Q,Background),BK2)
-		, \+ check(and(and(Background,BK2),not(Q)),'embedded proposition: informativity',_)
-		, backgroundKnowledge(Q,BK)
-		, check(and(Q,BK),'preparing world: consistency', model(D2,F2))
-		, World = (X,Index,world(D2,F2,Q))
-		, addEpistemic(World)
+		format('~nfound result: ~p', X)
+		, F = X
 	)
+	.
+
+
+
+beAdvertent((_Index,world(_D,F,R)),que(X,Domain,Body),Answer) :-
+	findBuddies(F,Buddies)
+	, maplist(or:formulate(X,and(Domain,Body)),Buddies, Formulae)
+	, partition(Formulae,Parted)
+	, checkPartitions(R,Parted,Answer)
+	.
+
+beAdvertent((Index,world(D,F,R)),que(X,Domain,Body)) :-
+	beAdvertent((Index,world(D,F,R)),que(X,Domain,Body),_).
+
+beAdvertent((Index,world(_,_,Background)),knowledge(X,que(_,alt,Q))) :-
+	!, (
+		getEpistemicBG(X,_,world(_,_,EBG))
+		, !
+		, BG = and(Q,EBG)
+		, NBG = and(not(Q),EBG)
+	;
+		BG = Q
+		, NBG = not(Q)
+	)
+	, backgroundKnowledge(and(BG,Background),BK2)
+	, (
+		\+ check(and(and(Background,BK2),not(BG)),'yes/ interrogative: informativity',_)
+		, !
+		, backgroundKnowledge(BG,BK)
+		, check(and(BG,BK),'preparing world: consistency', model(D2,F2))
+		, World = (X,Index,world(D2,F2,BG))
+	;
+		\+ check(and(and(Background,BK2),BG),'/no interrogative: informativity',_)
+		, backgroundKnowledge(NBG,BK)
+		, check(and(NBG,BK),'preparing world: consistency', model(D2,F2))
+		, World = (X,Index,world(D2,F2,NBG))
+	)
+	, addEpistemic(World)
+	.
+
+beAdvertent((Index,world(D,F,Background)),knowledge(X,que(Y,Domain,Body))) :-
+	! , beAdvertent((Index,world(D,F,Background)),que(Y,Domain,Body),Answer)
+	, (
+		getEpistemicBG(Y,_,world(_,_,EBG))
+		, !
+		, Q = and(Answer,EBG)
+	;
+		Q = Answer
+	)
+	, backgroundKnowledge(Q,BK)
+	, check(and(Q,BK),'preparing world: consistency', model(D2,F2))
+	, World = (X, Index,world(D2,F2,Q))
+	, addEpistemic(World)
+	.
+
+beAdvertent((Index,world(_,_,Background)),knowledge(X,P)) :-
+	(
+		getEpistemicBG(X,_,world(_,_,EBG))
+		, !
+		, Q = and(P,EBG)
+	;
+		Q = P
+	)
+	, backgroundKnowledge(and(Q,Background),BK2)
+	, \+ check(and(and(Background,BK2),not(Q)),'embedded proposition: informativity',_)
+	, backgroundKnowledge(Q,BK)
+	, check(and(Q,BK),'preparing world: consistency', model(D2,F2))
+	, World = (X,Index,world(D2,F2,Q))
+	, addEpistemic(World)
 	.
 
 check(Formula,Job,Model) :-
@@ -315,6 +327,30 @@ addDoxastic(World) :-
 	, append(Model,[World],New)
 	, assert(doxastic(New))
 	.
+findBuddies([f(0,A,_)|Fs],[A|More]) :-
+	!, findBuddies(Fs,More)
+	.
+
+findBuddies([],[]).
+
+findBuddies([f(_,_,_)|Fs],Buddies) :-
+	!, findBuddies(Fs,Buddies).
+
+partition([L],[L, not(L)]).
+
+partition([F1,F2],Ls):-
+	partition([F1],Fs)
+	, maplist(partition(F2),Fs,L)
+	, !
+	, flatten(L,Ls)
+	.
+partition([F1|Fs],Ls) :-
+	partition(Fs,PF)
+	, maplist(partition(F1),PF,L)
+	, flatten(L,Ls)
+	.
+
+partition(T1,X,[and(X,T1), and(X,not(T1))]).
 
 /*========================================================================
    Combine New Utterances with History

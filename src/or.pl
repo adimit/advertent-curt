@@ -30,6 +30,30 @@ disjunk(Formula,Result) :-
 	, maplist(term(Sym),PDArgs,Result)
 	.
 
+% only handles terms with ONE free variable
+% fails if there is more than one
+formulate(Variable,Term,Name,Term2) :-
+	Term =.. [Sym|Args]
+	, findVars(Variable,Name,Args,NArgs)
+	, Term2 =.. [Sym|NArgs]
+	.
+
+findVars(Variable,Name,[X|Xs],[L|Ls]) :-
+	(
+		var(X), !
+		, Variable == X
+		, findVars(Variable,Name,Xs,Ls)
+		, L = Name
+	;
+		compound(X), !
+		, formulate(Variable,X,Name,L)
+		, findVars(Variable,Name,Xs,Ls)
+	;
+		X = L
+	)
+	.
+
+findVars(_,_,[],[]).
 
 % args/2
 % takes a list of lists and returns all permutations of each list's elements
